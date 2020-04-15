@@ -1,4 +1,6 @@
 use regex::Regex;
+use lazy_static::lazy_static;
+
 
 // these expressions always return (if anything was matched) a fixed amount of captures,
 // optional capture groups return either std::Option::Some("") or std::Option::None (preferred)
@@ -40,7 +42,7 @@ lazy_static! {
                (X/Y)?,
                )?
     */
-    pub static ref RE_INDEXED_ADRRESING: Regex = Regex::new(
+    pub static ref RE_INDEXED_ADDRESSING: Regex = Regex::new(
         format!("{}{}{}", r"^(?:(\()?)", RE_COMMON, r"(?:(\))?)(?:,?([XY])?)(?:(\))?)$").as_str()
     ).unwrap();
 

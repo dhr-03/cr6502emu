@@ -6,6 +6,8 @@ pub enum ParseError {
     WrongAddressMode,
 
     SyntaxError,
+
+    ValueTooBig
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;
