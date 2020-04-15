@@ -1,8 +1,11 @@
-mod assembler;
-mod assembler_tools;
+mod parser;
+mod parser_types;
 mod re_patterns;
 
+mod assembler;
+
 pub use assembler::Assembler;
-pub use assembler_tools::{NumberBase,
-                          ParseError, ParseResult,
-                          ParsedAddress, ParsedU8, ParsedI8, ParsedU16};
+pub use parser::Parser;
+pub use parser_types::{NumberBase,
+                       ParseError, ParseResult,
+                       ParsedAddress, ParsedU8, ParsedI8, ParsedU16};

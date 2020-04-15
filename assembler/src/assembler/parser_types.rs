@@ -5,9 +5,9 @@ pub enum ParseError {
     UnknownAddressMode,
     WrongAddressMode,
 
-    SyntaxError,
+    ValueTooBig,
 
-    ValueTooBig
+    SyntaxError
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;
