@@ -2,6 +2,7 @@ use super::{ParseResult, ParsedAddress, NumberBase,
             ParsedU8, ParsedU16, ParsedI8};
 use super::re_patterns::{RE_NORMAL_ADDRESSING, RE_INDEXED_ADDRESSING};
 use crate::assembler::ParseError;
+use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
 
 pub struct Parser {}
 
@@ -14,33 +15,36 @@ impl Parser {
 
         let str_value = re_result[offset + 1];
 
-        match re_result[offset + 0] {
-            "" => {
-                //TODO: check based on the actual value
-                base = NumberBase::DEC;
-                is_zp = str_value.len() <= 3;
+        unsafe {
+            match re_result[offset + 0] {
+                "" => {
+                    //TODO: check based on the actual value
+                    base = NumberBase::DEC;
+                    is_zp = str_value.len() <= 3;
+                }
+
+                "$" => {
+                    base = NumberBase::HEX;
+                    is_zp = str_value.len() <= 2;
+                }
+
+                "b" => {
+                    base = NumberBase::BIN;
+                    is_zp = str_value.len() <= 4;
+                }
+
+                //"%" | "lo " | "hi " => todo!(), // TODO: labels
+
+                _ => unreachable_unchecked() //panic!("regex returned an invalid num type")
             }
-
-            "$" => {
-                base = NumberBase::HEX;
-                is_zp = str_value.len() <= 2;
-            }
-
-            "b" => {
-                base = NumberBase::BIN;
-                is_zp = str_value.len() <= 4;
-            }
-
-            //"%" | "lo " | "hi " => todo!(), // TODO: labels
-
-            _ => unreachable!() //panic!("regex returned an invalid num type")
         }
 
 
         Ok(
             (ParsedU16 {
                 is_address: true,
-                value: u16::from_str_radix(str_value, base as u32).unwrap(),
+                value: u16::from_str_radix(str_value, base as u32)
+                    .map_err(|_| ParseError::SyntaxError) ?,
                 base,
             },
              is_zp
@@ -125,17 +129,20 @@ impl Parser {
             ["(", _, _, ")", "", ""] => Ok(ParsedAddress::Indirect(parsed_number)),
 
             //FIXME: conflicts with Normal: ABS, ZP
-            ["", _, _, "", "", ""] => zp_or_err(ParsedAddress::Relative(ParsedI8 {
-                is_address: true,
-                value: parsed_number.value as i8,
-                base: parsed_number.base,
-            })),
+            ["", _, _, "", "", ""] => if is_zp {
+                Ok(ParsedAddress::RelativeOffset(ParsedI8 {
+                    is_address: true,
+                    value: parsed_number.value as i8,
+                    base: parsed_number.base,
+                }))
+            } else {
+                Ok(ParsedAddress::RelativeTarget(parsed_number))
+            }
 
             _ => Err(ParseError::SyntaxError)
         }
     }
 }
-
 
 impl Parser {
     fn sanitize_line(line: &str) -> &str {
@@ -145,7 +152,7 @@ impl Parser {
         }.trim() //remove blank chars, such as [space] \t \n \r ...
     }
 
-    fn clean_input(input: &str) -> impl Iterator<Item=&str> {
+    pub fn clean_input(input: &str) -> impl Iterator<Item=&str> {
         input.lines()
             .map(|l| Parser::sanitize_line(l))
             .filter(|l| !l.is_empty())

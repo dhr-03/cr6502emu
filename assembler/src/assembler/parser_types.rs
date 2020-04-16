@@ -7,13 +7,10 @@ pub enum ParseError {
 
     ValueTooBig,
 
-    SyntaxError
+    SyntaxError,
 }
 
 pub type ParseResult<T> = Result<T, ParseError>;
-
-
-
 
 
 #[derive(Copy, Clone)]
@@ -34,7 +31,6 @@ pub type ParsedI8 = NumberValue<i8>;
 pub type ParsedU16 = NumberValue<u16>;
 
 
-
 pub enum ParsedAddress {
     Implicit,
     Immediate(ParsedU8),
@@ -43,7 +39,8 @@ pub enum ParsedAddress {
     ZeroPageX(ParsedU8),
     ZeroPageY(ParsedU8),
 
-    Relative(ParsedI8),
+    RelativeOffset(ParsedI8),
+    RelativeTarget(ParsedU16),
 
     Absolute(ParsedU16),
     AbsoluteX(ParsedU16),
@@ -56,17 +53,18 @@ pub enum ParsedAddress {
 
 }
 
-impl From<ParsedAddress> for usize {
-    //enums with data cant (for now) be converted to the variant index
-    fn from(variant: ParsedAddress) -> Self {
 
+impl From<&ParsedAddress> for usize {
+    //enums with data cant (for now) be converted to the variant index
+    fn from(variant: &ParsedAddress) -> Self {
         match variant {
             ParsedAddress::Implicit => 0,
             ParsedAddress::Immediate(_) => 1,
             ParsedAddress::ZeroPage(_) => 2,
             ParsedAddress::ZeroPageX(_) => 3,
             ParsedAddress::ZeroPageY(_) => 4,
-            ParsedAddress::Relative(_) => 5,
+            ParsedAddress::RelativeOffset(_) => 5,
+            ParsedAddress::RelativeTarget(_) => 5,
             ParsedAddress::Absolute(_) => 6,
             ParsedAddress::AbsoluteX(_) => 7,
             ParsedAddress::AbsoluteY(_) => 8,
