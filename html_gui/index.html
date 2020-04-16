@@ -40,22 +40,20 @@
 
             let test = new Assembler();
             let ptr = test.assemble(`
-            LDA #$FF
-            LDA $FF
-            LDA $FF,X
-            LDA $FFFF
-            LDA $FFFF,X
-            LDA $FFFF,Y
-            LDA ($FF,X)
-            LDA ($FF),Y
-            JMP ($FFFF)
-            JMP $FFFF
-            ;TODO;BEQ $FF
+            STA $FF
+            label:
+            STA %label
+            STA hi label
+            STA lo label
             `);
 
-            let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
-            for (let n of output) {
-                console.log(n.toString(16));
+            if (ptr !== 0) {
+                let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
+                for (let n of output) {
+                    console.log(n.toString(16));
+                }
+            } else {
+                alert("JS: parse err");
             }
 
         }
