@@ -87,12 +87,21 @@ impl Parser {
         let (parsed_number, is_zp) =
             Parser::parse_re_addr_common(&re_inx, 1)?;
 
-
-        let zp_or_err = |val: ParsedAddress| {
+        //inline
+        let zp_or_err = |rs: ParsedAddress| {
             if is_zp {
-                Ok(val)
+                Ok(rs)
             } else {
                 Err(ParseError::ValueTooBig)
+            }
+        };
+
+        //inline
+        let to_u8 = || {
+            ParsedU8 {
+                is_address: true,
+                value: *(&parsed_number.value) as u8,
+                base: parsed_number.base,
             }
         };
 
@@ -100,48 +109,20 @@ impl Parser {
         //the regex itself, we can ignore those or assume they are valid
         match re_inx {
             ["", _, _, "", "X", ""] => match is_zp {
-                true => Ok(ParsedAddress::ZeroPageX(ParsedU8 {
-                    is_address: true,
-                    value: parsed_number.value as u8,
-                    base: parsed_number.base,
-                })),
-                false => Ok(ParsedAddress::AbsoluteX(ParsedU16 {
-                    is_address: true,
-                    value: parsed_number.value,
-                    base: parsed_number.base,
-                })),
+                true => Ok(ParsedAddress::ZeroPageX(to_u8())),
+                false => Ok(ParsedAddress::AbsoluteX(parsed_number))
             },
 
             ["", _, _, "", "Y", ""] => match is_zp {
-                true => Ok(ParsedAddress::ZeroPageY(ParsedU8 {
-                    is_address: true,
-                    value: parsed_number.value as u8,
-                    base: parsed_number.base,
-                })),
-                false => Ok(ParsedAddress::AbsoluteY(ParsedU16 {
-                    is_address: true,
-                    value: parsed_number.value,
-                    base: parsed_number.base,
-                })),
+                true => Ok(ParsedAddress::ZeroPageY(to_u8())),
+                false => Ok(ParsedAddress::AbsoluteY(parsed_number)),
             }
 
-            ["(", _, _, "", "X", ")"] => zp_or_err(ParsedAddress::IndexedIndirect(ParsedU8 {
-                is_address: true,
-                value: parsed_number.value as u8,
-                base: parsed_number.base,
-            })),
+            ["(", _, _, "", "X", ")"] => zp_or_err(ParsedAddress::IndexedIndirect(to_u8())),
 
-            ["(", _, _, ")", "Y", ""] => zp_or_err(ParsedAddress::IndirectIndexed(ParsedU8 {
-                is_address: true,
-                value: parsed_number.value as u8,
-                base: parsed_number.base,
-            })),
+            ["(", _, _, ")", "Y", ""] => zp_or_err(ParsedAddress::IndirectIndexed(to_u8())),
 
-            ["(", _, _, ")", "", ""] => Ok(ParsedAddress::Indirect(ParsedU16 {
-                is_address: true,
-                value: parsed_number.value,
-                base: parsed_number.base,
-            })),
+            ["(", _, _, ")", "", ""] => Ok(ParsedAddress::Indirect(parsed_number)),
 
             //FIXME: conflicts with Normal: ABS, ZP
             ["", _, _, "", "", ""] => zp_or_err(ParsedAddress::Relative(ParsedI8 {
