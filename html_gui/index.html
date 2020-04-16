@@ -39,7 +39,24 @@
             set_panic_hook();
 
             let test = new Assembler();
-            test.parse_instruction("LDA #$FF");
+            let ptr = test.assemble(`
+            LDA #$FF
+            LDA $FF
+            LDA $FF,X
+            LDA $FFFF
+            LDA $FFFF,X
+            LDA $FFFF,Y
+            LDA ($FF,X)
+            LDA ($FF),Y
+            JMP ($FFFF)
+            JMP $FFFF
+            ;TODO;BEQ $FF
+            `);
+
+            let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
+            for (let n of output) {
+                console.log(n.toString(16));
+            }
 
         }
 
