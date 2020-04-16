@@ -4,7 +4,7 @@ mod re_patterns;
 
 mod assembler;
 
-pub use assembler::Assembler;
+pub use assembler::{Assembler, IdentifierMap};
 pub use parser::Parser;
 pub use parser_types::{NumberBase,
                        ParseError, ParseResult,

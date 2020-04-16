@@ -1,6 +1,7 @@
 pub enum ParseError {
     UnknownOpcode,
     UnknownMacro,
+    UnknownIdentifier,
 
     UnknownAddressMode,
     WrongAddressMode,

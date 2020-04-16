@@ -1,41 +1,62 @@
-use super::{ParseResult, ParsedAddress, NumberBase,
-            ParsedU8, ParsedU16, ParsedI8};
-use super::re_patterns::{RE_NORMAL_ADDRESSING, RE_INDEXED_ADDRESSING};
-use crate::assembler::ParseError;
 use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
+
+use super::{ParseResult, ParseError, ParsedAddress, NumberBase,
+            ParsedU8, ParsedU16, ParsedI8,
+            IdentifierMap};
+
+use super::re_patterns::{RE_NORMAL_ADDRESSING, RE_INDEXED_ADDRESSING};
 
 pub struct Parser {}
 
 impl Parser {
     //TODO: I8
+
     // for simplicity, lets just return a u16, but inform if the value is actually a [u/i]8
-    fn parse_re_addr_common(re_result: &[&str], offset: usize) -> ParseResult<(ParsedU16, bool)> {
+    fn parse_re_addr_common(re_result: &[&str], offset: usize, map: &IdentifierMap) -> ParseResult<(ParsedU16, bool)> {
         let base: NumberBase;
         let is_zp: bool; //zero-page OR only 1 byte of data (instead of 2)
 
         let str_value = re_result[offset + 1];
+        let mut value: u16;
+
+        let parse_value = |base: u32|
+            u16::from_str_radix(str_value, base).map_err(|_| ParseError::SyntaxError);
 
         unsafe {
             match re_result[offset + 0] {
                 "" => {
-                    //TODO: check based on the actual value
                     base = NumberBase::DEC;
-                    is_zp = str_value.len() <= 3;
+                    value = parse_value(10)?;
+                    is_zp = value <= 0xFF;
                 }
 
                 "$" => {
                     base = NumberBase::HEX;
                     is_zp = str_value.len() <= 2;
+                    value = parse_value(16)?;
                 }
 
                 "b" => {
                     base = NumberBase::BIN;
                     is_zp = str_value.len() <= 4;
+                    value = parse_value(2)?;
                 }
 
-                //"%" | "lo " | "hi " => todo!(), // TODO: labels
+                label_type => {
+                    base = NumberBase::DEC;
+                    value = *map.get(str_value).ok_or(ParseError::UnknownIdentifier) ?;
 
-                _ => unreachable_unchecked() //panic!("regex returned an invalid num type")
+                    is_zp = match label_type {
+                        "%" => false,
+                        "lo " => true,
+                        "hi " => {
+                            value >>= 8;
+                            true
+                        },
+                        _ => unreachable_unchecked() //panic!("regex returned an invalid value")
+                    }
+                }
+
             }
         }
 
@@ -43,8 +64,7 @@ impl Parser {
         Ok(
             (ParsedU16 {
                 is_address: true,
-                value: u16::from_str_radix(str_value, base as u32)
-                    .map_err(|_| ParseError::SyntaxError) ?,
+                value,
                 base,
             },
              is_zp
@@ -52,13 +72,13 @@ impl Parser {
         )
     }
 
-    pub fn parse_addr_normal(address: &str) -> ParseResult<ParsedAddress> {
+    pub fn parse_addr_normal(address: &str, map: &IdentifierMap) -> ParseResult<ParsedAddress> {
         let re_nrm = Parser::regex_normal_addressing(address)?;
 
         let is_addr = re_nrm[0] != "#";
 
         let (parsed_number, is_zp) =
-            Parser::parse_re_addr_common(&re_nrm, 1)?;
+            Parser::parse_re_addr_common(&re_nrm, 1, map)?;
 
 
         match [is_addr, is_zp] {
@@ -85,11 +105,11 @@ impl Parser {
     }
 
 
-    pub fn parse_addr_indexed(address: &str) -> ParseResult<ParsedAddress> {
+    pub fn parse_addr_indexed(address: &str, map: &IdentifierMap) -> ParseResult<ParsedAddress> {
         let re_inx = Parser::regex_indexed_addressing(address)?;
 
         let (parsed_number, is_zp) =
-            Parser::parse_re_addr_common(&re_inx, 1)?;
+            Parser::parse_re_addr_common(&re_inx, 1, map)?;
 
         //inline
         let zp_or_err = |rs: ParsedAddress| {
@@ -213,5 +233,19 @@ impl Parser {
         } else {
             Err(ParseError::UnknownAddressMode)
         }
+    }
+}
+
+// line type
+impl Parser {
+    #[inline(always)]
+    pub fn is_macro(line: &str) -> bool {
+        line.starts_with("#")
+    }
+
+    #[inline(always)]
+    pub fn is_label(line: &str) -> bool {
+        line.ends_with(":") &&
+            (&line[..line.len() - 2]).chars().all(char::is_alphanumeric)
     }
 }

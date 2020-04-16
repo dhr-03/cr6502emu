@@ -1,15 +1,20 @@
 use wasm_bindgen::prelude::*;
+use std::collections::HashMap;
+use std::ptr;
 
-use super::{Parser, ParseResult, ParsedAddress, ParseError,
-            ParsedU8, ParsedI8, ParsedU16};
+use super::{Parser, ParseResult, ParsedAddress, ParseError};
 use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
 
-use crate::alert;
+//TODO: messages
+
+pub type IdentifierMap = HashMap<String, u16>;
 
 #[wasm_bindgen]
 pub struct Assembler {
+    identifiers: IdentifierMap,
+
     test_tmp: [u8; 30],
-    offset: usize
+    offset: u16,
 }
 
 //public api
@@ -18,22 +23,44 @@ impl Assembler {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Assembler {
         Assembler {
+            identifiers: HashMap::new(),
+
             test_tmp: [0; 30],
-            offset: 0
+            offset: 0,
         }
     }
 
-    pub fn assemble(&mut self, prg: &str) -> *const u8 { //TODO: result
-        for line in Parser::clean_input(prg) {
-        //TODO: check max length
-        //      check type: instruction, label, macro
+    pub fn assemble(&mut self, prg: &str) -> *const u8 {
+        self.identifiers.clear();
 
-            if let Err(_) = self.parse_instruction(line) {
-                alert("err");
-                break
+        let tmp_early_exit = || {
+            ptr::null()
+        };
+
+        for line in Parser::clean_input(prg) {
+            if Parser::is_macro(line) {
+                if let Err(_) = self.parse_macro(line) {
+                    return tmp_early_exit();
+                }
+
+
+            } else if Parser::is_label(line) {
+                let name = &line[..line.len() - 1];
+
+                if !self.identifiers.contains_key(name) {
+                    self.identifiers.insert(name.into(), self.offset);
+                } else {
+                    return tmp_early_exit();
+                }
+
+            } else {
+                if let Err(e) = self.parse_instruction(line) {
+                    return tmp_early_exit();
+                }
             }
         }
 
+        self.identifiers.clear();
         &self.test_tmp[0]
     }
 }
@@ -41,11 +68,11 @@ impl Assembler {
 //parsers, struct members so they can emit warnings
 impl Assembler {
     fn write_rom(&mut self, byte: u8) { //TODO: safe
-        self.test_tmp[self.offset] = byte;
+        self.test_tmp[self.offset as usize] = byte;
         self.offset += 1;
     }
 
-    fn parse_instruction(&mut self, line: &str,) -> ParseResult<()> {
+    fn parse_instruction(&mut self, line: &str) -> ParseResult<()> {
         let space_i = *line.find(' ').get_or_insert(line.len());
         let opcode = &line[..space_i];
         let data = *line.get((space_i + 1)..).get_or_insert("");
@@ -76,8 +103,8 @@ impl Assembler {
                 ZeroPageY(v) | IndexedIndirect(v) |
                 IndirectIndexed(v) => self.write_rom(v.value),
 
-                RelativeTarget(v) => {}
-                RelativeOffset(v) => {}
+                RelativeTarget(_) => {unimplemented!()}
+                RelativeOffset(_) => {unimplemented!()}
 
                 Absolute(v) | AbsoluteX(v) | AbsoluteY(v) |
                 Indirect(v) => {
@@ -91,7 +118,7 @@ impl Assembler {
     }
 
 
-    fn parse_macro(&self, line: &str) {
+    fn parse_macro(&self, _line: &str) -> ParseResult<()> {
         unimplemented!()
     }
 
@@ -100,10 +127,10 @@ impl Assembler {
         if address.is_empty() || address == "A" {
             Ok(ParsedAddress::Implicit) //accumulator
         } else {
-            Parser::parse_addr_normal(address)
+            Parser::parse_addr_normal(address, &self.identifiers)
                 .or_else(|err| {
                     if let ParseError::UnknownAddressMode = err {
-                        Parser::parse_addr_indexed(address)
+                        Parser::parse_addr_indexed(address, &self.identifiers)
                     } else {
                         Err(err)
                     }
