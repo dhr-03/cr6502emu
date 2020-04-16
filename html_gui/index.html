@@ -8,32 +8,7 @@
         import init, { Assembler, set_panic_hook } from '/static/jsm/assembler/assembler_dev.js';
 
         async function run() {
-            // First up we need to actually load the wasm file, so we use the
-            // default export to inform it where the wasm file is located on the
-            // server, and then we wait on the returned promise to wait for the
-            // wasm to be loaded.
-            //
-            // It may look like this: `await init('./pkg/without_a_bundler_bg.wasm');`,
-            // but there is also a handy default inside `init` function, which uses
-            // `import.meta` to locate the wasm file relatively to js file.
-            //
-            // Note that instead of a string you can also pass in any of the
-            // following things:
-            //
-            // * `WebAssembly.Module`
-            //
-            // * `ArrayBuffer`
-            //
-            // * `Response`
-            //
-            // * `Promise` which returns any of the above, e.g. `fetch("./path/to/wasm")`
-            //
-            // This gives you complete control over how the module is loaded
-            // and compiled.
-            //
-            // Also note that the promise, when resolved, yields the wasm module's
-            // exports which is the same as importing the `*_bg` module in other
-            // modes
+
             let wasm  = await init();
 
             set_panic_hook();
@@ -49,9 +24,12 @@
 
             if (ptr !== 0) {
                 let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
-                for (let n of output) {
-                    console.log(n.toString(16));
-                }
+                let hexData = [];
+                for (let b of output) hexData.push(
+                    b.toString(16).padStart(2, "0").toUpperCase())
+                ;
+
+                console.table(hexData);
             } else {
                 alert("JS: parse err");
             }
