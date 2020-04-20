@@ -88,7 +88,7 @@ impl Assembler {
                 if *v != OPCODE_NONE {
                     Ok(v)
                 } else {
-                    Err(ParseError::WrongAddressMode)
+                    Err(ParseError::WrongAddressingMode)
                 }
             })?;
 
@@ -129,7 +129,7 @@ impl Assembler {
         } else {
             Parser::parse_addr_normal(address, &self.identifiers)
                 .or_else(|err| {
-                    if let ParseError::UnknownAddressMode = err {
+                    if let ParseError::UnknownAddressingMode = err {
                         Parser::parse_addr_indexed(address, &self.identifiers)
                     } else {
                         Err(err)

@@ -203,7 +203,7 @@ impl Parser {
 
             Ok(rt)
         } else {
-            Err(ParseError::UnknownAddressMode)
+            Err(ParseError::UnknownAddressingMode)
         }
     }
 
@@ -231,7 +231,7 @@ impl Parser {
 
             Ok(rt)
         } else {
-            Err(ParseError::UnknownAddressMode)
+            Err(ParseError::UnknownAddressingMode)
         }
     }
 }

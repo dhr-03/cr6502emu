@@ -3,8 +3,8 @@ pub enum ParseError {
     UnknownMacro,
     UnknownIdentifier,
 
-    UnknownAddressMode,
-    WrongAddressMode,
+    UnknownAddressingMode,
+    WrongAddressingMode,
 
     ValueTooBig,
 
@@ -21,7 +21,7 @@ pub enum NumberBase {
     DEC = 10,
 }
 
-pub struct NumberValue<T> {
+struct NumberValue<T> {
     pub base: NumberBase,
     pub value: T,
     pub is_address: bool,
