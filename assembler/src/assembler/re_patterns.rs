@@ -48,7 +48,7 @@ lazy_static! {
                )?
     */
     pub static ref RE_INDEXED_ADDRESSING: Regex = Regex::new(
-        concat!(r"^(?:(\()?)", re_common!(), r"(?:(\))?)(?:,?([XY])?)(?:(\))?)$")
+        concat!(r"^(?:(\(|\&|\*)?)", re_common!(), r"(?:(\))?)(?:,?([XY])?)(?:(\))?)$")
     ).unwrap();
 
 }

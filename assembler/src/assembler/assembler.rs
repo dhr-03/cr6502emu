@@ -31,37 +31,81 @@ impl Assembler {
     }
 
     pub fn assemble(&mut self, prg: &str) -> *const u8 {
-        self.identifiers.clear();
+        let mut success = true;
+        let mut lines = Parser::clean_input(prg);
 
-        let tmp_early_exit = || {
-            ptr::null()
-        };
-
-        for line in Parser::clean_input(prg) {
+        while let (_, Some(line)) = (success, lines.next()) {
             if Parser::is_macro(line) {
-                if let Err(_) = self.parse_macro(line) {
-                    return tmp_early_exit();
-                }
-
-
+                success = self.macro_behaviour(line)
             } else if Parser::is_label(line) {
-                let name = &line[..line.len() - 1];
-
-                if !self.identifiers.contains_key(name) {
-                    self.identifiers.insert(name.into(), self.offset);
-                } else {
-                    return tmp_early_exit();
-                }
-
+                success = self.label_behaviour(line)
             } else {
-                if let Err(e) = self.parse_instruction(line) {
-                    return tmp_early_exit();
-                }
+                success = self.instruction_behaviour(line)
             }
         }
 
         self.identifiers.clear();
-        &self.test_tmp[0]
+
+        if success {
+            &self.test_tmp[0] //get ptr
+        } else {
+            0 as *const u8
+        }
+    }
+}
+
+impl Assembler {
+    #[inline(always)]
+    fn macro_behaviour(&mut self, line: &str) -> bool {
+        self.parse_macro(line).is_ok()
+    }
+
+    #[inline(always)]
+    fn label_behaviour(&mut self, line: &str) -> bool {
+        let name = &line[..line.len() - 1];
+
+        if !self.identifiers.contains_key(name) {
+            self.identifiers.insert(name.into(), self.offset);
+            true
+        } else {
+            false
+        }
+    }
+
+    #[inline(always)]
+    fn instruction_behaviour(&mut self, line: &str) -> bool {
+
+        match self.parse_instruction(line) {
+            Ok((opcode, addr)) => {
+                self.write_rom(opcode);
+
+                {
+                    use ParsedAddress::*;
+                    match addr {
+                        Implicit => (),
+
+                        Immediate(v) | ZeroPage(v) | ZeroPageX(v) |
+                        ZeroPageY(v) | IndexedIndirect(v) |
+                        IndirectIndexed(v) => self.write_rom(v.value),
+
+                        RelativeTarget(v) => self.write_rom_u16(v.value),
+                        RelativeOffset(v) => {
+                            let target: u16 = v.value as u16 + self.offset - 1;
+                            self.write_rom_u16(target);
+                        }
+
+                        Absolute(v) | AbsoluteX(v) | AbsoluteY(v) |
+                        Indirect(v) => {
+                            self.write_rom_u16(v.value);
+                        }
+                    }
+                }
+
+                true
+            }
+
+            Err(_) => false
+        }
     }
 }
 
@@ -72,7 +116,12 @@ impl Assembler {
         self.offset += 1;
     }
 
-    fn parse_instruction(&mut self, line: &str) -> ParseResult<()> {
+    fn write_rom_u16(&mut self, bytes: u16) {
+        self.write_rom(bytes as u8);
+        self.write_rom((bytes >> 8) as u8);
+    }
+
+    fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedAddress)> {
         let space_i = *line.find(' ').get_or_insert(line.len());
         let opcode = &line[..space_i];
         let data = *line.get((space_i + 1)..).get_or_insert("");
@@ -82,44 +131,22 @@ impl Assembler {
         let opcode_val = OPCODES_MAP.get(opcode)
             .ok_or(ParseError::UnknownOpcode)?;
 
-        let opcode_val = opcode_val.get(usize::from(&parsed_addr))
+        let index = usize::from(&parsed_addr);
+
+        opcode_val.get(index)
             .ok_or(ParseError::UnknownOpcode)
             .and_then(|v| {
                 if *v != OPCODE_NONE {
-                    Ok(v)
+                    Ok((*v, parsed_addr))
                 } else {
                     Err(ParseError::WrongAddressingMode)
                 }
-            })?;
-
-        self.write_rom(*opcode_val);
-
-        {
-            use ParsedAddress::*;
-            match parsed_addr {
-                Implicit => (),
-
-                Immediate(v) | ZeroPage(v) | ZeroPageX(v) |
-                ZeroPageY(v) | IndexedIndirect(v) |
-                IndirectIndexed(v) => self.write_rom(v.value),
-
-                RelativeTarget(_) => {unimplemented!()}
-                RelativeOffset(_) => {unimplemented!()}
-
-                Absolute(v) | AbsoluteX(v) | AbsoluteY(v) |
-                Indirect(v) => {
-                    self.write_rom(v.value as u8);
-                    self.write_rom((v.value >> 8) as u8);
-                }
-            }
-        }
-
-        Ok(())
+            })
     }
 
 
     fn parse_macro(&self, _line: &str) -> ParseResult<()> {
-        unimplemented!()
+        Err(ParseError::UnknownMacro)
     }
 
 

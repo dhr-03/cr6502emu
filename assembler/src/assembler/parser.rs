@@ -44,7 +44,7 @@ impl Parser {
 
                 label_type => {
                     base = NumberBase::DEC;
-                    value = *map.get(str_value).ok_or(ParseError::UnknownIdentifier) ?;
+                    value = *map.get(str_value).ok_or(ParseError::UnknownIdentifier)?;
 
                     is_zp = match label_type {
                         "%" => false,
@@ -52,11 +52,10 @@ impl Parser {
                         "hi " => {
                             value >>= 8;
                             true
-                        },
+                        }
                         _ => unreachable_unchecked() //panic!("regex returned an invalid value")
                     }
                 }
-
             }
         }
 
@@ -100,6 +99,7 @@ impl Parser {
                 base: parsed_number.base,
             })),
 
+            //immediate only accepts 1 byte
             [false, false] => Err(ParseError::ValueTooBig)
         }
     }
@@ -148,16 +148,13 @@ impl Parser {
 
             ["(", _, _, ")", "", ""] => Ok(ParsedAddress::Indirect(parsed_number)),
 
-            //FIXME: conflicts with Normal: ABS, ZP
-            ["", _, _, "", "", ""] => if is_zp {
-                Ok(ParsedAddress::RelativeOffset(ParsedI8 {
-                    is_address: true,
-                    value: parsed_number.value as i8,
-                    base: parsed_number.base,
-                }))
-            } else {
-                Ok(ParsedAddress::RelativeTarget(parsed_number))
-            }
+            ["*", _, _, "", "", ""] => Ok(ParsedAddress::RelativeOffset(ParsedI8 {
+                is_address: true,
+                value: parsed_number.value as i8,
+                base: parsed_number.base,
+            })),
+
+            ["&", _, _, "", "", ""] => Ok(ParsedAddress::RelativeTarget(parsed_number)),
 
             _ => Err(ParseError::SyntaxError)
         }
