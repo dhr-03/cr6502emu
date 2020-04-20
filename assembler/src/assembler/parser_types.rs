@@ -21,7 +21,7 @@ pub enum NumberBase {
     DEC = 10,
 }
 
-struct NumberValue<T> {
+pub struct NumberValue<T> {
     pub base: NumberBase,
     pub value: T,
     pub is_address: bool,

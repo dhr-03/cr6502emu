@@ -15,7 +15,11 @@ use lazy_static::lazy_static;
 //TODO: identifiers/labels offset
 
 //format! bloats the bin
-//static RE_COMMON: &str = r"(?:(\$|b|lo |hi |%)?)((?:[A-f0-9]{1,4})|(?:[01]{1,16})|(?:[0-9]{1,8}|(?:[A-z_]{3,10})))";
+macro_rules! re_common {
+    () => {
+        r"(?:(\$|b|lo |hi |%)?)((?:[A-f0-9]{1,4})|(?:[01]{1,16})|(?:[0-9]{1,8})|(?:[A-z_]{3,10}))"
+    }
+}
 
 lazy_static! {
 
@@ -27,11 +31,8 @@ lazy_static! {
        value/identifier
        </---->
     */
-
     pub static ref RE_NORMAL_ADDRESSING: Regex = Regex::new(
-        "^(?:(#)?)\
-(?:(\\$|b|lo |hi |%)?)((?:[A-f0-9]{1,4})|(?:[01]{1,16})|(?:[0-9]{1,8}|(?:[A-z_][A-z0-9_]{2,10})))\
-$"
+        concat!(r"^(?:(#)?)", re_common!(), r"$")
     ).unwrap();
 
 
@@ -47,9 +48,7 @@ $"
                )?
     */
     pub static ref RE_INDEXED_ADDRESSING: Regex = Regex::new(
-        "^(?:(\\()?)\
-(?:(\\$|b|lo |hi |%)?)((?:[A-f0-9]{1,4})|(?:[01]{1,16})|(?:[0-9]{1,8}|(?:[A-z_]{3,10})))\
-(?:(\\))?)(?:,?([XY])?)(?:(\\))?)$"
+        concat!(r"^(?:(\()?)", re_common!(), r"(?:(\))?)(?:,?([XY])?)(?:(\))?)$")
     ).unwrap();
 
 }
