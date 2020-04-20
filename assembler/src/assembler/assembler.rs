@@ -11,6 +11,7 @@ pub type IdentifierMap = HashMap<String, u16>;
 
 #[wasm_bindgen]
 pub struct Assembler {
+    rom_offset: u16,
     identifiers: IdentifierMap,
 
     test_tmp: [u8; 30],
@@ -21,8 +22,9 @@ pub struct Assembler {
 #[wasm_bindgen]
 impl Assembler {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Assembler {
+    pub fn new(rom_start: u16) -> Assembler {
         Assembler {
+            rom_offset: rom_start,
             identifiers: HashMap::new(),
 
             test_tmp: [0; 30],
@@ -65,7 +67,7 @@ impl Assembler {
         let name = &line[..line.len() - 1];
 
         if !self.identifiers.contains_key(name) {
-            self.identifiers.insert(name.into(), self.offset);
+            self.identifiers.insert(name.into(), self.offset + self.rom_offset);
             true
         } else {
             false
