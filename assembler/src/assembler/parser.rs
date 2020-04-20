@@ -1,10 +1,12 @@
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
 
 use super::{ParseResult, ParseError, ParsedAddress, NumberBase,
             ParsedU8, ParsedU16, ParsedI8,
             IdentifierMap};
 
-use super::re_patterns::{RE_NORMAL_ADDRESSING, RE_INDEXED_ADDRESSING};
+use super::js_regex;
+use crate::assembler::js_regex::{js_re_nrm, js_re_inx};
 
 pub struct Parser {}
 
@@ -176,57 +178,43 @@ impl Parser {
     }
 }
 
-
 impl Parser {
-    //TODO: use js regex
+    fn substr_or_empty(txt: &str, from: usize, len: usize) -> &str {
+        if len != 0 {
+            &txt[from..len]
+        } else {
+            &""
+        }
+    }
+
     fn regex_normal_addressing(input: &str) -> ParseResult<[&str; 3]> {
-        let matches = RE_NORMAL_ADDRESSING.captures(input);
+        let mut bounds = [0; 6];
+        js_re_nrm(input, &mut bounds);
 
-        if let Some(matches) = matches {
-            let mut matches = matches.iter()
-                .map(|opt| {
-                    match opt {
-                        Some(m) => m.as_str(),
-                        None => ""
-                    }
-                });
-
-            matches.next(); //first match == whole match
-            let rt: [&str; 3] = [
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or("")
-            ];
-
-            Ok(rt)
+        if bounds[5] != 0 {
+            Ok([
+                Parser::substr_or_empty(input, bounds[0], bounds[1]),
+                Parser::substr_or_empty(input, bounds[2], bounds[3]),
+                Parser::substr_or_empty(input, bounds[4], bounds[5])
+            ])
         } else {
             Err(ParseError::UnknownAddressingMode)
         }
     }
 
     fn regex_indexed_addressing(input: &str) -> ParseResult<[&str; 6]> {
-        let matches = RE_INDEXED_ADDRESSING.captures(input);
+        let mut bounds = [0; 12];
+        js_re_inx(input, &mut bounds);
 
-        if let Some(matches) = matches {
-            let mut matches = matches.iter()
-                .map(|opt| {
-                    match opt {
-                        Some(m) => m.as_str(),
-                        None => ""
-                    }
-                });
-
-            matches.next(); //first match == whole match
-            let rt: [&str; 6] = [
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-                matches.next().unwrap_or(""),
-            ];
-
-            Ok(rt)
+        if bounds[5] != 0 {
+            Ok([
+                Parser::substr_or_empty(input, bounds[0], bounds[1]),
+                Parser::substr_or_empty(input, bounds[2], bounds[3]),
+                Parser::substr_or_empty(input, bounds[4], bounds[5]),
+                Parser::substr_or_empty(input, bounds[6], bounds[7]),
+                Parser::substr_or_empty(input, bounds[8], bounds[9]),
+                Parser::substr_or_empty(input, bounds[10], bounds[11])
+            ])
         } else {
             Err(ParseError::UnknownAddressingMode)
         }

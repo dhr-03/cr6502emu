@@ -1,9 +1,9 @@
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::wasm_bindgen;
 use std::collections::HashMap;
-use std::ptr;
 
 use super::{Parser, ParseResult, ParsedAddress, ParseError};
 use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
+use crate::alert;
 
 //TODO: messages
 
@@ -106,7 +106,7 @@ impl Assembler {
                 true
             }
 
-            Err(_) => false
+            Err(e) => {alert(format!("{}", e as u32).as_str()); false}
         }
     }
 }

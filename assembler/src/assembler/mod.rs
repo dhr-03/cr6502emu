@@ -1,6 +1,6 @@
 mod parser;
 mod parser_types;
-mod re_patterns;
+mod js_regex;
 
 mod assembler;
 
