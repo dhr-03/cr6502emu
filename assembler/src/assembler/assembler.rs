@@ -1,18 +1,19 @@
 use wasm_bindgen::prelude::wasm_bindgen;
-use std::collections::HashMap;
 
-use super::{Parser, ParseResult, ParsedAddress, ParseError};
+use super::{Parser, ParseResult, ParsedValue, ParseError,
+            ValueMode,
+            LabelManager};
+
 use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
-use crate::alert;
+use crate::assembler::AddressingMode;
 
 //TODO: messages
-
-pub type IdentifierMap = HashMap<String, u16>;
+use crate::alert;
 
 #[wasm_bindgen]
 pub struct Assembler {
     rom_offset: u16,
-    identifiers: IdentifierMap,
+    identifiers: LabelManager,
 
     test_tmp: [u8; 30],
     offset: u16,
@@ -25,7 +26,7 @@ impl Assembler {
     pub fn new(rom_start: u16) -> Assembler {
         Assembler {
             rom_offset: rom_start,
-            identifiers: HashMap::new(),
+            identifiers: LabelManager::new(),
 
             test_tmp: [0; 30],
             offset: 0,
@@ -34,19 +35,42 @@ impl Assembler {
 
     pub fn assemble(&mut self, prg: &str) -> *const u8 {
         let mut success = true;
-        let mut lines = Parser::clean_input(prg);
 
+        let mut lines = Parser::clean_input(prg);
         while let (_, Some(line)) = (success, lines.next()) {
             if Parser::is_macro(line) {
-                success = self.macro_behaviour(line)
+                success = self.macro_behaviour(line);
             } else if Parser::is_label(line) {
-                success = self.label_behaviour(line)
+                success = self.label_behaviour(line);
             } else {
-                success = self.instruction_behaviour(line)
+                success = self.instruction_behaviour(line);
             }
         }
 
-        self.identifiers.clear();
+
+        // write unordered labels
+        let keys: Vec<String> = self.identifiers.map.keys()
+            .map(|k| k.clone())
+            .collect();
+
+        for key in keys {
+            let label = self.identifiers.map.remove_entry(&key).unwrap().1;
+
+            if let Some(value) = label.value {
+                let w_val = value as u8;
+                for addr in label.usages_lo.iter() {
+                    self.write_rom_at(w_val as u8, *addr);
+                }
+
+                let w_val = (value >> 8) as u8;
+                for addr in &label.usages_hi {
+                    self.write_rom_at(w_val, *addr)
+                }
+            } else {
+                success = false;
+            }
+        }
+
 
         if success {
             &self.test_tmp[0] //get ptr
@@ -66,56 +90,87 @@ impl Assembler {
     fn label_behaviour(&mut self, line: &str) -> bool {
         let name = &line[..line.len() - 1];
 
-        if !self.identifiers.contains_key(name) {
+
+        if let Some(label) = self.identifiers.map.get_mut(name) {
+            if let Some(_) = label.value {
+                false
+            } else {
+                label.value = Some(self.rom_offset + self.offset);
+                true
+            }
+        } else {
             self.identifiers.insert(name.into(), self.offset + self.rom_offset);
             true
-        } else {
-            false
         }
     }
 
     #[inline(always)]
     fn instruction_behaviour(&mut self, line: &str) -> bool {
-
         match self.parse_instruction(line) {
             Ok((opcode, addr)) => {
                 self.write_rom(opcode);
 
-                {
-                    use ParsedAddress::*;
-                    match addr {
-                        Implicit => (),
+                match addr.value() {
+                    ValueMode::None => (),
 
-                        Immediate(v) | ZeroPage(v) | ZeroPageX(v) |
-                        ZeroPageY(v) | IndexedIndirect(v) |
-                        IndirectIndexed(v) => self.write_rom(v.value),
+                    ValueMode::U8(v) => self.write_rom(*v),
 
-                        RelativeTarget(v) => self.write_rom_u16(v.value),
-                        RelativeOffset(v) => {
-                            let target: u16 = v.value as u16 + self.offset - 1;
-                            self.write_rom_u16(target);
+                    ValueMode::U16(v) => self.write_rom_u16(*v),
+
+                    ValueMode::I8(offset) => {
+                        let target = self.rom_offset.wrapping_add(*offset as u16) - 1;
+
+                        self.write_rom_u16(target)
+                    }
+
+                    ValueMode::Label(name) => {
+                        let data = self.identifiers.get_or_sched(name, self.offset);
+                        if let Some(bytes) = data {
+                            self.write_rom_u16(bytes);
+                        } else {
+                            self.offset += 2;
                         }
+                    }
 
-                        Absolute(v) | AbsoluteX(v) | AbsoluteY(v) |
-                        Indirect(v) => {
-                            self.write_rom_u16(v.value);
+                    ValueMode::LabelLo(name) => {
+                        let data = self.identifiers.get_or_sched_lo(name, self.offset);
+                        if let Some(byte) = data {
+                            self.write_rom(byte);
+                        } else {
+                            self.offset += 1;
+                        }
+                    }
+
+                    ValueMode::LabelHi(name) => {
+                        let data = self.identifiers.get_or_sched_hi(name, self.offset);
+                        if let Some(byte) = data {
+                            self.write_rom(byte);
+                        } else {
+                            self.offset += 1;
                         }
                     }
                 }
-
                 true
             }
 
-            Err(e) => {alert(format!("{}", e as u32).as_str()); false}
+            Err(e) => {
+                alert(&format!("err {}", e as i32)); //TODO: REMOVE
+                false
+            }
         }
     }
 }
 
-//parsers, struct members so they can emit warnings
+//struct members so they can emit warnings
 impl Assembler {
-    fn write_rom(&mut self, byte: u8) { //TODO: safe
-        self.test_tmp[self.offset as usize] = byte;
-        self.offset += 1;
+    #[inline(always)]
+    fn write_rom_at(&mut self, byte: u8, addr: u16) { //TODO: safe
+        self.test_tmp[addr as usize] = byte;
+    }
+
+    fn write_rom(&mut self, byte: u8) {
+        self.write_rom_at(byte, self.offset);
+        self.offset += 1
     }
 
     fn write_rom_u16(&mut self, bytes: u16) {
@@ -123,7 +178,7 @@ impl Assembler {
         self.write_rom((bytes >> 8) as u8);
     }
 
-    fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedAddress)> {
+    fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedValue)> {
         let space_i = *line.find(' ').get_or_insert(line.len());
         let opcode = &line[..space_i];
         let data = *line.get((space_i + 1)..).get_or_insert("");
@@ -133,7 +188,7 @@ impl Assembler {
         let opcode_val = OPCODES_MAP.get(opcode)
             .ok_or(ParseError::UnknownOpcode)?;
 
-        let index = usize::from(&parsed_addr);
+        let index = usize::from(parsed_addr.addr_mode());
 
         opcode_val.get(index)
             .ok_or(ParseError::UnknownOpcode)
@@ -152,14 +207,16 @@ impl Assembler {
     }
 
 
-    fn parse_address(&self, address: &str) -> ParseResult<ParsedAddress> {
-        if address.is_empty() || address == "A" {
-            Ok(ParsedAddress::Implicit) //accumulator
+    fn parse_address(&self, address: &str) -> ParseResult<ParsedValue> {
+        if address.is_empty() || address == "A" { //accumulator
+            Ok(
+                ParsedValue::new(AddressingMode::Implicit, ValueMode::None, false)
+            )
         } else {
-            Parser::parse_addr_normal(address, &self.identifiers)
+            Parser::parse_addr_normal(address)
                 .or_else(|err| {
                     if let ParseError::UnknownAddressingMode = err {
-                        Parser::parse_addr_indexed(address, &self.identifiers)
+                        Parser::parse_addr_indexed(address)
                     } else {
                         Err(err)
                     }

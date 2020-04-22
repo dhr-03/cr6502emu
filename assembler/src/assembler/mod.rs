@@ -3,9 +3,10 @@ mod parser_types;
 mod js_regex;
 
 mod assembler;
+mod label_manager;
 
-pub use assembler::{Assembler, IdentifierMap};
+pub use assembler::Assembler;
+pub use label_manager::LabelManager;
 pub use parser::Parser;
-pub use parser_types::{NumberBase,
-                       ParseError, ParseResult,
-                       ParsedAddress, ParsedU8, ParsedI8, ParsedU16};
+pub use parser_types::{ParseError, ParseResult,
+                       ParsedValue, ValueMode, AddressingMode};

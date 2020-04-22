@@ -1,12 +1,10 @@
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
+use core::hint::unreachable_unchecked;
 
-use super::{ParseResult, ParseError, ParsedAddress, NumberBase,
-            ParsedU8, ParsedU16, ParsedI8,
-            IdentifierMap};
+use super::{ParseResult, ParseError,
+            AddressingMode};
 
-use super::js_regex;
-use crate::assembler::js_regex::{js_re_nrm, js_re_inx};
+use super::js_regex::{js_re_nrm, js_re_inx};
+use crate::assembler::{ValueMode, ParsedValue};
 
 pub struct Parser {}
 
@@ -14,12 +12,11 @@ impl Parser {
     //TODO: I8
 
     // for simplicity, lets just return a u16, but inform if the value is actually a [u/i]8
-    fn parse_re_addr_common(re_result: &[&str], offset: usize, map: &IdentifierMap) -> ParseResult<(ParsedU16, bool)> {
-        let base: NumberBase;
-        let is_zp: bool; //zero-page OR only 1 byte of data (instead of 2)
+    fn parse_re_addr_common(re_result: &[&str], offset: usize) -> ParseResult<(ValueMode, bool)> {
+        let value_mode: ValueMode;
+        let is_zp: bool; //zero-page OR only 1 byte of data
 
         let str_value = re_result[offset + 1];
-        let mut value: u16;
 
         let parse_value = |base: u32|
             u16::from_str_radix(str_value, base).map_err(|_| ParseError::SyntaxError);
@@ -27,79 +24,72 @@ impl Parser {
         unsafe {
             match re_result[offset + 0] {
                 "" => {
-                    base = NumberBase::DEC;
-                    value = parse_value(10)?;
-                    is_zp = value <= 0xFF;
+                    let parsed_value = parse_value(10)?;
+
+                    value_mode = ValueMode::U16(parsed_value);
+                    is_zp = parsed_value <= 0xFF;
                 }
 
                 "$" => {
-                    base = NumberBase::HEX;
+                    value_mode = ValueMode::U16(
+                        parse_value(16)?
+                    );
                     is_zp = str_value.len() <= 2;
-                    value = parse_value(16)?;
                 }
 
                 "b" => {
-                    base = NumberBase::BIN;
+                    value_mode = ValueMode::U16(
+                        parse_value(2)?
+                    );
                     is_zp = str_value.len() <= 4;
-                    value = parse_value(2)?;
                 }
 
-                label_type => {
-                    base = NumberBase::DEC;
-                    value = *map.get(str_value).ok_or(ParseError::UnknownIdentifier)?;
-
-                    is_zp = match label_type {
-                        "%" => false,
-                        "lo " => true,
-                        "hi " => {
-                            value >>= 8;
-                            true
-                        }
-                        _ => unreachable_unchecked() //panic!("regex returned an invalid value")
-                    }
+                "%" => {
+                    value_mode = ValueMode::Label(str_value.into());
+                    is_zp = false;
                 }
+
+                "lo " => {
+                    value_mode = ValueMode::LabelLo(str_value.into());
+                    is_zp = true;
+                }
+
+                "hi " => {
+                    value_mode = ValueMode::LabelHi(str_value.into());
+                    is_zp = true;
+                }
+
+                _ => unreachable_unchecked()
             }
         }
 
 
         Ok(
-            (ParsedU16 {
-                is_address: true,
-                value,
-                base,
-            },
-             is_zp
-            )
+            (value_mode, is_zp)
         )
     }
 
-    pub fn parse_addr_normal(address: &str, map: &IdentifierMap) -> ParseResult<ParsedAddress> {
+    pub fn parse_addr_normal(address: &str) -> ParseResult<ParsedValue> {
         let re_nrm = Parser::regex_normal_addressing(address)?;
 
         let is_addr = re_nrm[0] != "#";
 
-        let (parsed_number, is_zp) =
-            Parser::parse_re_addr_common(&re_nrm, 1, map)?;
+        let (value, is_zp) =
+            Parser::parse_re_addr_common(&re_nrm, 1)?;
 
 
         match [is_addr, is_zp] {
-            [true, true] => Ok(ParsedAddress::ZeroPage(ParsedU8 {
-                is_address: true,
-                value: parsed_number.value as u8,
-                base: parsed_number.base,
-            })),
+            [true, true] => Ok(
+                ParsedValue::new(AddressingMode::ZeroPage, value, true)
+            ),
 
-            [true, false] => Ok(ParsedAddress::Absolute(ParsedU16 {
-                is_address: true,
-                value: parsed_number.value,
-                base: parsed_number.base,
-            })),
+            [true, false] => Ok(
+                ParsedValue::new(AddressingMode::Absolute, value, true)
+            ),
 
-            [false, true] => Ok(ParsedAddress::Immediate(ParsedU8 {
-                is_address: false,
-                value: parsed_number.value as u8,
-                base: parsed_number.base,
-            })),
+            [false, true] => Ok(
+                ParsedValue::new(AddressingMode::Immediate,value.to_u8_or_dft(), false)
+            ),
 
             //immediate only accepts 1 byte
             [false, false] => Err(ParseError::ValueTooBig)
@@ -107,56 +97,62 @@ impl Parser {
     }
 
 
-    pub fn parse_addr_indexed(address: &str, map: &IdentifierMap) -> ParseResult<ParsedAddress> {
+    pub fn parse_addr_indexed(address: &str) -> ParseResult<ParsedValue> {
         let re_inx = Parser::regex_indexed_addressing(address)?;
 
-        let (parsed_number, is_zp) =
-            Parser::parse_re_addr_common(&re_inx, 1, map)?;
+        let (value, is_zp) =
+            Parser::parse_re_addr_common(&re_inx, 1)?;
 
-        //inline
-        let zp_or_err = |rs: ParsedAddress| {
+
+        //unsafe closure to keep the unsafe block small
+        let number_value = (|| unsafe {
+            match value {
+                ValueMode::U16(v) => v,
+                _ => unreachable_unchecked()
+            }
+        })();
+
+        let zp_or_err = |addr_mode: AddressingMode| {
             if is_zp {
-                Ok(rs)
+                Ok(
+                    ParsedValue::new(addr_mode, ValueMode::U8(number_value as u8), true)
+                )
             } else {
                 Err(ParseError::ValueTooBig)
             }
         };
 
-        //inline
-        let to_u8 = || {
-            ParsedU8 {
-                is_address: true,
-                value: *(&parsed_number.value) as u8,
-                base: parsed_number.base,
-            }
-        };
 
         //some values have already been validated by parse_re_addr_common and
         //the regex itself, we can ignore those or assume they are valid
         match re_inx {
-            ["", _, _, "", "X", ""] => match is_zp {
-                true => Ok(ParsedAddress::ZeroPageX(to_u8())),
-                false => Ok(ParsedAddress::AbsoluteX(parsed_number))
-            },
+            ["", _, _, "", "X", ""] => Ok(match is_zp {
+                true => ParsedValue::new(AddressingMode::ZeroPageX, value, true),
+                false => ParsedValue::new(AddressingMode::AbsoluteX, value, true)
+            }),
 
-            ["", _, _, "", "Y", ""] => match is_zp {
-                true => Ok(ParsedAddress::ZeroPageY(to_u8())),
-                false => Ok(ParsedAddress::AbsoluteY(parsed_number)),
-            }
+            ["", _, _, "", "Y", ""] => Ok(match is_zp {
+                true => ParsedValue::new(AddressingMode::ZeroPageY, value, true),
+                false => ParsedValue::new(AddressingMode::AbsoluteY, value, true)
+            }),
 
-            ["(", _, _, "", "X", ")"] => zp_or_err(ParsedAddress::IndexedIndirect(to_u8())),
+            ["(", _, _, "", "X", ")"] => zp_or_err(AddressingMode::IndexedIndirect),
+            ["(", _, _, ")", "Y", ""] => zp_or_err(AddressingMode::IndirectIndexed),
 
-            ["(", _, _, ")", "Y", ""] => zp_or_err(ParsedAddress::IndirectIndexed(to_u8())),
+            ["(", _, _, ")", "", ""] => Ok(
+                ParsedValue::new(AddressingMode::Indirect, value, true)
+            ),
 
-            ["(", _, _, ")", "", ""] => Ok(ParsedAddress::Indirect(parsed_number)),
+            ["*", _, _, "", "", ""] => Ok(
+                ParsedValue::new(AddressingMode::RelativeOffset,
+                                 ValueMode::I8(number_value as i8),
+                                 true,
+                )
+            ),
 
-            ["*", _, _, "", "", ""] => Ok(ParsedAddress::RelativeOffset(ParsedI8 {
-                is_address: true,
-                value: parsed_number.value as i8,
-                base: parsed_number.base,
-            })),
-
-            ["&", _, _, "", "", ""] => Ok(ParsedAddress::RelativeTarget(parsed_number)),
+            ["&", _, _, "", "", ""] => Ok(
+                ParsedValue::new(AddressingMode::RelativeTarget, value, true)
+            ),
 
             _ => Err(ParseError::SyntaxError)
         }
@@ -171,6 +167,7 @@ impl Parser {
         }.trim() //remove blank chars, such as [space] \t \n \r ...
     }
 
+    #[inline(always)]
     pub fn clean_input(input: &str) -> impl Iterator<Item=&str> {
         input.lines()
             .map(|l| Parser::sanitize_line(l))
@@ -230,7 +227,7 @@ impl Parser {
 
     #[inline(always)]
     pub fn is_label(line: &str) -> bool {
-        line.ends_with(":") &&
+        line.ends_with(":") & &
             (&line[..line.len() - 2]).chars().all(char::is_alphanumeric)
     }
 }
