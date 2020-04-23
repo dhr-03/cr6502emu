@@ -37,7 +37,8 @@ impl Assembler {
         let mut success = true;
 
         let mut lines = Parser::clean_input(prg);
-        while let (_, Some(line)) = (success, lines.next()) {
+        while let (true, Some(line)) = (success, lines.next()) {
+
             if Parser::is_macro(line) {
                 success = self.macro_behaviour(line);
             } else if Parser::is_label(line) {
@@ -47,30 +48,37 @@ impl Assembler {
             }
         }
 
-
         // write unordered labels
         let keys: Vec<String> = self.identifiers.map.keys()
             .map(|k| k.clone())
             .collect();
 
-        for key in keys {
-            let label = self.identifiers.map.remove_entry(&key).unwrap().1;
+        let mut keys_iter = keys.iter();
+
+        //for key in keys
+          while let (true, Some(key)) = (success, keys_iter.next()){
+            let label = self.identifiers.map.remove_entry(key).unwrap().1;
 
             if let Some(value) = label.value {
                 let w_val = value as u8;
                 for addr in label.usages_lo.iter() {
-                    self.write_rom_at(w_val as u8, *addr);
+                    success = self.write_rom_at(w_val as u8, *addr);
                 }
 
                 let w_val = (value >> 8) as u8;
                 for addr in &label.usages_hi {
-                    self.write_rom_at(w_val, *addr)
+                    success = self.write_rom_at(w_val, *addr);
                 }
             } else {
-                success = false;
+                success = false; //undefined label
+            }
+
+            if !success {
+                break
             }
         }
 
+        self.identifiers.map.clear();
 
         if success {
             &self.test_tmp[0] //get ptr
@@ -92,7 +100,7 @@ impl Assembler {
 
 
         if let Some(label) = self.identifiers.map.get_mut(name) {
-            if let Some(_) = label.value {
+            if let Some(_) = label.value { //if the value is already defined
                 false
             } else {
                 label.value = Some(self.rom_offset + self.offset);
@@ -106,27 +114,26 @@ impl Assembler {
 
     #[inline(always)]
     fn instruction_behaviour(&mut self, line: &str) -> bool {
+        let mut rt: bool;
+
         match self.parse_instruction(line) {
             Ok((opcode, addr)) => {
-                self.write_rom(opcode);
+                rt = self.write_rom(opcode);
 
                 match addr.value() {
                     ValueMode::None => (),
 
-                    ValueMode::U8(v) => self.write_rom(*v),
+                    ValueMode::U8(v) => rt = self.write_rom(*v),
 
-                    ValueMode::U16(v) => self.write_rom_u16(*v),
+                    ValueMode::U16(v) => rt = self.write_rom_u16(*v),
 
-                    ValueMode::I8(offset) => {
-                        let target = self.rom_offset.wrapping_add(*offset as u16) - 1;
+                    ValueMode::I8(offset) => rt = self.write_rom(*offset as u8),
 
-                        self.write_rom_u16(target)
-                    }
 
                     ValueMode::Label(name) => {
                         let data = self.identifiers.get_or_sched(name, self.offset);
                         if let Some(bytes) = data {
-                            self.write_rom_u16(bytes);
+                            rt = self.write_rom_u16(bytes);
                         } else {
                             self.offset += 2;
                         }
@@ -135,7 +142,7 @@ impl Assembler {
                     ValueMode::LabelLo(name) => {
                         let data = self.identifiers.get_or_sched_lo(name, self.offset);
                         if let Some(byte) = data {
-                            self.write_rom(byte);
+                            rt = self.write_rom(byte);
                         } else {
                             self.offset += 1;
                         }
@@ -144,13 +151,13 @@ impl Assembler {
                     ValueMode::LabelHi(name) => {
                         let data = self.identifiers.get_or_sched_hi(name, self.offset);
                         if let Some(byte) = data {
-                            self.write_rom(byte);
+                            rt = self.write_rom(byte);
                         } else {
                             self.offset += 1;
                         }
                     }
                 }
-                true
+                rt
             }
 
             Err(e) => {
@@ -164,18 +171,25 @@ impl Assembler {
 //struct members so they can emit warnings
 impl Assembler {
     #[inline(always)]
-    fn write_rom_at(&mut self, byte: u8, addr: u16) { //TODO: safe
-        self.test_tmp[addr as usize] = byte;
+    fn write_rom_at(&mut self, byte: u8, addr: u16) -> bool {
+        if (addr as usize) < self.test_tmp.len() {
+            self.test_tmp[addr as usize] = byte;
+            true
+        } else {
+            false
+        }
     }
 
-    fn write_rom(&mut self, byte: u8) {
-        self.write_rom_at(byte, self.offset);
-        self.offset += 1
+    fn write_rom(&mut self, byte: u8) -> bool {
+        let write_ok = self.write_rom_at(byte, self.offset);
+        self.offset += 1;
+
+        write_ok
     }
 
-    fn write_rom_u16(&mut self, bytes: u16) {
-        self.write_rom(bytes as u8);
-        self.write_rom((bytes >> 8) as u8);
+    fn write_rom_u16(&mut self, bytes: u16) -> bool {
+        self.write_rom(bytes as u8) &&
+        self.write_rom((bytes >> 8) as u8)
     }
 
     fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedValue)> {

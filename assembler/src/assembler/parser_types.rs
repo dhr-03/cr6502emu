@@ -6,6 +6,7 @@ pub enum ParseError {
     UnknownAddressingMode,
     WrongAddressingMode,
 
+    InvalidValue,
     ValueTooBig,
 
     SyntaxError,
@@ -25,7 +26,6 @@ pub enum AddressingMode {
     ZeroPageY, //U8
 
     RelativeOffset, //I8
-    RelativeTarget, //U16
 
     Absolute, //U16
     AbsoluteX, //U16
@@ -50,10 +50,22 @@ pub enum ValueMode {
 }
 
 impl ValueMode {
-    pub fn to_u8_or_dft(&self) -> Self {
+    pub fn is_zp(&self) -> bool {
+        use ValueMode::*;
+
         match self {
-            ValueMode::U16(v) => ValueMode::U8(*v as u8),
-            _ => ValueMode::U8(0)
+            None | U8(_) | I8(_) |
+            LabelLo(_) | LabelHi(_) => true,
+
+            U16(_) | Label(_) => false
+        }
+    }
+
+    pub fn is_i8(&self) -> bool {
+        if let ValueMode::I8(_) = self {
+            true
+        } else {
+            false
         }
     }
 }
@@ -87,17 +99,16 @@ impl ParsedValue {
                     _ => panic!("inv mode 3")
                 },
 
-                RelativeTarget | Absolute | AbsoluteX | AbsoluteY |
+                Absolute | AbsoluteX | AbsoluteY |
                 Indirect => match value {
                     U16(_) | Label(_) => (),
                     _ => panic!("inv mode 4")
                 },
             }
 
-            if let Immediate = mode {
-                assert!(!is_address);
-            } else {
-                assert!(is_address);
+            match mode {
+                Implicit | RelativeOffset => assert!(!is_address),
+                _ => assert!(is_address)
             }
         }
 
@@ -115,10 +126,6 @@ impl ParsedValue {
     pub fn value(&self) -> &ValueMode {
         &self.value
     }
-
-    pub fn is_addr(&self) -> bool {
-        self.is_address
-    }
 }
 
 impl From<&AddressingMode> for usize {
@@ -130,7 +137,6 @@ impl From<&AddressingMode> for usize {
             AddressingMode::ZeroPageX => 3,
             AddressingMode::ZeroPageY => 4,
             AddressingMode::RelativeOffset => 5,
-            AddressingMode::RelativeTarget => 5,
             AddressingMode::Absolute => 6,
             AddressingMode::AbsoluteX => 7,
             AddressingMode::AbsoluteY => 8,
