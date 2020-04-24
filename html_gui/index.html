@@ -5,42 +5,127 @@
     <title>Title</title>
 
     <script type="module">
-        import init, { Assembler, set_panic_hook } from '/static/jsm/assembler/assembler_dev.js';
+        import init, {Assembler, set_panic_hook} from '/static/jsm/assembler/assembler_dev.js';
 
         async function run() {
 
-            let wasm  = await init();
+            let wasm = await init();
 
             set_panic_hook();
 
-            let test = new Assembler();
-            let ptr = test.assemble(`
-            STA $FF
-            label:
-            STA %label
-            STA hi label
-            STA lo label
-            `);
+            let assembler = new Assembler(0);
 
-            if (ptr !== 0) {
-                let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
-                let hexData = [];
-                for (let b of output) hexData.push(
-                    b.toString(16).padStart(2, "0").toUpperCase())
-                ;
+            let btn = document.querySelector("#assemble");
+            btn.addEventListener("click", function () {
 
-                console.table(hexData);
-            } else {
-                alert("JS: parse err");
-            }
+                let ptr = assembler.assemble(
+                    document.querySelector("#input").value
+                );
 
+
+                if (ptr !== 0) {
+                    let output = new Uint8Array(wasm.memory.buffer, ptr, 30);
+                    let hexData = [];
+                    for (let b of output) hexData.push(
+                        b.toString(16).padStart(2, "0").toUpperCase())
+                    ;
+
+                    console.table(hexData)
+
+                    //document.querySelector("#result").innerText = "...";
+
+                    console.table(hexData);
+                } else {
+                    console.error("parse error");
+                }
+
+            });
         }
 
         run();
+
     </script>
+
+    <style>
+        div.info {
+            border: 1px solid;
+            border-color: #22b8cf;
+            background: #c5f6fa;
+
+            margin-bottom: 0.1em;
+        }
+
+        div.warn {
+            border: 1px solid;
+            border-color: #fab005;
+            background: #ffe066;
+
+            margin-bottom: 0.1em;
+        }
+
+        div.err {
+            border: 1px solid;
+            border-color: #f03e3e;
+            background: #ff6b6b;
+
+            margin-bottom: 0.1em;
+        }
+
+        code {
+            background: #f1f1f1 !important;
+            padding: 0.1em;
+
+            font-family: "Source Code Pro";
+            font-size: 0.9em;
+            color: #6e6b5e;
+            font-weight: bold;
+        }
+
+
+    </style>
 
 </head>
 <body>
 
+<div class="gui" style="text-align: center">
+    <div id="result">
+        open the console <b>BEFORE</b> assembling
+        <br>
+        otherwise, <code>console.table</code> wont work
+        <br>
+        output limited to 30 bytes
+    </div>
+    <textarea rows="20" cols="60" id="input">
+        err_demo:
+        err_demo:
+
+        label1:
+        LDA #lo label1
+        LDA #hi label1
+        LDA #55
+        LDA #$37
+        LDA #b110111
+
+        STA %label1
+        STA %notyetdef
+
+        ROL
+        ROL A
+
+        notyetdef:
+        BEQ *5 ;relative
+        BEQ *-5
+
+        STA $00AA,X
+        JMP (%label1) ;indirect
+
+
+    </textarea>
+    <br>
+    <button id="assemble">assemble</button>
+
+</div>
+
+<div class="demo"></div>
 </body>
 </html>
