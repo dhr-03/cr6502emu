@@ -1,6 +1,7 @@
 mod parser;
 mod parser_types;
 mod js_regex;
+mod js_logger;
 
 mod assembler;
 mod label_manager;

@@ -4,6 +4,8 @@ use super::{Parser, ParseResult, ParsedValue, ParseError,
             ValueMode,
             LabelManager};
 
+use super::js_logger::Logger;
+
 use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
 use crate::assembler::AddressingMode;
 
@@ -24,6 +26,8 @@ pub struct Assembler {
 impl Assembler {
     #[wasm_bindgen(constructor)]
     pub fn new(rom_start: u16) -> Assembler {
+        Logger::setup(&"div.demo");
+
         Assembler {
             rom_offset: rom_start,
             identifiers: LabelManager::new(),
@@ -34,11 +38,12 @@ impl Assembler {
     }
 
     pub fn assemble(&mut self, prg: &str) -> *const u8 {
+        self.offset = 0;
+
         let mut success = true;
 
         let mut lines = Parser::clean_input(prg);
         while let (true, Some(line)) = (success, lines.next()) {
-
             if Parser::is_macro(line) {
                 success = self.macro_behaviour(line);
             } else if Parser::is_label(line) {
@@ -56,7 +61,7 @@ impl Assembler {
         let mut keys_iter = keys.iter();
 
         //for key in keys
-          while let (true, Some(key)) = (success, keys_iter.next()){
+        while let (true, Some(key)) = (success, keys_iter.next()) {
             let label = self.identifiers.map.remove_entry(key).unwrap().1;
 
             if let Some(value) = label.value {
@@ -74,15 +79,27 @@ impl Assembler {
             }
 
             if !success {
-                break
+                break;
             }
         }
 
         self.identifiers.map.clear();
 
         if success {
+            self.clear_unused_rom();
+
+            Logger::begin_info();
+            Logger::write_str("assmebled into");
+            Logger::write_code_i32(self.offset as i32);
+            Logger::write_str("bytes");
+            Logger::end_msg();
+
             &self.test_tmp[0] //get ptr
         } else {
+            Logger::begin_err();
+            Logger::write_str("failed to assemble");
+            Logger::end_msg();
+
             0 as *const u8
         }
     }
@@ -101,6 +118,14 @@ impl Assembler {
 
         if let Some(label) = self.identifiers.map.get_mut(name) {
             if let Some(_) = label.value { //if the value is already defined
+
+                Logger::begin_err();
+                Logger::write_str("label");
+                Logger::write_code(name);
+                Logger::write_str("already defined");
+                Logger::end_msg();
+
+
                 false
             } else {
                 label.value = Some(self.rom_offset + self.offset);
@@ -128,7 +153,6 @@ impl Assembler {
                     ValueMode::U16(v) => rt = self.write_rom_u16(*v),
 
                     ValueMode::I8(offset) => rt = self.write_rom(*offset as u8),
-
 
                     ValueMode::Label(name) => {
                         let data = self.identifiers.get_or_sched(name, self.offset);
@@ -161,7 +185,10 @@ impl Assembler {
             }
 
             Err(e) => {
-                alert(&format!("err {}", e as i32)); //TODO: REMOVE
+                Logger::begin_err();
+                Logger::write_str("parse err, id:");
+                Logger::write_code_i32(e as i32);
+                Logger::end_msg();
                 false
             }
         }
@@ -189,7 +216,13 @@ impl Assembler {
 
     fn write_rom_u16(&mut self, bytes: u16) -> bool {
         self.write_rom(bytes as u8) &&
-        self.write_rom((bytes >> 8) as u8)
+            self.write_rom((bytes >> 8) as u8)
+    }
+
+    fn clear_unused_rom(&mut self) {
+        for i in (self.offset..self.test_tmp.len() as u16) {
+            self.test_tmp[i as usize] = 0;
+        }
     }
 
     fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedValue)> {
