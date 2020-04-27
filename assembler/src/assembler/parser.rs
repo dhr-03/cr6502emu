@@ -124,10 +124,10 @@ impl Parser {
             }),
 
             ["(", _, _, "", "X", ")"] =>
-                Parser::__indexed_zp_or_err(AddressingMode::IndexedIndirect, value, is_zp),
+                Parser::__indexed_zp_or_err(AddressingMode::IndexedIndirect, value, true),
 
             ["(", _, _, ")", "Y", ""] =>
-                Parser::__indexed_zp_or_err(AddressingMode::IndirectIndexed, value, is_zp),
+                Parser::__indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
 
             ["(", _, _, ")", "", ""] => Ok(
                 ParsedValue::new(AddressingMode::Indirect, value, true)
