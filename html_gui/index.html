@@ -5,13 +5,15 @@
     <title>Title</title>
 
     <script type="module">
-        import init, {Assembler, set_panic_hook} from '/static/jsm/assembler/assembler_dev.js';
+        import init, {Assembler, set_panic_hook, build_date} from '/static/jsm/assembler/assembler_dev.js';
 
         async function run() {
 
             let wasm = await init();
 
             set_panic_hook();
+
+            document.querySelector("#build_ts").innerText = build_date();
 
             let assembler = new Assembler(0);
 
@@ -84,6 +86,12 @@
 <body>
 
 <div class="gui" style="text-align: center">
+    <div>
+        <b>Build:</b> <span id="build_ts"></span>
+    </div>
+
+    <hr>
+
     <div id="result">
         open the console <b>BEFORE</b> assembling
         <br>
