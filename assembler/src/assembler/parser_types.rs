@@ -1,3 +1,5 @@
+use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
+
 pub enum ParseError {
     UnknownOpcode,
     UnknownMacro,
@@ -68,6 +70,27 @@ impl ValueMode {
             false
         }
     }
+
+    pub fn into_u16(self) -> ValueMode {
+        use ValueMode::{U8, U16};
+
+        match &self {
+            U8(v) => U16(*v as u16),
+            U16(_) => self,
+
+            _ => {
+                #[cfg(debug_assertions)]
+                panic!("invalid into_u16");
+
+                unsafe {
+                    //(kind of) hardcoded params (ParsedValue),
+                    // if properly tested, should never happen
+
+                    unreachable_unchecked();
+                }
+            }
+        }
+    }
 }
 
 pub struct ParsedValue {
@@ -78,8 +101,8 @@ pub struct ParsedValue {
 
 impl ParsedValue {
     pub fn new(mode: AddressingMode, value: ValueMode, is_address: bool) -> ParsedValue {
-
-        #[cfg(debug_assertions)] { //if debug checks enabled
+        #[cfg(debug_assertions)] {
+            //if debug checks enabled
             use AddressingMode::*;
             use ValueMode::*;
             match mode {

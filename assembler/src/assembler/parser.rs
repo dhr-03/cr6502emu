@@ -130,7 +130,7 @@ impl Parser {
                 Parser::__indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
 
             ["(", _, _, ")", "", ""] => Ok(
-                ParsedValue::new(AddressingMode::Indirect, value, true)
+                ParsedValue::new(AddressingMode::Indirect, value.into_u16(), true)
             ),
 
             ["*", _, _, "", "", ""] => match value.is_i8() {
