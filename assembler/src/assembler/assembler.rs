@@ -26,8 +26,6 @@ pub struct Assembler {
 impl Assembler {
     #[wasm_bindgen(constructor)]
     pub fn new(rom_start: u16) -> Assembler {
-        Logger::setup(&"div.demo");
-
         Assembler {
             rom_offset: rom_start,
             identifiers: LabelManager::new(),

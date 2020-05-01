@@ -1,11 +1,8 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen(module = "/js_snippets/logger.js")]
+#[wasm_bindgen(raw_module = "/static/jsm/assembler/logger.js")]
 extern {
     pub type Logger;
-
-    #[wasm_bindgen(static_method_of = Logger, js_name = setup)]
-    pub fn setup(selector: &str);
 
     #[wasm_bindgen(static_method_of = Logger, js_name = setCurrentLine)]
     pub fn set_current_line(line_num: usize);
