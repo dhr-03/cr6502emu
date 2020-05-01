@@ -92,7 +92,7 @@ impl Assembler {
         if success {
             self.clear_unused_rom();
 
-            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.offset as i32 - 1, lang::INFO_ASM_SUCCESS_2);
+            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.offset as i32, lang::INFO_ASM_SUCCESS_2);
 
             &self.test_tmp[0] //get ptr
         } else {
