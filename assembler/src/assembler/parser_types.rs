@@ -1,5 +1,6 @@
 use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
 
+//TODO: move assemble errs
 pub enum ParseError {
     UnknownOpcode,
     UnknownMacro,
@@ -72,11 +73,11 @@ impl ValueMode {
     }
 
     pub fn into_u16(self) -> ValueMode {
-        use ValueMode::{U8, U16};
+        use ValueMode::{U8, U16, Label};
 
         match &self {
             U8(v) => U16(*v as u16),
-            U16(_) => self,
+            U16(_) | Label(_) => self,
 
             _ => {
                 #[cfg(debug_assertions)]
@@ -96,6 +97,7 @@ impl ValueMode {
 pub struct ParsedValue {
     mode: AddressingMode,
     value: ValueMode,
+    #[allow(dead_code)]
     is_address: bool,
 }
 

@@ -4,13 +4,13 @@ use super::{Parser, ParseResult, ParsedValue, ParseError,
             ValueMode,
             LabelManager};
 
-use super::js_logger::Logger;
-
 use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
-use crate::assembler::AddressingMode;
+use super::AddressingMode;
 
-//TODO: messages
-use crate::alert;
+use super::js_logger::{Logger,
+                       err_code, info_code_i32, warn_code,
+                       err_msg, warn_msg};
+use crate::lang::assembler as lang;
 
 #[wasm_bindgen]
 pub struct Assembler {
@@ -46,8 +46,10 @@ impl Assembler {
         while let (true, Some(line)) = (success, lines.next()) {
             if Parser::is_macro(line) {
                 success = self.macro_behaviour(line);
+
             } else if Parser::is_label(line) {
                 success = self.label_behaviour(line);
+
             } else {
                 success = self.instruction_behaviour(line);
             }
@@ -60,7 +62,6 @@ impl Assembler {
 
         let mut keys_iter = keys.iter();
 
-        //for key in keys
         while let (true, Some(key)) = (success, keys_iter.next()) {
             let label = self.identifiers.map.remove_entry(key).unwrap().1;
 
@@ -75,30 +76,27 @@ impl Assembler {
                     success = self.write_rom_at(w_val, *addr);
                 }
             } else {
+                err_code(lang::ERR_LBL_NEVER_DEF_1, key.as_str(), lang::ERR_LBL_NEVER_DEF_2);
                 success = false; //undefined label
-            }
-
-            if !success {
-                break;
             }
         }
 
         self.identifiers.map.clear();
 
+        if success && self.offset < 1 {
+            err_msg(lang::ERR_EMPTY_INPUT);
+
+            success = false;
+        }
+
         if success {
             self.clear_unused_rom();
 
-            Logger::begin_info();
-            Logger::write_str("assmebled into");
-            Logger::write_code_i32(self.offset as i32);
-            Logger::write_str("bytes");
-            Logger::end_msg();
+            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.offset as i32 - 1, lang::INFO_ASM_SUCCESS_2);
 
             &self.test_tmp[0] //get ptr
         } else {
-            Logger::begin_err();
-            Logger::write_str("failed to assemble");
-            Logger::end_msg();
+            err_msg(lang::ERR_ASM_FAILED);
 
             0 as *const u8
         }
@@ -115,17 +113,10 @@ impl Assembler {
     fn label_behaviour(&mut self, line: &str) -> bool {
         let name = &line[..line.len() - 1];
 
-
         if let Some(label) = self.identifiers.map.get_mut(name) {
             if let Some(_) = label.value { //if the value is already defined
 
-                Logger::begin_err();
-                Logger::write_str("label");
-                Logger::write_code(name);
-                Logger::write_str("already defined");
-                Logger::end_msg();
-
-
+                err_code(lang::ERR_LBL_RE_DEF_1, name, lang::ERR_LBL_RE_DEF_2);
                 false
             } else {
                 label.value = Some(self.rom_offset + self.offset);
@@ -152,7 +143,19 @@ impl Assembler {
 
                     ValueMode::U16(v) => rt = self.write_rom_u16(*v),
 
-                    ValueMode::I8(offset) => rt = self.write_rom(*offset as u8),
+                    ValueMode::I8(offset) => {
+                        let write_offset_sg = self.offset as i32;
+                        let offset_32 = *offset as i32;
+
+                        let target = write_offset_sg + offset_32;
+
+                        if target < 0 && target < write_offset_sg ||
+                            target >= self.test_tmp.len() as i32{
+                            warn_msg(lang::WARN_REL_OOB)
+                        }
+
+                        rt = self.write_rom(*offset as u8)
+                    },
 
                     ValueMode::Label(name) => {
                         let data = self.identifiers.get_or_sched(name, self.offset);
@@ -184,18 +187,17 @@ impl Assembler {
                 rt
             }
 
-            Err(e) => {
+            Err(err) => {
                 Logger::begin_err();
-                Logger::write_str("parse err, id:");
-                Logger::write_code_i32(e as i32);
+                Logger::write_code(err.to_str());
                 Logger::end_msg();
+
                 false
             }
         }
     }
 }
 
-//struct members so they can emit warnings
 impl Assembler {
     #[inline(always)]
     fn write_rom_at(&mut self, byte: u8, addr: u16) -> bool {
@@ -203,6 +205,8 @@ impl Assembler {
             self.test_tmp[addr as usize] = byte;
             true
         } else {
+            err_msg(lang::ERR_ROM_TOO_SMALL);
+
             false
         }
     }
@@ -220,7 +224,7 @@ impl Assembler {
     }
 
     fn clear_unused_rom(&mut self) {
-        for i in (self.offset..self.test_tmp.len() as u16) {
+        for i in self.offset..self.test_tmp.len() as u16 {
             self.test_tmp[i as usize] = 0;
         }
     }
@@ -233,7 +237,14 @@ impl Assembler {
         let parsed_addr = self.parse_address(data)?;
 
         let opcode_val = OPCODES_MAP.get(opcode)
-            .ok_or(ParseError::UnknownOpcode)?;
+            .ok_or_else(|| {
+                Logger::begin_err();
+                Logger::write_str(lang::ERR_UNKNOWN_OPCODE);
+                Logger::write_code(opcode);
+                Logger::end_msg();
+
+                ParseError::UnknownOpcode
+            })?;
 
         let index = usize::from(parsed_addr.addr_mode());
 
@@ -243,6 +254,13 @@ impl Assembler {
                 if *v != OPCODE_NONE {
                     Ok((*v, parsed_addr))
                 } else {
+                    Logger::begin_err();
+                    Logger::write_str(lang::ERR_ADDR_MODE_1);
+                    Logger::write_code(opcode);
+                    Logger::write_str(lang::ERR_ADDR_MODE_2);
+                    Logger::write_code(parsed_addr.addr_mode().to_str());
+                    Logger::end_msg();
+
                     Err(ParseError::WrongAddressingMode)
                 }
             })
@@ -250,6 +268,8 @@ impl Assembler {
 
 
     fn parse_macro(&self, _line: &str) -> ParseResult<()> {
+        err_msg(lang::ERR_MACROS_TODO);
+
         Err(ParseError::UnknownMacro)
     }
 

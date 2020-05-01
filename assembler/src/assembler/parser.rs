@@ -4,7 +4,10 @@ use super::{ParseResult, ParseError,
             AddressingMode};
 
 use super::js_regex::{js_re_nrm, js_re_inx};
-use crate::assembler::{ValueMode, ParsedValue};
+use super::{ValueMode, ParsedValue};
+
+use crate::lang::parser as lang;
+use super::js_logger::Logger;
 
 pub struct Parser {}
 
@@ -14,12 +17,10 @@ impl Parser {
 
         let parse_value = |base: u32| {
             u16::from_str_radix(str_value, base)
-                .map_err(|_| ParseError::SyntaxError)
         };
 
         let parse_value_i8 = |base: u32| {
             i8::from_str_radix(str_value, base)
-                .map_err(|_| ParseError::SyntaxError)
         };
 
 
@@ -41,23 +42,33 @@ impl Parser {
         };
 
         unsafe {
-            Ok(
-                match re_result[offset + 0] {
-                    "" => parse_to_valuemode(10)?,
+            let parse_rs = match re_result[offset + 0] {
+                "" => parse_to_valuemode(10),
 
-                    "$" => parse_to_valuemode(16)?,
+                "$" => parse_to_valuemode(16),
 
-                    "b" => parse_to_valuemode(2)?,
+                "b" => parse_to_valuemode(2),
 
-                    "%" => ValueMode::Label(str_value.into()),
+                "%" => Ok(ValueMode::Label(str_value.into())),
 
-                    "lo " => ValueMode::LabelLo(str_value.into()),
+                "lo " => Ok(ValueMode::LabelLo(str_value.into())),
 
-                    "hi " => ValueMode::LabelHi(str_value.into()),
+                "hi " => Ok(ValueMode::LabelHi(str_value.into())),
 
-                    _ => unreachable_unchecked()
-                }
-            )
+                _ => unreachable_unchecked()
+            };
+
+            if let Err(_) = &parse_rs {
+                Logger::begin_err();
+                Logger::write_str(lang::ERR_NUM_PARSE_1);
+                Logger::write_code(str_value);
+                Logger::write_str(lang::ERR_NUM_PARSE_2);
+                Logger::write_code(if is_i8 { "i8" } else { "u16/u8" });
+                Logger::end_msg();
+            };
+
+
+            parse_rs.map_err(|_| ParseError::SyntaxError)
         }
     }
 
@@ -142,7 +153,7 @@ impl Parser {
                 )
             }
 
-            _ => Err(ParseError::SyntaxError)
+            _ => Err(ParseError::UnknownAddressingMode)
         }
     }
 }
