@@ -113,18 +113,24 @@ impl Assembler {
     fn label_behaviour(&mut self, line: &str) -> bool {
         let name = &line[..line.len() - 1];
 
-        if let Some(label) = self.identifiers.map.get_mut(name) {
-            if let Some(_) = label.value { //if the value is already defined
+        if name.len() >= 3 {
+            if let Some(label) = self.identifiers.map.get_mut(name) {
+                if let Some(_) = label.value { //if the value is already defined
 
-                err_code(lang::ERR_LBL_RE_DEF_1, name, lang::ERR_LBL_RE_DEF_2);
-                false
+                    err_code(lang::ERR_LBL_RE_DEF_1, name, lang::ERR_LBL_RE_DEF_2);
+                    false
+                } else {
+                    label.value = Some(self.rom_offset + self.offset);
+                    true
+                }
             } else {
-                label.value = Some(self.rom_offset + self.offset);
+                self.identifiers.insert(name.into(), self.offset + self.rom_offset);
                 true
             }
         } else {
-            self.identifiers.insert(name.into(), self.offset + self.rom_offset);
-            true
+            err_code(lang::ERR_LBL_SHORT_1, name, lang::ERR_LBL_SHORT_2);
+
+            false
         }
     }
 

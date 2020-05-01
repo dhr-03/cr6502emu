@@ -30,6 +30,8 @@ pub mod assembler {
     pub const ERR_LBL_RE_DEF_1: STR = ERR_LBL_NEVER_DEF_1;
     pub const ERR_LBL_RE_DEF_2: STR = "has already been defined";
 
+    pub const ERR_LBL_SHORT_1: STR = ERR_LBL_NEVER_DEF_1;
+    pub const ERR_LBL_SHORT_2: STR = "it's too short";
 
     pub const ERR_ASM_FAILED: STR = "Assemble failed";
 

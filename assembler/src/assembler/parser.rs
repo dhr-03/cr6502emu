@@ -226,7 +226,7 @@ impl Parser {
 
     #[inline(always)]
     pub fn is_label(line: &str) -> bool {
-        line.ends_with(":") && line.len() > 3 &&
+        line.ends_with(":") &&
             (&line[..line.len() - 1])
                 .chars()
                 .all(|c| char::is_alphanumeric(c) || c == '_')
