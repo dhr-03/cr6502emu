@@ -1,4 +1,4 @@
-const RE_COMMON = String.raw`(\$|b|lo |hi |%|)([A-f0-9]{1,4}|[01]{1,16}|(?:[\+\-]?[0-9]{1,8})|[A-z_][A-z0-9_]{2,10})`;
+const RE_COMMON = String.raw`(\$|b|lo |hi |%|)([A-f0-9]{1,8}|[01]{1,32}|(?:[\+\-]?[0-9]{1,16})|[A-z_][A-z0-9_]{2,20})`;
 
 function execRegex(which, input, bounds) {
     let results = which.exec(input);
