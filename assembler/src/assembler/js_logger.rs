@@ -8,7 +8,13 @@ extern {
     pub fn setup(selector: &str);
 
     #[wasm_bindgen(static_method_of = Logger, js_name = setCurrentLine)]
-    pub fn set_current_line(line_num: i32);
+    pub fn set_current_line(line_num: usize);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = setCurrentLine)]
+    pub fn set_current_line_null();
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = setCurrentLine)]
+    pub fn set_current_line_str(txt: &str);
 
     #[wasm_bindgen(static_method_of = Logger, js_name = beginInfo)]
     pub fn begin_info();

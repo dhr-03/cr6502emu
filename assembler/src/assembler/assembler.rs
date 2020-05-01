@@ -43,7 +43,10 @@ impl Assembler {
         let mut success = true;
 
         let mut lines = Parser::clean_input(prg);
-        while let (true, Some(line)) = (success, lines.next()) {
+        while let (true, Some((line_num, line))) = (success, lines.next()) {
+
+            Logger::set_current_line(line_num + 1);
+
             if Parser::is_macro(line) {
                 success = self.macro_behaviour(line);
 
@@ -54,6 +57,8 @@ impl Assembler {
                 success = self.instruction_behaviour(line);
             }
         }
+
+        Logger::set_current_line_null();
 
         // write unordered labels
         let keys: Vec<String> = self.identifiers.map.keys()
@@ -83,6 +88,8 @@ impl Assembler {
 
         self.identifiers.map.clear();
 
+        Logger::set_current_line_str("-");
+
         if success && self.offset < 1 {
             err_msg(lang::ERR_EMPTY_INPUT);
 
@@ -98,7 +105,7 @@ impl Assembler {
         } else {
             err_msg(lang::ERR_ASM_FAILED);
 
-            0 as *const u8
+            &0
         }
     }
 }
@@ -116,9 +123,9 @@ impl Assembler {
         if name.len() >= 3 {
             if let Some(label) = self.identifiers.map.get_mut(name) {
                 if let Some(_) = label.value { //if the value is already defined
-
                     err_code(lang::ERR_LBL_RE_DEF_1, name, lang::ERR_LBL_RE_DEF_2);
                     false
+
                 } else {
                     label.value = Some(self.rom_offset + self.offset);
                     true
@@ -231,7 +238,7 @@ impl Assembler {
 
     fn clear_unused_rom(&mut self) {
         for i in self.offset..self.test_tmp.len() as u16 {
-            self.test_tmp[i as usize] = 0;
+            self.test_tmp[i as usize] = 0; //BRK
         }
     }
 

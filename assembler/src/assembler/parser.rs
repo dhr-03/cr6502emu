@@ -167,10 +167,11 @@ impl Parser {
     }
 
     #[inline(always)]
-    pub fn clean_input(input: &str) -> impl Iterator<Item=&str> {
+    pub fn clean_input(input: &str) -> impl Iterator<Item=(usize, &str)> {
         input.lines()
-            .map(|l| Parser::sanitize_line(l))
-            .filter(|l| !l.is_empty())
+            .enumerate()
+            .map(|(n, l)| (n, Parser::sanitize_line(l)))
+            .filter(|(_, l)| !l.is_empty())
     }
 }
 

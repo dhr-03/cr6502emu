@@ -20,7 +20,7 @@ export class Logger {
         let template = `
             <div class="message ${msgClass}">
                 <div style="width: 8em;float: left;border-right: 2px solid; margin-right: 1em">
-                    <span>line: ${this.currentLine}</span>
+                    <span>line: ${this.currentLine || "?"}</span>
                 </div>
                 <div class="msg-content"></div>
             </div>
