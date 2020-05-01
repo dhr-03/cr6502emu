@@ -20,6 +20,10 @@
             let btn = document.querySelector("#assemble");
             btn.addEventListener("click", function () {
 
+                if (document.querySelector("#clear-log").checked) {
+                    document.querySelector("#log").innerHTML = "";
+                }
+
                 let ptr = assembler.assemble(
                     document.querySelector("#input").value
                 );
@@ -45,6 +49,11 @@
     </script>
 
     <style>
+
+        .message span,code {
+            margin-right: 0.4em;
+        }
+
         div.info {
             border: 1px solid;
             border-color: #22b8cf;
@@ -100,9 +109,6 @@
         output limited to 30 bytes
     </div>
     <textarea rows="20" cols="60" id="input">
-        err_demo:
-        err_demo:
-
         label1:
         LDA #lo label1
         LDA #hi label1
@@ -127,9 +133,13 @@
     </textarea>
     <br>
     <button id="assemble">assemble</button>
+    <label>
+        Clear log
+        <input type="checkbox" id="clear-log" checked>
+    </label>
 
 </div>
 
-<div class="demo"></div>
+<div class="demo" id="log"></div>
 </body>
 </html>
