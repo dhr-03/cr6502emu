@@ -71,27 +71,6 @@ impl ValueMode {
             false
         }
     }
-
-    pub fn into_u16(self) -> ValueMode {
-        use ValueMode::{U8, U16, Label};
-
-        match &self {
-            U8(v) => U16(*v as u16),
-            U16(_) | Label(_) => self,
-
-            _ => {
-                #[cfg(debug_assertions)]
-                panic!("invalid into_u16");
-
-                unsafe {
-                    //(kind of) hardcoded params (ParsedValue),
-                    // if properly tested, should never happen
-
-                    unreachable_unchecked();
-                }
-            }
-        }
-    }
 }
 
 pub struct ParsedValue {

@@ -109,6 +109,22 @@ impl Parser {
         }
     }
 
+    fn __indexed_to_u16(val: ValueMode) -> ValueMode {
+        use ValueMode::{U8, U16, Label};
+
+        match &val {
+            U8(v) => U16(*v as u16),
+            U16(_) | Label(_) => val,
+
+            _ => {
+                #[cfg(debug_assertions)]
+                panic!("invalid into_u16");
+
+                unsafe { unreachable_unchecked() }
+            }
+        }
+    }
+
     pub fn parse_addr_indexed(address: &str) -> ParseResult<ParsedValue> {
         let re_inx = Parser::regex_indexed_addressing(address)?;
 
@@ -135,14 +151,23 @@ impl Parser {
             }),
 
             ["(", _, _, "", "X", ")"] =>
-                Parser::__indexed_zp_or_err(AddressingMode::IndexedIndirect, value, true),
+                Self::__indexed_zp_or_err(AddressingMode::IndexedIndirect, value, true),
 
             ["(", _, _, ")", "Y", ""] =>
-                Parser::__indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
+                Self::__indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
 
-            ["(", _, _, ")", "", ""] => Ok(
-                ParsedValue::new(AddressingMode::Indirect, value.into_u16(), true)
-            ),
+            ["(", _, _, ")", "", ""] => {
+                use ValueMode::*;
+                match &value {
+                    U16(_) | U8(_) | Label(_) => {
+                        let val = Self::__indexed_to_u16(value);
+
+                        Ok(ParsedValue::new(AddressingMode::Indirect, val, true))
+                    }
+
+                    _ => Err(ParseError::InvalidValue)
+                }
+            }
 
             ["*", _, _, "", "", ""] => match value.is_i8() {
                 true => Ok(
