@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen(raw_module = "/static/jsm/assembler/logger.js")]
+#[wasm_bindgen(raw_module = "./logger.js")]
 extern {
     pub type Logger;
 
