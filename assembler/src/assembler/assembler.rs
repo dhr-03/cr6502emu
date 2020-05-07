@@ -18,7 +18,7 @@ pub struct Assembler {
     identifiers: LabelManager,
 
     test_tmp: [u8; 30],
-    offset: u16,
+    write_offset: u16,
 }
 
 //public api
@@ -31,12 +31,12 @@ impl Assembler {
             identifiers: LabelManager::new(),
 
             test_tmp: [0; 30],
-            offset: 0,
+            write_offset: 0,
         }
     }
 
     pub fn assemble(&mut self, prg: &str) -> *const u8 {
-        self.offset = 0;
+        self.write_offset = 0;
 
         let mut success = true;
 
@@ -88,7 +88,7 @@ impl Assembler {
 
         Logger::set_current_line_str("-");
 
-        if success && self.offset < 1 {
+        if success && self.write_offset < 1 {
             err_msg(lang::ERR_EMPTY_INPUT);
 
             success = false;
@@ -97,7 +97,7 @@ impl Assembler {
         if success {
             self.clear_unused_rom();
 
-            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.offset as i32, lang::INFO_ASM_SUCCESS_2);
+            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.write_offset as i32, lang::INFO_ASM_SUCCESS_2);
 
             &self.test_tmp[0] //get ptr
         } else {
@@ -125,11 +125,11 @@ impl Assembler {
                     false
 
                 } else {
-                    label.value = Some(self.rom_offset + self.offset);
+                    label.value = Some(self.rom_offset + self.write_offset);
                     true
                 }
             } else {
-                self.identifiers.insert(name.into(), self.offset + self.rom_offset);
+                self.identifiers.insert(name.into(), self.write_offset + self.rom_offset);
                 true
             }
         } else {
@@ -155,7 +155,7 @@ impl Assembler {
                     ValueMode::U16(v) => rt = self.write_rom_u16(*v),
 
                     ValueMode::I8(offset) => {
-                        let write_offset_sg = self.offset as i32;
+                        let write_offset_sg = self.write_offset as i32;
                         let offset_32 = *offset as i32;
 
                         let target = write_offset_sg + offset_32;
@@ -169,29 +169,29 @@ impl Assembler {
                     },
 
                     ValueMode::Label(name) => {
-                        let data = self.identifiers.get_or_sched(name, self.offset);
+                        let data = self.identifiers.get_or_sched(name, self.write_offset);
                         if let Some(bytes) = data {
                             rt = self.write_rom_u16(bytes);
                         } else {
-                            self.offset += 2;
+                            self.write_offset += 2;
                         }
                     }
 
                     ValueMode::LabelLo(name) => {
-                        let data = self.identifiers.get_or_sched_lo(name, self.offset);
+                        let data = self.identifiers.get_or_sched_lo(name, self.write_offset);
                         if let Some(byte) = data {
                             rt = self.write_rom(byte);
                         } else {
-                            self.offset += 1;
+                            self.write_offset += 1;
                         }
                     }
 
                     ValueMode::LabelHi(name) => {
-                        let data = self.identifiers.get_or_sched_hi(name, self.offset);
+                        let data = self.identifiers.get_or_sched_hi(name, self.write_offset);
                         if let Some(byte) = data {
                             rt = self.write_rom(byte);
                         } else {
-                            self.offset += 1;
+                            self.write_offset += 1;
                         }
                     }
                 }
@@ -223,8 +223,8 @@ impl Assembler {
     }
 
     fn write_rom(&mut self, byte: u8) -> bool {
-        let write_ok = self.write_rom_at(byte, self.offset);
-        self.offset += 1;
+        let write_ok = self.write_rom_at(byte, self.write_offset);
+        self.write_offset += 1;
 
         write_ok
     }
@@ -235,7 +235,7 @@ impl Assembler {
     }
 
     fn clear_unused_rom(&mut self) {
-        for i in self.offset..self.test_tmp.len() as u16 {
+        for i in self.write_offset..self.test_tmp.len() as u16 {
             self.test_tmp[i as usize] = 0; //BRK
         }
     }

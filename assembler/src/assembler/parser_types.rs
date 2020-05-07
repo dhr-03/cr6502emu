@@ -1,5 +1,3 @@
-use wasm_bindgen::__rt::core::hint::unreachable_unchecked;
-
 //TODO: move assemble errs
 pub enum ParseError {
     UnknownOpcode,
