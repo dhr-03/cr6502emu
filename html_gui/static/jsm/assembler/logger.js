@@ -8,6 +8,11 @@ export class Logger {
 
     static setup(selector) {
         this.baseNode = document.querySelector(selector);
+
+        this.reset();
+    }
+
+    static reset() {
         this.workingNode = null;
         this.writeNode = null;
         this.currentLine = -1;
@@ -24,7 +29,7 @@ export class Logger {
         let template = `
             <div class="message ${msgClass}">
                 <div style="width: 8em;float: left;border-right: 2px solid; margin-right: 1em">
-                    <span>line: ${this.currentLine !== undefined ? this.currentLine : "?" }</span>
+                    <span>line: ${this.currentLine !== undefined ? this.currentLine : "?"}</span>
                 </div>
                 <div class="msg-content"></div>
             </div>
@@ -52,7 +57,7 @@ export class Logger {
     }
 
     static write(obj) {
-        let node =  document.createElement("span");
+        let node = document.createElement("span");
 
         node.innerText = obj;
         this.writeNode.appendChild(node);
@@ -70,7 +75,7 @@ export class Logger {
         if (this.workingNode) {
             this.baseNode.appendChild(this.workingNode);
 
-            this.workingNode= null;
+            this.workingNode = null;
             this.writeNode = null;
         }
 

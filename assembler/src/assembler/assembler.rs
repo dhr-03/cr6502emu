@@ -64,6 +64,7 @@ impl Assembler {
         //Stage 2: build and remove labels, log errs/warns/infs if necessary
         let mut st2_ok = true;
 
+        Logger::reset();
         let stage_2 = stage_1.filter(|(num, item)| {
             Logger::set_current_line(*num + 1);
 
