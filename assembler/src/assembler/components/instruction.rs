@@ -3,6 +3,9 @@ use crate::parser::{Parser, types::*};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
+use crate::js_logger::err_code;
+use crate::lang::assembler as lang;
+
 pub struct Instruction {
     opcode: u8,
     value: ParsedValue,
@@ -52,7 +55,14 @@ impl CodeItemTrait for Instruction {
                 Ok(())
             }
 
-            None => Err(ParseError::UnknownIdentifier)
+            None => {
+                err_code(lang::ERR_LBL_NEVER_DEF_1,
+                         self.value.label_name().get_or_insert(""),
+                         lang::ERR_LBL_NEVER_DEF_2,
+                );
+
+                Err(ParseError::UnknownIdentifier)
+            }
         }
     }
 }

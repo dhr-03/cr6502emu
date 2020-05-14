@@ -145,4 +145,17 @@ impl ParsedValue {
                 .map(|v| v >> 8)
         }
     }
+
+    pub fn label_name(&self) -> Option<&str> {
+        use ValueMode::{Label, LabelLo, LabelHi};
+
+        match &self.value {
+            Label(s) | LabelHi(s) |
+            LabelLo(s) => Some(s.as_str()),
+
+            _ => None
+
+
+        }
+    }
 }
