@@ -1,29 +1,9 @@
-use std::collections::HashMap;
-
 use crate::assembler::AssemblerInterface;
 
-pub enum ParseError {
-    UnknownOpcode,
-    UnknownMacro,
-    UnknownIdentifier,
-    UnknownPattern,
 
-    UnknownAddressingMode,
-    WrongAddressingMode,
-
-    InvalidValue,
-    ValueTooBig,
-
-    SyntaxError,
-}
-
-pub type ParseResult<T> = Result<T, ParseError>;
-
-
-// ################### - ###################
-
+#[derive(Copy, Clone)]
 pub enum AddressingMode {
-    Implicit,
+    Implicit = 0,
     //U8
     Immediate,
 
@@ -163,25 +143,6 @@ impl ParsedValue {
             LabelLo(k) => asm.get_label_value(k.as_str()),
             LabelHi(k) => asm.get_label_value(k.as_str())
                 .map(|v| v >> 8)
-        }
-    }
-}
-
-impl From<&AddressingMode> for usize {
-    fn from(variant: &AddressingMode) -> Self {
-        match variant {
-            AddressingMode::Implicit => 0,
-            AddressingMode::Immediate => 1,
-            AddressingMode::ZeroPage => 2,
-            AddressingMode::ZeroPageX => 3,
-            AddressingMode::ZeroPageY => 4,
-            AddressingMode::RelativeOffset => 5,
-            AddressingMode::Absolute => 6,
-            AddressingMode::AbsoluteX => 7,
-            AddressingMode::AbsoluteY => 8,
-            AddressingMode::Indirect => 9,
-            AddressingMode::IndexedIndirect => 10,
-            AddressingMode::IndirectIndexed => 11,
         }
     }
 }
