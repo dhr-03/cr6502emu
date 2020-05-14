@@ -1,15 +1,12 @@
 use core::hint::unreachable_unchecked;
 
-use super::{ParseResult, ParseError,
-            AddressingMode};
+use super::Parser;
 
-use super::js_regex::{js_re_nrm, js_re_inx};
-use super::{ValueMode, ParsedValue};
+use super::parser_types::*;
 
+use crate::js_regex::{js_re_inx, js_re_nrm};
+use crate::js_logger::Logger;
 use crate::lang::parser as lang;
-use super::js_logger::Logger;
-
-pub struct Parser {}
 
 impl Parser {
     fn parse_re_addr_common(re_result: &[&str], offset: usize, is_i8: bool) -> ParseResult<ValueMode> {
@@ -41,36 +38,36 @@ impl Parser {
             value
         };
 
-        unsafe {
-            let parse_rs = match re_result[offset + 0] {
-                "" => parse_to_valuemode(10),
+        let parse_rs = match re_result[offset + 0] {
+            "" => parse_to_valuemode(10),
 
-                "$" => parse_to_valuemode(16),
+            "$" => parse_to_valuemode(16),
 
-                "b" => parse_to_valuemode(2),
+            "b" => parse_to_valuemode(2),
 
-                "%" => Ok(ValueMode::Label(str_value.into())),
+            "%" => Ok(ValueMode::Label(str_value.into())),
 
-                "lo " => Ok(ValueMode::LabelLo(str_value.into())),
+            "lo " => Ok(ValueMode::LabelLo(str_value.into())),
 
-                "hi " => Ok(ValueMode::LabelHi(str_value.into())),
+            "hi " => Ok(ValueMode::LabelHi(str_value.into())),
 
-                _ => unreachable_unchecked()
-            };
-
-            if let Err(_) = &parse_rs {
-                Logger::begin_err();
-                Logger::write_str(lang::ERR_NUM_PARSE_1);
-                Logger::write_code(str_value);
-                Logger::write_str(lang::ERR_NUM_PARSE_2);
-                Logger::write_code(if is_i8 { "i8" } else { "u16/u8" });
-                Logger::end_msg();
-            };
+            _ => unsafe { unreachable_unchecked() }
+        };
 
 
-            parse_rs.map_err(|_| ParseError::SyntaxError)
-        }
+        if let Err(_) = &parse_rs {
+            Logger::begin_err();
+            Logger::write_str(lang::ERR_NUM_PARSE_1);
+            Logger::write_code(str_value);
+            Logger::write_str(lang::ERR_NUM_PARSE_2);
+            Logger::write_code(if is_i8 { lang::AUX_SIGNED_ZP } else { lang::AUX_UNSIGNED_ZP_ABS });
+            Logger::end_msg();
+        };
+
+        parse_rs.
+            map_err(|_| ParseError::SyntaxError)
     }
+
 
     pub fn parse_addr_normal(address: &str) -> ParseResult<ParsedValue> {
         let re_nrm = Parser::regex_normal_addressing(address)?;
@@ -183,23 +180,9 @@ impl Parser {
     }
 }
 
-impl Parser {
-    fn sanitize_line(line: &str) -> &str {
-        match line.find(';') {
-            Some(i) => &line[..i], //if found, remove comment
-            None => line
-        }.trim() //remove blank chars, such as [space] \t \n \r ...
-    }
-
-    #[inline(always)]
-    pub fn clean_input(input: &str) -> impl Iterator<Item=(usize, &str)> {
-        input.lines()
-            .enumerate()
-            .map(|(n, l)| (n, Parser::sanitize_line(l)))
-            .filter(|(_, l)| !l.is_empty())
-    }
-}
-
+// #########################################
+//                   REGEX
+// #########################################
 impl Parser {
     fn substr_or_empty(txt: &str, from: usize, len: usize) -> &str {
         if len != 0 {
@@ -240,21 +223,5 @@ impl Parser {
         } else {
             Err(ParseError::UnknownAddressingMode)
         }
-    }
-}
-
-// line type
-impl Parser {
-    #[inline(always)]
-    pub fn is_macro(line: &str) -> bool {
-        line.starts_with("#")
-    }
-
-    #[inline(always)]
-    pub fn is_label(line: &str) -> bool {
-        line.ends_with(":") &&
-            (&line[..line.len() - 1])
-                .chars()
-                .all(|c| char::is_alphanumeric(c) || c == '_')
     }
 }

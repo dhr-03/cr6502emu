@@ -1,8 +1,12 @@
-//TODO: move assemble errs
+use std::collections::HashMap;
+
+use crate::assembler::AssemblerInterface;
+
 pub enum ParseError {
     UnknownOpcode,
     UnknownMacro,
-    //UnknownIdentifier,
+    UnknownIdentifier,
+    UnknownPattern,
 
     UnknownAddressingMode,
     WrongAddressingMode,
@@ -20,22 +24,28 @@ pub type ParseResult<T> = Result<T, ParseError>;
 
 pub enum AddressingMode {
     Implicit,
-    Immediate, //U8
+    //U8
+    Immediate,
 
-    ZeroPage, //U8
-    ZeroPageX, //U8
-    ZeroPageY, //U8
+    //U8
+    ZeroPage,
+    ZeroPageX,
+    ZeroPageY,
 
-    RelativeOffset, //I8
+    //I8
+    RelativeOffset,
 
-    Absolute, //U16
-    AbsoluteX, //U16
-    AbsoluteY, //U16
+    //U16
+    Absolute,
+    AbsoluteX,
+    AbsoluteY,
 
-    Indirect, //U16
+    //U16
+    Indirect,
 
-    IndexedIndirect, //U8
-    IndirectIndexed, //U8
+    //U8
+    IndexedIndirect,
+    IndirectIndexed,
 }
 
 pub enum ValueMode {
@@ -51,6 +61,16 @@ pub enum ValueMode {
 }
 
 impl ValueMode {
+    pub fn get_size(&self) -> usize {
+        use ValueMode::*;
+
+        match self {
+            None => 0,
+            U8(_) | I8(_) | LabelLo(_) | LabelHi(_) => 1,
+            U16(_) | Label(_) => 2
+        }
+    }
+
     pub fn is_zp(&self) -> bool {
         use ValueMode::*;
 
@@ -127,6 +147,23 @@ impl ParsedValue {
 
     pub fn value(&self) -> &ValueMode {
         &self.value
+    }
+
+    pub fn resolve(&self, asm: &AssemblerInterface) -> Option<u16> {
+        use ValueMode::*;
+
+        match &self.value {
+            None => Some(0), //None is reserved for errors, use get_size or is_none for checking
+
+            U16(v) => Some(*v),
+            U8(v) => Some(*v as u16),
+            I8(v) => Some(*v as u16),
+
+            Label(k) => asm.get_label_value(k.as_str()),
+            LabelLo(k) => asm.get_label_value(k.as_str()),
+            LabelHi(k) => asm.get_label_value(k.as_str())
+                .map(|v| v >> 8)
+        }
     }
 }
 

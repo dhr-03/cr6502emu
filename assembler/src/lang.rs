@@ -1,8 +1,8 @@
-use crate::assembler::{ParseError, AddressingMode};
+use crate::parser::{AddressingMode, ParseError};
 
 type STR = &'static str;
 /*
-    Format: [ERR|WARN|INF]_{DESC}(_[1..])?
+    Format: [ERR|WARN|INF|AUX]_{DESC}(_[1..])?
 */
 
 
@@ -15,6 +15,8 @@ pub mod parser {
 
     pub const ERR_NUM_PARSE_1: STR = "Failed to parse value";
     pub const ERR_NUM_PARSE_2: STR = "as";
+    pub const AUX_UNSIGNED_ZP_ABS: STR = "unsigned integer 8b/16b";
+    pub const AUX_SIGNED_ZP: STR = "signed integer 8b";
 }
 
 // ###################################################################################
@@ -63,6 +65,8 @@ impl ParseError {
         match self {
             UnknownOpcode => "UnknownOpcode",
             UnknownMacro => "UnknownMacro",
+            UnknownPattern  => "UnknownPattern",
+            UnknownIdentifier  => "UnknownIdentifier",
 
             UnknownAddressingMode => "UnknownAddressingMode",
             WrongAddressingMode => "WrongAddressingMode",

@@ -1,8 +1,10 @@
 use phf::{Map, phf_map};
 
-pub const NONE: u8 = 0xFF;
+pub const OPCODE_NONE: u8 = 0xFF;
+
 
 // SRC: http://www.obelisk.me.uk/6502/instructions.html
+use OPCODE_NONE as NONE;
 pub static OPCODES_MAP: Map<&'static str, [u8; 12]> = phf_map! {
 
     /* #######################  Load/Store Operations  ####################### */

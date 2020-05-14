@@ -1,21 +1,28 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use super::{Parser, ParseResult, ParsedValue, ParseError,
-            ValueMode,
-            LabelManager};
+use std::collections::HashMap;
+use core::hint::unreachable_unchecked;
 
-use crate::opcodes::{OPCODES_MAP, NONE as OPCODE_NONE};
-use super::AddressingMode;
+use std::ptr;
 
-use super::js_logger::{Logger,
+use crate::assembler::{AssemblerInterface};
+use crate::assembler::components::{CodeItemTrait, Instruction, Label, MacroFactory};
+
+use crate::parser::{Parser, ParsedValue, ParseError, ParseResult, AddressingMode, ValueMode};
+
+use crate::js_logger::{Logger,
                        err_code, info_code_i32, warn_code,
                        err_msg, warn_msg};
+
 use crate::lang::assembler as lang;
+use crate::lang::assembler::ERR_ASM_FAILED;
+
 
 #[wasm_bindgen]
 pub struct Assembler {
     rom_offset: u16,
-    identifiers: LabelManager,
+    //hashmap doesn't deallocate all the memory after deleting items, keeping it as a member can save a few os calls
+    identifiers: HashMap<String, u16>,
 
     test_tmp: [u8; 30],
     write_offset: u16,
@@ -28,278 +35,111 @@ impl Assembler {
     pub fn new(rom_start: u16) -> Assembler {
         Assembler {
             rom_offset: rom_start,
-            identifiers: LabelManager::new(),
+            identifiers: HashMap::new(),
 
             test_tmp: [0; 30],
             write_offset: 0,
         }
     }
 
-    pub fn assemble(&mut self, prg: &str) -> *const u8 {
-        self.write_offset = 0;
+    pub fn assemble(&mut self, lines: &str) -> *const u8 {
+        let mut interface = AssemblerInterface {
+            rom: &mut self.test_tmp,
+            offset: 0,
+            map: &mut self.identifiers,
+        };
 
-        let mut success = true;
-
-        let mut lines = Parser::clean_input(prg);
-        while let (true, Some((line_num, line))) = (success, lines.next()) {
-
-            Logger::set_current_line(line_num + 1);
-
-            if Parser::is_macro(line) {
-                success = self.macro_behaviour(line);
-
+        //Stage 1: parse into structs
+        let stage_1 = Parser::clean_input(lines).map(|(num, line)| {
+            if Parser::is_instruction(line) {
+                Instruction::from_str_boxed(line)
             } else if Parser::is_label(line) {
-                success = self.label_behaviour(line);
-
+                Label::from_str_boxed(line)
+            } else if Parser::is_macro(line) {
+                MacroFactory::from_str_boxed("")
             } else {
-                success = self.instruction_behaviour(line);
+                Err(ParseError::UnknownPattern)
             }
-        }
+        });
 
-        Logger::set_current_line_null();
+        //Stage 2: build and remove labels, log errs/warns/infs if necessary
+        let mut st2_ok = true;
 
-        // write unordered labels
-        let keys: Vec<String> = self.identifiers.map.keys()
-            .map(|k| k.clone())
-            .collect();
+        let stage_2 = stage_1.filter(|item| {
+            if let Ok(item) = item {
+                let item_size = item.get_size() as u16;
+                interface.increase_offset(item_size);
 
-        let mut keys_iter = keys.iter();
-
-        while let (true, Some(key)) = (success, keys_iter.next()) {
-            let label = self.identifiers.map.remove_entry(key).unwrap().1;
-
-            if let Some(value) = label.value {
-                let w_val = value as u8;
-                for addr in label.usages_lo.iter() {
-                    success = self.write_rom_at(w_val as u8, *addr);
-                }
-
-                let w_val = (value >> 8) as u8;
-                for addr in &label.usages_hi {
-                    success = self.write_rom_at(w_val, *addr);
-                }
+                item.process(&mut interface) //-> bool, keep?
             } else {
-                err_code(lang::ERR_LBL_NEVER_DEF_1, key.as_str(), lang::ERR_LBL_NEVER_DEF_2);
-                success = false; //undefined label
-            }
-        }
+                if let Err(e) = item {
+                    //TODO log
 
-        self.identifiers.map.clear();
-
-        Logger::set_current_line_str("-");
-
-        if success && self.write_offset < 1 {
-            err_msg(lang::ERR_EMPTY_INPUT);
-
-            success = false;
-        }
-
-        if success {
-            self.clear_unused_rom();
-
-            info_code_i32(lang::INFO_ASM_SUCCESS_1, self.write_offset as i32, lang::INFO_ASM_SUCCESS_2);
-
-            &self.test_tmp[0] //get ptr
-        } else {
-            err_msg(lang::ERR_ASM_FAILED);
-
-            &0
-        }
-    }
-}
-
-impl Assembler {
-    #[inline(always)]
-    fn macro_behaviour(&mut self, line: &str) -> bool {
-        self.parse_macro(line).is_ok()
-    }
-
-    #[inline(always)]
-    fn label_behaviour(&mut self, line: &str) -> bool {
-        let name = &line[..line.len() - 1];
-
-        if name.len() >= 3 {
-            if let Some(label) = self.identifiers.map.get_mut(name) {
-                if let Some(_) = label.value { //if the value is already defined
-                    err_code(lang::ERR_LBL_RE_DEF_1, name, lang::ERR_LBL_RE_DEF_2);
-                    false
-
-                } else {
-                    label.value = Some(self.rom_offset + self.write_offset);
-                    true
+                    st2_ok = false;
                 }
-            } else {
-                self.identifiers.insert(name.into(), self.write_offset + self.rom_offset);
-                true
-            }
-        } else {
-            err_code(lang::ERR_LBL_SHORT_1, name, lang::ERR_LBL_SHORT_2);
-
-            false
-        }
-    }
-
-    #[inline(always)]
-    fn instruction_behaviour(&mut self, line: &str) -> bool {
-        let mut rt: bool;
-
-        match self.parse_instruction(line) {
-            Ok((opcode, addr)) => {
-                rt = self.write_rom(opcode);
-
-                match addr.value() {
-                    ValueMode::None => (),
-
-                    ValueMode::U8(v) => rt = self.write_rom(*v),
-
-                    ValueMode::U16(v) => rt = self.write_rom_u16(*v),
-
-                    ValueMode::I8(offset) => {
-                        let write_offset_sg = self.write_offset as i32;
-                        let offset_32 = *offset as i32;
-
-                        let target = write_offset_sg + offset_32;
-
-                        if target < 0 && target < write_offset_sg ||
-                            target >= self.test_tmp.len() as i32{
-                            warn_msg(lang::WARN_REL_OOB)
-                        }
-
-                        rt = self.write_rom(*offset as u8)
-                    },
-
-                    ValueMode::Label(name) => {
-                        let data = self.identifiers.get_or_sched(name, self.write_offset);
-                        if let Some(bytes) = data {
-                            rt = self.write_rom_u16(bytes);
-                        } else {
-                            self.write_offset += 2;
-                        }
-                    }
-
-                    ValueMode::LabelLo(name) => {
-                        let data = self.identifiers.get_or_sched_lo(name, self.write_offset);
-                        if let Some(byte) = data {
-                            rt = self.write_rom(byte);
-                        } else {
-                            self.write_offset += 1;
-                        }
-                    }
-
-                    ValueMode::LabelHi(name) => {
-                        let data = self.identifiers.get_or_sched_hi(name, self.write_offset);
-                        if let Some(byte) = data {
-                            rt = self.write_rom(byte);
-                        } else {
-                            self.write_offset += 1;
-                        }
-                    }
-                }
-                rt
-            }
-
-            Err(err) => {
-                Logger::begin_err();
-                Logger::write_code(err.to_str());
-                Logger::end_msg();
 
                 false
             }
-        }
-    }
-}
+        });
 
-impl Assembler {
-    #[inline(always)]
-    fn write_rom_at(&mut self, byte: u8, addr: u16) -> bool {
-        if (addr as usize) < self.test_tmp.len() {
-            self.test_tmp[addr as usize] = byte;
-            true
-        } else {
+        //Stage 3.0: Iterators are lazy evaluated, so we need to execute it an collect it before continuing
+        let stage_3: Vec<Box<dyn CodeItemTrait>> = stage_2
+            .map(|i| i.unwrap_or_else(|_| unsafe { unreachable_unchecked() })) //filtered in stg 2
+            .collect();
+
+
+        //Stage 3.1: Now we know the final ROM size, lets check if it fits and if everything is ok
+        let mut rsv_write_ok = false;
+
+        if interface.offset < 1 {
+            err_msg(lang::ERR_EMPTY_INPUT);
+        } else if (interface.offset as usize) >= interface.rom.len() {
             err_msg(lang::ERR_ROM_TOO_SMALL);
+        } else if st2_ok {
+            //Stage 4.1: Write
 
-            false
-        }
-    }
+            interface.reset_counter();
 
-    fn write_rom(&mut self, byte: u8) -> bool {
-        let write_ok = self.write_rom_at(byte, self.write_offset);
-        self.write_offset += 1;
+            rsv_write_ok = true; //resolve and write
 
-        write_ok
-    }
+            for item in stage_3 {
+                if let Err(e) = item.execute(&mut interface) {
+                    //TODO log
 
-    fn write_rom_u16(&mut self, bytes: u16) -> bool {
-        self.write_rom(bytes as u8) &&
-            self.write_rom((bytes >> 8) as u8)
-    }
+                    rsv_write_ok = false;
 
-    fn clear_unused_rom(&mut self) {
-        for i in self.write_offset..self.test_tmp.len() as u16 {
-            self.test_tmp[i as usize] = 0; //BRK
-        }
-    }
-
-    fn parse_instruction(&mut self, line: &str) -> ParseResult<(u8, ParsedValue)> {
-        let space_i = *line.find(' ').get_or_insert(line.len());
-        let opcode = &line[..space_i];
-        let data = *line.get((space_i + 1)..).get_or_insert("");
-
-        let parsed_addr = self.parse_address(data)?;
-
-        let opcode_val = OPCODES_MAP.get(opcode)
-            .ok_or_else(|| {
-                Logger::begin_err();
-                Logger::write_str(lang::ERR_UNKNOWN_OPCODE);
-                Logger::write_code(opcode);
-                Logger::end_msg();
-
-                ParseError::UnknownOpcode
-            })?;
-
-        let index = usize::from(parsed_addr.addr_mode());
-
-        opcode_val.get(index)
-            .ok_or(ParseError::UnknownOpcode)
-            .and_then(|v| {
-                if *v != OPCODE_NONE {
-                    Ok((*v, parsed_addr))
-                } else {
-                    Logger::begin_err();
-                    Logger::write_str(lang::ERR_ADDR_MODE_1);
-                    Logger::write_code(opcode);
-                    Logger::write_str(lang::ERR_ADDR_MODE_2);
-                    Logger::write_code(parsed_addr.addr_mode().to_str());
-                    Logger::end_msg();
-
-                    Err(ParseError::WrongAddressingMode)
+                    break;
                 }
-            })
-    }
+            }
+        }
 
 
-    fn parse_macro(&self, _line: &str) -> ParseResult<()> {
-        err_msg(lang::ERR_MACROS_TODO);
+        Logger::set_current_line_str("EOL");
 
-        Err(ParseError::UnknownMacro)
-    }
+        if rsv_write_ok {
+            info_code_i32(lang::INFO_ASM_SUCCESS_1,
+                          interface.offset as i32,
+                          lang::INFO_ASM_SUCCESS_2);
 
+            Self::clear_unused_rom(&mut interface);
 
-    fn parse_address(&self, address: &str) -> ParseResult<ParsedValue> {
-        if address.is_empty() || address == "A" { //accumulator
-            Ok(
-                ParsedValue::new(AddressingMode::Implicit, ValueMode::None, false)
-            )
+            self.identifiers.clear();
+
+            &self.test_tmp[0]
         } else {
-            Parser::parse_addr_normal(address)
-                .or_else(|err| {
-                    if let ParseError::UnknownAddressingMode = err {
-                        Parser::parse_addr_indexed(address)
-                    } else {
-                        Err(err)
-                    }
-                })
+            err_msg(lang::ERR_ASM_FAILED);
+
+            self.identifiers.clear();
+
+            ptr::null()
+        }
+    }
+
+    fn clear_unused_rom(asm: &mut AssemblerInterface) {
+        for _ in asm.offset as usize..asm.rom.len() {
+            asm.write(0); //BRK
         }
     }
 }
+
 
