@@ -65,7 +65,7 @@ impl Parser {
 }
 
 impl Parser {
-    fn sanitize_line(line: &str) -> &str {
+    pub fn sanitize_line(line: &str) -> &str {
         match line.find(';') {
             Some(i) => &line[..i], //if found, remove comment
             None => line

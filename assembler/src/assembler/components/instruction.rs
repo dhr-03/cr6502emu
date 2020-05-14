@@ -12,13 +12,21 @@ pub struct Instruction {
 }
 
 impl Instruction {
+
+    pub fn new(opcode: u8, value: ParsedValue) -> Self {
+        Instruction {
+            opcode,
+            value
+        }
+    }
+
     pub fn from_str(line: &str) -> ParseResult<Self> {
         let (opcode, value) = Parser::parse_instruction(line)?;
 
-        Ok(Instruction {
+        Ok(Self::new(
             opcode,
-            value,
-        })
+            value
+        ))
     }
 
     pub fn from_str_boxed(line: &str) -> ParseResult<Box<dyn CodeItemTrait>> {

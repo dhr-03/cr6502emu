@@ -53,7 +53,7 @@ impl Assembler {
             } else if Parser::is_label(line) {
                 rs = Label::from_str_boxed(line)
             } else if Parser::is_macro(line) {
-                rs = MacroFactory::from_str_boxed("")
+                rs = MacroFactory::from_str_boxed(&line[1..line.len()])
             } else {
                 rs = Err(ParseError::UnknownPattern)
             }
