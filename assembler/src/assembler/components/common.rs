@@ -1,10 +1,10 @@
 use crate::assembler::{AssemblerInterface};
-use crate::parser::{ParseResult, ParseError};
+use crate::parser::types::{ParseResult};
 
 pub trait CodeItemTrait {
     fn get_size(&self) -> usize;
 
-    fn process(&self, asm: &mut AssemblerInterface) -> bool;
+    fn process(&self, asm: &mut AssemblerInterface) -> (bool, bool);
     fn execute(&self, asm: &mut AssemblerInterface) -> ParseResult<()>;
 }
 

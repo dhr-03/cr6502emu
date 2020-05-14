@@ -1,6 +1,6 @@
-use super::Parser;
+use crate::parser::Parser;
 
-use super::parser_types::*;
+use crate::parser::types::*;
 
 use crate::opcodes::{OPCODES_MAP, OPCODE_NONE};
 
@@ -25,7 +25,7 @@ impl Parser {
                 ParseError::UnknownOpcode
             })?;
 
-        let index = usize::from(parsed_addr.addr_mode());
+        let index = *parsed_addr.addr_mode() as usize;
 
         opcode_val.get(index)
             .ok_or(ParseError::UnknownOpcode)

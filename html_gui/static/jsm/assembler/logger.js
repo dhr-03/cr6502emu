@@ -4,11 +4,15 @@ export class Logger {
     static writeNode;
     static currentLine;
 
+    static handled;
+
     static setup(selector) {
         this.baseNode = document.querySelector(selector);
         this.workingNode = null;
         this.writeNode = null;
         this.currentLine = -1;
+
+        this.handled = false;
     }
 
     static setCurrentLine(line) {
@@ -20,7 +24,7 @@ export class Logger {
         let template = `
             <div class="message ${msgClass}">
                 <div style="width: 8em;float: left;border-right: 2px solid; margin-right: 1em">
-                    <span>line: ${this.currentLine || "?"}</span>
+                    <span>line: ${this.currentLine !== undefined ? this.currentLine : "?" }</span>
                 </div>
                 <div class="msg-content"></div>
             </div>
@@ -69,6 +73,8 @@ export class Logger {
             this.workingNode= null;
             this.writeNode = null;
         }
+
+        this.handled = true;
     }
 
     static genericMessage(kind, msg) {
@@ -85,5 +91,12 @@ export class Logger {
         Logger.endMessage();
     }
 
+    static msgHandled() {
+        let handled = this.handled;
+
+        this.handled = false;
+
+        return handled;
+    }
 
 }

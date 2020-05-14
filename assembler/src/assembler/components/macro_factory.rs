@@ -1,5 +1,5 @@
 use crate::assembler::{AssemblerInterface};
-use crate::parser::{ParseResult, ParseError};
+use crate::parser::types::{ParseResult, ParseError};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
@@ -25,8 +25,8 @@ impl CodeItemTrait for MacroFactory {
         0
     }
 
-    fn process(&self, _: &mut AssemblerInterface) -> bool {
-        false
+    fn process(&self, _: &mut AssemblerInterface) -> (bool, bool) {
+        (true, false)
     }
 
     fn execute(&self, _: &mut AssemblerInterface) -> ParseResult<()> {Ok(())}

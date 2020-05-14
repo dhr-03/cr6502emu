@@ -45,6 +45,10 @@ extern {
 
     #[wasm_bindgen(static_method_of = Logger, js_name = genericExplainedCode)]
     fn generic_explained_code_i32(kind: &str, msg1: &str, code: i32, msg2: &str);
+
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = msgHandled)]
+    pub fn msg_handled() -> bool;
 }
 
 #[inline(always)]

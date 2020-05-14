@@ -1,8 +1,7 @@
 use crate::assembler::{AssemblerInterface};
-use crate::parser::{Parser, ParseResult, ParseError, ParsedValue};
+use crate::parser::{Parser, types::*};
 
 use super::common::{CodeItemTrait, to_boxed_result};
-
 
 pub struct Instruction {
     opcode: u8,
@@ -31,8 +30,8 @@ impl CodeItemTrait for Instruction {
         self.value.value().get_size() + 1 //opcode
     }
 
-    fn process(&self, _: &mut AssemblerInterface) -> bool {
-        true
+    fn process(&self, _: &mut AssemblerInterface) -> (bool, bool) {
+        (true, true)
     }
 
     fn execute(&self, asm: &mut AssemblerInterface) -> ParseResult<()> {
@@ -54,7 +53,6 @@ impl CodeItemTrait for Instruction {
             }
 
             None => Err(ParseError::UnknownIdentifier)
-
         }
     }
 }

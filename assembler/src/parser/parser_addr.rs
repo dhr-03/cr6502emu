@@ -1,11 +1,11 @@
 use core::hint::unreachable_unchecked;
 
-use super::Parser;
+use crate::parser::Parser;
 
-use super::parser_types::*;
+use crate::parser::types::*;
 
 use crate::js_regex::{js_re_inx, js_re_nrm};
-use crate::js_logger::Logger;
+use crate::js_logger::{Logger, err_msg};
 use crate::lang::parser as lang;
 
 impl Parser {
@@ -54,7 +54,6 @@ impl Parser {
             _ => unsafe { unreachable_unchecked() }
         };
 
-
         if let Err(_) = &parse_rs {
             Logger::begin_err();
             Logger::write_str(lang::ERR_NUM_PARSE_1);
@@ -91,7 +90,11 @@ impl Parser {
             ),
 
             //immediate only accepts 1 byte
-            [false, false] => Err(ParseError::ValueTooBig)
+            [false, false] => {
+                err_msg(lang::ERR_IMM_ONLY_ZP);
+
+                Err(ParseError::ValueSize)
+            }
         }
     }
 
@@ -102,7 +105,9 @@ impl Parser {
                 ParsedValue::new(addr_mode, value, true)
             )
         } else {
-            Err(ParseError::ValueTooBig)
+            err_msg(lang::ERR_EXPECTED_ZP);
+
+            Err(ParseError::ValueSize)
         }
     }
 
@@ -117,6 +122,7 @@ impl Parser {
                 #[cfg(debug_assertions)]
                 panic!("invalid into_u16");
 
+                #[allow(unreachable_code)]
                 unsafe { unreachable_unchecked() }
             }
         }
