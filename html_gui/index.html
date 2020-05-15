@@ -5,13 +5,13 @@
     <title>Title</title>
 
     <script type="module">
-        import {Logger} from "/static/jsm/assembler/logger.js";
+        import {Logger} from "./static/jsm/assembler/logger.js";
 
         Logger.setup("#log")
     </script>
 
     <script type="module">
-        import init, {Assembler, set_panic_hook, build_date} from '/static/jsm/assembler/assembler_dev.js';
+        import init, {Assembler, set_panic_hook, build_date} from './static/jsm/assembler/assembler_dev.js';
 
         async function run() {
 
@@ -115,25 +115,18 @@
         output limited to 30 bytes
     </div>
     <textarea rows="20" cols="60" id="input">
-        label1:
-        LDA #lo label1
-        LDA #hi label1
-        LDA #55
-        LDA #$37
-        LDA #b110111
+        #store u8 55
+        #store u16 550
+        #store asciiz test text
 
-        STA %label1
         STA %notyetdef
 
         ROL
         ROL A
 
         notyetdef:
-        BEQ *5 ;relative
         BEQ *-5
-
-        STA $00AA,X
-        JMP (%label1) ;indirect
+        BEQ &%notyetdef
 
 
     </textarea>
