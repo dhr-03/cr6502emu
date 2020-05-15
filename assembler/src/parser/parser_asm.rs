@@ -25,7 +25,7 @@ impl Parser {
                 ParseError::UnknownOpcode
             })?;
 
-        let index = *parsed_addr.addr_mode() as usize;
+        let index = parsed_addr.addr_mode().to_table_index();
 
         opcode_val.get(index)
             .ok_or(ParseError::UnknownOpcode)

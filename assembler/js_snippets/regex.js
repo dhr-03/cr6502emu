@@ -37,7 +37,7 @@ export function reNormalAddressing(line, container) {
 
 
 const RE_INDEXED_ADDR = new RegExp(
-    String.raw`^(\(|\*|)` +
+    String.raw`^(\(|\*|&|)` +
     RE_COMMON +
     String.raw`(\)?),?([XY]?)(\)?)$`
 );

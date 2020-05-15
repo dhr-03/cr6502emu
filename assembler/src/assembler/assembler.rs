@@ -35,7 +35,7 @@ impl Assembler {
             test_tmp: [0; 30],
         }
     }
-
+    //TODO target
     pub fn assemble(&mut self, lines: &str) -> *const u8 {
         let mut interface = AssemblerInterface::new(
             &mut self.test_tmp,

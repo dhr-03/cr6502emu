@@ -3,7 +3,7 @@ use crate::assembler::AssemblerInterface;
 
 #[derive(Copy, Clone)]
 pub enum AddressingMode {
-    Implicit = 0,
+    Implicit,
     //U8
     Immediate,
 
@@ -14,6 +14,9 @@ pub enum AddressingMode {
 
     //I8
     RelativeOffset,
+
+    //U16
+    RelativeTarget,
 
     //U16
     Absolute,
@@ -28,6 +31,7 @@ pub enum AddressingMode {
     IndirectIndexed,
 }
 
+#[derive(Clone)]
 pub enum ValueMode {
     None,
 
@@ -69,8 +73,17 @@ impl ValueMode {
             false
         }
     }
+
+    pub fn can_be_abs(&self) -> bool {
+        use ValueMode::*;
+        match self {
+            U8(_) | U16(_) | Label(_) => true,
+            _ => false
+        }
+    }
 }
 
+#[derive(Clone)]
 pub struct ParsedValue {
     mode: AddressingMode,
     value: ValueMode,
@@ -102,7 +115,7 @@ impl ParsedValue {
                 },
 
                 Absolute | AbsoluteX | AbsoluteY |
-                Indirect => match value {
+                Indirect | RelativeTarget => match value {
                     U16(_) | Label(_) => (),
                     _ => panic!("inv mode 4")
                 },
@@ -154,8 +167,18 @@ impl ParsedValue {
             LabelLo(s) => Some(s.as_str()),
 
             _ => None
-
-
         }
+    }
+}
+
+impl AddressingMode {
+    pub fn to_table_index(&self) -> usize{
+        let mut val = *self as usize;
+
+        if val > 5 {
+            val -= 1;
+        }
+
+        val
     }
 }

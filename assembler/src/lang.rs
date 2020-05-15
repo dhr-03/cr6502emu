@@ -68,6 +68,8 @@ pub mod macros {
     pub const ERR_WRT_NUM_PARSE_1: STR = "Failed to parse";
     pub const ERR_WRT_NUM_PARSE_2: STR = "as a number";
 
+    pub const ERR_TARGET_TOO_FAR: STR = "The target it's not in the -128..=127 range, from this position";
+
 }
 
 
@@ -107,6 +109,7 @@ impl AddressingMode {
             ZeroPageY => "ZeroPageY",
 
             RelativeOffset => "RelativeOffset",
+            RelativeTarget => "RelativeTarget",
 
             Absolute => "Absolute",
             AbsoluteX => "AbsoluteX",
