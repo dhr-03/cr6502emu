@@ -1,4 +1,5 @@
-use crate::parser::types::{ParseResult, ParseError};
+use crate::parser::Parser;
+use crate::parser::types::{ParseResult, ParseError, ParsedValue, AddressingMode, ValueMode};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
@@ -11,13 +12,13 @@ pub struct MacroFactory {}
 
 impl MacroFactory {
     pub fn from_str_boxed(line: &str) -> ParseResult<Box<dyn CodeItemTrait>> {
-        to_boxed_result(
             if line.starts_with("store") {
-                Self::macro_write(line)
-            } else {
+                to_boxed_result(Self::macro_write(line))
+            } else if Parser::is_instruction(line){
+                Self::custom_opcodes(line)
+            }else{
                 Err(ParseError::UnknownMacro)
             }
-        )
     }
 
     fn macro_write(line: &str) -> ParseResult<MacroWrite> {
@@ -53,6 +54,8 @@ impl MacroFactory {
             Err(ParseError::SyntaxError)
         }
     }
+
+
 }
 
 fn parse_or_log<T: std::str::FromStr>(txt: &str) -> ParseResult<T> {
