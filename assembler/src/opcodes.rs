@@ -7,6 +7,9 @@ pub const OPCODE_NONE: u8 = 0xFF;
 use OPCODE_NONE as NONE;
 pub static OPCODES_MAP: Map<&'static str, [u8; 12]> = phf_map! {
 
+    // crate::parser::types::AddressingMode
+    //        IMP    IMM   ZP   ZP,X  ZP,Y  REL   ABS   ABS,X ABS,Y  IND  INXD  INDX
+
     /* #######################  Load/Store Operations  ####################### */
     "LDA" => [NONE, 0xA9, 0xA5, 0xB5, NONE, NONE, 0xAD, 0xBD, 0xB9, NONE, 0xA1, 0xB1],
     "LDX" => [NONE, 0xA2, 0xA6, NONE, 0xB6, NONE, 0xAE, NONE, 0xBE, NONE, NONE, NONE],

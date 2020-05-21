@@ -90,7 +90,7 @@ impl ParseError {
             WrongAddressingMode => "WrongAddressingMode",
 
             InvalidValue => "InvalidValue",
-            ValueSize => "ValueTooBig",
+            ValueSize => "ValueSize",
 
             SyntaxError => "SyntaxError",
         }

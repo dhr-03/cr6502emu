@@ -1,12 +1,11 @@
-use crate::parser::Parser;
-use crate::parser::types::{ParseResult, ParseError, ParsedValue, AddressingMode, ValueMode};
+use crate::parser::types::{ParseResult, ParseError};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
 use crate::js_logger::{err_msg, err_code};
 use crate::lang::macros as lang;
 
-use super::MacroWrite;
+use super::{MacroWrite, CustomOpcodeParser};
 
 pub struct MacroFactory {}
 
@@ -14,8 +13,8 @@ impl MacroFactory {
     pub fn from_str_boxed(line: &str) -> ParseResult<Box<dyn CodeItemTrait>> {
             if line.starts_with("store") {
                 to_boxed_result(Self::macro_write(line))
-            } else if Parser::is_instruction(line){
-                Self::custom_opcodes(line)
+            } else if CustomOpcodeParser::is_cust_instruction(line){
+                CustomOpcodeParser::from_str(line)
             }else{
                 Err(ParseError::UnknownMacro)
             }

@@ -7,6 +7,17 @@ use wasm_bindgen::prelude::wasm_bindgen;
 #[wasm_bindgen(module = "/js_snippets/regex.js")]
 extern {
     /*
+    common, returns:
+       <-- COMMON -->
+       b/$//lo /hi /%,
+       value/identifier
+       </---->
+    */
+    #[wasm_bindgen(js_name = "reCommon")]
+    pub fn js_re_common(line: &str, bounds: &mut [usize]);
+
+
+    /*
     normal modes, returns:
        #?,
        <-- COMMON -->

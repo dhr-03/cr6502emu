@@ -112,21 +112,54 @@
         <br>
         otherwise, <code>console.table</code> wont work
         <br>
-        output limited to 30 bytes
+        output limited to 50 bytes
     </div>
     <textarea rows="20" cols="60" id="input">
-        #store u8 55
-        #store u16 550
-        #store asciiz test text
 
-        STA %notyetdef
+        label:
 
-        ROL
-        ROL A
+        LDA #10
+        #CAR 10 ; #CAR $A
 
-        notyetdef:
-        BEQ *-5
-        BEQ &%notyetdef
+        ;############
+
+        LDA 10
+        #CAR (10) ; #CAR (%label)
+
+        ;############
+
+        STA 5
+        #ALM (5)
+
+        ;############
+        ADC #10
+        #SUM 10
+
+        ADC 10
+        #SUM (10)
+
+        ;############
+
+        JMP %label
+        #IR (%label) ; #IR (0)
+
+        ;############
+
+        BEQ &0
+        #SI0 (0)
+
+        ;############
+
+        JSR %label
+        #SUB (%label)
+
+        ;############
+
+        RTS
+        #RET
+
+
+
 
 
     </textarea>

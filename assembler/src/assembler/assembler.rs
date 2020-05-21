@@ -21,7 +21,7 @@ pub struct Assembler {
     //hashmaps dont deallocate all the memory after deleting items, keeping it as a member can save a few os calls
     identifiers: HashMap<String, u16>,
 
-    test_tmp: [u8; 30],
+    test_tmp: [u8; 50],
 }
 
 //public api
@@ -32,7 +32,7 @@ impl Assembler {
         Assembler {
             identifiers: HashMap::new(),
 
-            test_tmp: [0; 30],
+            test_tmp: [0; 50],
         }
     }
     //TODO target
@@ -106,7 +106,9 @@ impl Assembler {
         Logger::set_current_line_str("EVAL");
 
         if interface.offset() < 1 {
-            err_msg(lang::ERR_EMPTY_INPUT);
+            if st2_ok {
+                err_msg(lang::ERR_EMPTY_INPUT);
+            }
         } else if interface.offset() > interface.rom_size() {
             err_msg(lang::ERR_ROM_TOO_SMALL);
         } else if st2_ok {
@@ -130,7 +132,7 @@ impl Assembler {
         }
 
 
-        Logger::set_current_line_str("EOL");
+        Logger::set_current_line_str("EOF");
 
         if rsv_write_ok {
             info_code_i32(lang::INFO_ASM_SUCCESS_1,

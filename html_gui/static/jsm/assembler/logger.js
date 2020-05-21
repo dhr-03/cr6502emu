@@ -75,11 +75,13 @@ export class Logger {
         if (this.workingNode) {
             this.baseNode.appendChild(this.workingNode);
 
+            if (this.baseNode.classList.contains("err")) {
+                this.handled = true;
+            }
+
             this.workingNode = null;
             this.writeNode = null;
         }
-
-        this.handled = true;
     }
 
     static genericMessage(kind, msg) {
