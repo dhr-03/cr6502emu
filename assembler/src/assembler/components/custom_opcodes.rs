@@ -131,7 +131,7 @@ impl CustomOpcodeParser {
 use crate::opcodes::OPCODE_NONE;
 use OPCODE_NONE as NONE;
 
-const _TMP: u8 =  0xFE; //placehodler
+const _TMP: u8 =  0xFE; //placeholder
 //TODO: add actual opcodes
 static CUSTOM_OPCODES: Map<&'static str, [u8; 3]> = phf_map! {
         //         IMP   IMM   ABS

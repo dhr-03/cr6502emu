@@ -35,7 +35,7 @@ impl Assembler {
             test_tmp: [0; 50],
         }
     }
-    //TODO target
+
     pub fn assemble(&mut self, lines: &str) -> *const u8 {
         let mut interface = AssemblerInterface::new(
             &mut self.test_tmp,
@@ -112,7 +112,7 @@ impl Assembler {
         } else if interface.offset() > interface.rom_size() {
             err_msg(lang::ERR_ROM_TOO_SMALL);
         } else if st2_ok {
-            //Stage 4.1: Write
+            //Stage 4: Write
 
             interface.reset_counter();
 
@@ -155,7 +155,7 @@ impl Assembler {
 
     fn clear_unused_rom(asm: &mut AssemblerInterface) {
         for _ in asm.offset()..asm.rom_size() {
-            asm.write(0); //BRK
+            asm.write(0xEA); //NOP
         }
     }
 }
