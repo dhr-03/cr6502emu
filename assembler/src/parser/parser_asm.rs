@@ -4,7 +4,7 @@ use crate::parser::types::*;
 
 use crate::opcodes::{OPCODES_MAP, OPCODE_NONE};
 
-use crate::js_logger::Logger;
+use crate::js_logger::{Logger, err_code};
 use crate::lang::assembler as lang;
 
 impl Parser {
@@ -17,10 +17,7 @@ impl Parser {
 
         let opcode_val = OPCODES_MAP.get(opcode)
             .ok_or_else(|| {
-                Logger::begin_err();
-                Logger::write_str(lang::ERR_UNKNOWN_OPCODE);
-                Logger::write_code(opcode);
-                Logger::end_msg();
+                err_code(lang::ERR_UNKNOWN_OPCODE, opcode, "");
 
                 ParseError::UnknownOpcode
             })?;
