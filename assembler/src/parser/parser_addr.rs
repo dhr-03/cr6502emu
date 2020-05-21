@@ -4,7 +4,7 @@ use crate::parser::Parser;
 
 use crate::parser::types::*;
 
-use crate::js_regex::{js_re_inx, js_re_nrm};
+use crate::js_regex::{js_re_inx, js_re_nrm, js_re_common};
 use crate::js_logger::{Logger, err_msg};
 use crate::lang::parser as lang;
 
@@ -12,23 +12,14 @@ impl Parser {
     fn parse_re_addr_common(re_result: &[&str], offset: usize, is_i8: bool) -> ParseResult<ValueMode> {
         let str_value = re_result[offset + 1];
 
-        let parse_value = |base: u32| {
-            u16::from_str_radix(str_value, base)
-        };
-
-        let parse_value_i8 = |base: u32| {
-            i8::from_str_radix(str_value, base)
-        };
-
-
         let parse_to_valuemode = |base| {
             let value;
 
             if is_i8 {
-                value = parse_value_i8(base)
+                value = i8::from_str_radix(str_value, base)
                     .map(|v| ValueMode::I8(v));
             } else {
-                value = parse_value(base)
+                value = u16::from_str_radix(str_value, base)
                     .map(|v| match v <= 0xFF {
                         true => ValueMode::U8(v as u8),
                         false => ValueMode::U16(v)
@@ -54,7 +45,7 @@ impl Parser {
             _ => unsafe { unreachable_unchecked() }
         };
 
-        if let Err(_) = &parse_rs {
+        if parse_rs.is_err() {
             Logger::begin_err();
             Logger::write_str(lang::ERR_NUM_PARSE_1);
             Logger::write_code(str_value);
@@ -86,7 +77,7 @@ impl Parser {
             ),
 
             [false, true] => Ok(
-                ParsedValue::new(AddressingMode::Immediate, value, true)
+                ParsedValue::new(AddressingMode::Immediate, value, false)
             ),
 
             //immediate only accepts 1 byte
@@ -130,13 +121,10 @@ impl Parser {
                 __indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
 
             ["(", _, _, ")", "", ""] => {
-                if value.can_be_abs() {
-                    let val = __indexed_to_u16(value);
+                let val = value.into_abs()
+                    .map_err(|_| ParseError::InvalidValue)?;
 
-                    Ok(ParsedValue::new(AddressingMode::Indirect, val, true))
-                } else {
-                    Err(ParseError::InvalidValue)
-                }
+                Ok(ParsedValue::new(AddressingMode::Indirect, val, true))
             }
 
             ["*", _, _, "", "", ""] => match value.is_i8() {
@@ -149,17 +137,20 @@ impl Parser {
             }
 
             ["&", _, _, "", "", ""] => {
-                if value.can_be_abs() {
-                    let val = __indexed_to_u16(value);
+                let val = value.into_abs()
+                    .map_err(|_| ParseError::InvalidValue)?;
 
-                    Ok(ParsedValue::new(AddressingMode::RelativeTarget, val, true))
-                } else {
-                    Err(ParseError::InvalidValue)
-                }
+                Ok(ParsedValue::new(AddressingMode::RelativeTarget, val, true))
             }
 
             _ => Err(ParseError::UnknownAddressingMode)
         }
+    }
+
+    pub fn parse_addr_value(txt: &str, offset: usize, is_i8: bool) -> ParseResult<ValueMode> {
+        let re_result = Self::regex_common(txt)?;
+
+        Self::parse_re_addr_common(&re_result, offset, is_i8)
     }
 }
 
@@ -175,24 +166,6 @@ fn __indexed_zp_or_err(addr_mode: AddressingMode, value: ValueMode, is_zp: bool)
     }
 }
 
-fn __indexed_to_u16(val: ValueMode) -> ValueMode {
-    use ValueMode::{U8, U16, Label};
-
-    match &val {
-        U8(v) => U16(*v as u16),
-        U16(_) | Label(_) => val,
-
-        _ => {
-            #[cfg(debug_assertions)]
-            panic!("invalid into_u16");
-
-            #[allow(unreachable_code)]
-                unsafe { unreachable_unchecked() }
-        }
-    }
-}
-
-
 
 // #########################################
 //                   REGEX
@@ -203,6 +176,20 @@ impl Parser {
             &txt[from..len]
         } else {
             &""
+        }
+    }
+
+    fn regex_common(input: &str) -> ParseResult<[&str; 2]> {
+        let mut bounds = [0; 4];
+        js_re_common(input, &mut bounds);
+
+        if bounds[3] != 0 {
+            Ok([
+                Parser::substr_or_empty(input, bounds[0], bounds[1]),
+                Parser::substr_or_empty(input, bounds[2], bounds[3])
+            ])
+        } else {
+            Err(ParseError::UnknownAddressingMode)
         }
     }
 

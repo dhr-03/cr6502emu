@@ -74,14 +74,19 @@ impl ValueMode {
         }
     }
 
-    pub fn can_be_abs(&self) -> bool {
+
+    pub fn into_abs(self) -> Result<Self, ()> {
         use ValueMode::*;
         match self {
-            U8(_) | U16(_) | Label(_) => true,
-            _ => false
+            U8(v) => Ok(U16(v as u16)),
+            I8(v) => Ok(U16(v as u16)),
+
+            U16(_) | Label(_) | None => Ok(self),
+
+            LabelLo(_) | LabelHi(_) => Err(())
         }
     }
-}
+    }
 
 #[derive(Clone)]
 pub struct ParsedValue {
@@ -122,7 +127,7 @@ impl ParsedValue {
             }
 
             match mode {
-                Implicit | RelativeOffset => assert!(!is_address),
+                Implicit | RelativeOffset | Immediate => assert!(!is_address),
                 _ => assert!(is_address)
             }
         }
