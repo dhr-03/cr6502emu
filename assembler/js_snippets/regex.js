@@ -25,7 +25,11 @@ function execRegex(which, input, bounds) {
     return bounds;
 }
 
-const RE_COMMON_ADDR = new RegExp(RE_COMMON);
+const RE_COMMON_ADDR = new RegExp(
+    String.raw`^` +
+    RE_COMMON +
+    String.raw`$`
+);
 
 export function reCommon(line, container) {
     return execRegex(RE_COMMON_ADDR, line, container);
