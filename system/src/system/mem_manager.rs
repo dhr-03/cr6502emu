@@ -81,6 +81,15 @@ impl MemManager {
 
             *self.bus.data_mut_ref() = val;
         } else {
+            //TODO: temp
+            use wasm_bindgen::prelude::wasm_bindgen;
+            #[wasm_bindgen]
+            extern {
+                fn alert(msg: &str);
+            }
+
+            alert("unk addr: read");
+
             *self.bus.data_mut_ref() = 0;
         }
 
@@ -98,6 +107,15 @@ impl MemManager {
 
         if let Some((dev, offset)) = mapped {
             dev.write(offset, current_data);
+        } else {
+            //TODO: temp
+            use wasm_bindgen::prelude::wasm_bindgen;
+            #[wasm_bindgen]
+            extern {
+                fn alert(msg: &str);
+            }
+
+            alert("unk addr: write");
         }
     }
 

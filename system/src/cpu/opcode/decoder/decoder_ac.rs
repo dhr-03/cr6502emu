@@ -100,21 +100,20 @@ impl Decoder {
         }
 
         let a_usize = a as usize;
-        let c_usize = c as usize;
+        //c=0 and c=2 share the same table, map if necessary. c=3 is invalid
+        let c_bank_usize = (c & 0b01) as usize;
 
-        let opcode = match OPCODES_AC[c_usize].get(a_usize) {
+        let opcode = match OPCODES_AC[c_bank_usize].get(a_usize) {
             Some(v) => *v,
             None => &operations::NOP
         };
 
-        let mask = **ADDR_MASK_AC[c_usize]
+        let mask = **ADDR_MASK_AC[c_bank_usize]
             .get(a_usize)
             .get_or_insert(&NONE);
 
 
-        //c=0 and c=2 share the same table, map if necessary. c=3 is invalid
-        let bank = (c & 0b01) as usize;
-        let addr_mode = *ADDR_MODES_BC[bank]
+        let addr_mode = *ADDR_MODES_BC[c_bank_usize]
             .get(mapped_b as usize)
             .unwrap(); //b == 0bXXX
 

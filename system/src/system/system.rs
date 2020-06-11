@@ -22,6 +22,23 @@ impl System {
         }
     }
 
+    pub fn with_default() -> Self {
+        let mut sys = Self::new();
+
+        //TODO: temp
+        let dev: super::BoxedDev = Box::new(crate::dev::mem::Ram::with_size(0x1000));
+        let holder = super::DeviceHolder::new(dev, 0, 0x1000);
+        sys.mem.devices_mut().push(holder);
+
+
+        let dev: super::BoxedDev = Box::new(crate::dev::mem::Rom::with_size(0x1000));
+        let holder = super::DeviceHolder::new(dev, 0x1000, 0x2000);
+        sys.mem.devices_mut().push(holder);
+
+
+        sys
+    }
+
     pub fn tick(&mut self) {
         self.mem.tick(); //tick the bus and all the devices
 

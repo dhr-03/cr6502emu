@@ -45,12 +45,10 @@ impl CurrentOpcode {
         inter.reg.pc += 1;
     }
 
-    /// #Panics
-    /// Might panic if `self.is_done() == true`
     fn unchecked_execute(&mut self, inter: &mut CPUInterface) {
         //TODO: force read PC+1
 
-        let mut owned_inserted = inter.next_cycle.take(); // consume and replace with None
+        let mut owned_inserted = None;//inter.next_cycle.take(); // consume and replace with None
 
         let actions = owned_inserted
             .get_or_insert_with(|| {
@@ -60,9 +58,11 @@ impl CurrentOpcode {
                 rt
             });
 
-        if self.action_i == 2 { //always the second cycle is a fetch, even on 1 byte opcodes
+        if self.action_i == 1 { //always the second cycle is a fetch, even on 1 byte opcodes
             inter.mem.set_addr(inter.reg.pc);
             inter.mem.read_at_addr();
+
+            inter.reg.pc += 1;
         }
 
         for action in *actions {
