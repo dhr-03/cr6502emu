@@ -3,6 +3,8 @@ use super::Decoder;
 use super::super::{InstructionActions, DecodedInstruction, AddressingActions};
 use super::super::behaviour::{operations, addressing};
 
+use std::cmp::min;
+
 mod __op {
     use super::{InstructionActions, operations};
 
@@ -100,10 +102,11 @@ impl Decoder {
         }
 
         let a_usize = a as usize;
-        //c=0 and c=2 share the same table, map if necessary. c=3 is invalid
+        let c_usize = min(2, c) as usize;
+        //c=0 and c=2 share the same addr table, map if necessary. c=3 is invalid
         let c_bank_usize = (c & 0b01) as usize;
 
-        let opcode = match OPCODES_AC[c_bank_usize].get(a_usize) {
+        let opcode = match OPCODES_AC[c_usize].get(a_usize) {
             Some(v) => *v,
             None => &operations::NOP
         };

@@ -48,7 +48,7 @@ impl CurrentOpcode {
     fn unchecked_execute(&mut self, inter: &mut CPUInterface) {
         //TODO: force read PC+1
 
-        let mut owned_inserted = None;//inter.next_cycle.take(); // consume and replace with None
+        let mut owned_inserted = inter.next_cycle.take(); // consume and replace with None
 
         let actions = owned_inserted
             .get_or_insert_with(|| {
