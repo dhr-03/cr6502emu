@@ -10,8 +10,3 @@ mod js_logger;
 
 mod assembler;
 mod parser;
-
-#[wasm_bindgen]
-pub fn build_date() -> String {
-    env!("build_timestamp").to_owned()
-}
