@@ -1,4 +1,5 @@
-use super::{BoxedDev, DevHolderVec, Bus};
+use crate::dev::BoxedDev;
+use super::{DevHolderVec, Bus};
 
 // The design is kind of weird because i was having trouble with the lack of support for
 // self referencing structs in Rust.
@@ -21,6 +22,10 @@ impl MemManager {
 
     pub fn devices_mut(&mut self) -> &mut DevHolderVec {
         &mut self.devices
+    }
+
+    pub fn devices(&self) -> &DevHolderVec {
+        &self.devices
     }
 
     pub fn tick(&mut self) {

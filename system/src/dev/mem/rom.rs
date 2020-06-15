@@ -17,10 +17,6 @@ impl Rom {
 }
 
 impl DeviceTrait for Rom {
-    fn size(&self) -> usize {
-        self.contents.len()
-    }
-
     fn reset_system(&mut self) {
         //do_nothing();
     }
@@ -33,6 +29,14 @@ impl DeviceTrait for Rom {
 }
 
 impl AddressableDeviceTrait for Rom {
+    fn size(&self) -> u16 {
+        self.contents.len() as u16
+    }
+
+    fn data_ptr(&mut self) -> *const u8 {
+        self.contents.as_ptr()
+    }
+
     fn read(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)

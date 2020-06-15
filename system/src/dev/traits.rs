@@ -1,7 +1,4 @@
 pub trait DeviceTrait {
-    /// Returns the actual size of the device in the address bus.
-    fn size(&self) -> usize;
-
     /// This method is called on every system + cpu tick.
     fn tick(&mut self) {}
 
@@ -15,6 +12,9 @@ pub trait DeviceTrait {
 }
 
 pub trait AddressableDeviceTrait: DeviceTrait {
+    /// Returns the actual size of the device in the address bus.
+    fn size(&self) -> u16;
+
     /// Read value at `offset`.
     ///
     /// The offset has already been validated by `system::MemManager`.
@@ -23,6 +23,7 @@ pub trait AddressableDeviceTrait: DeviceTrait {
     /// Write `value` at `offset`.
     ///
     /// The offset has already been validated by `system::MemManager`.
+    #[allow(unused_variables)]
     fn write(&mut self, offset: u16, value: u8) {
         //TODO: temp
         use wasm_bindgen::prelude::wasm_bindgen;
@@ -32,5 +33,11 @@ pub trait AddressableDeviceTrait: DeviceTrait {
         }
 
         alert("non writable");
+    }
+
+    /// # Returns
+    /// Returns a raw ptr to the device data if possible or a null ptr.
+    fn data_ptr(&mut self) -> *const u8 {
+        std::ptr::null()
     }
 }

@@ -13,10 +13,6 @@ impl Ram {
 }
 
 impl DeviceTrait for Ram {
-    fn size(&self) -> usize {
-        self.contents.len()
-    }
-
     fn reset_system(&mut self) {
         for val in &mut *self.contents {
             *val = 0;
@@ -29,6 +25,14 @@ impl DeviceTrait for Ram {
 }
 
 impl AddressableDeviceTrait for Ram {
+    fn size(&self) -> u16 {
+        self.contents.len() as u16
+    }
+
+    fn data_ptr(&mut self) -> *const u8 {
+        self.contents.as_ptr()
+    }
+
     fn read(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)

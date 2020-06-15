@@ -1,8 +1,9 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::cpu::CPU;
-
 use super::MemManager;
+
+use crate::cpu::CPU;
+use crate::dev::{DeviceId, DeviceFactory, DeviceHolder};
 
 #[wasm_bindgen]
 pub struct System {
@@ -22,19 +23,12 @@ impl System {
         }
     }
 
-    pub fn with_default() -> Self {
+    pub fn with_default_mem_map() -> Self {
         let mut sys = Self::new();
 
-        //TODO: temp
-        let dev: super::BoxedDev = Box::new(crate::dev::mem::Ram::with_size(0x1000));
-        let holder = super::DeviceHolder::new(dev, 0, 0x1000);
-        sys.mem.devices_mut().push(holder);
-
-
-        let dev: super::BoxedDev = Box::new(crate::dev::mem::Rom::with_size(0x1000));
-        let holder = super::DeviceHolder::new(dev, 0x1000, 0x2000);
-        sys.mem.devices_mut().push(holder);
-
+        //TODO: invalid
+        sys.add_device(DeviceId::Ram, 0, 0x1000);
+        sys.add_device(DeviceId::Rom, 0x1000, 0x1000);
 
         sys
     }
@@ -55,12 +49,57 @@ impl System {
         unimplemented!();
     }
 
-    pub fn add_device(&mut self, device: u32, start: u16, end: u16) {
-        unimplemented!();
+    pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool{
+        if (std::u16::MAX - size) >= start { //check for overflows
+            let result = DeviceFactory::with_size(device, size);
+
+            match result {
+                Ok(dev) => {
+                    let end = start + dev.size();
+
+                    let holder = DeviceHolder::new(dev, start, end);
+
+                    self.mem.devices_mut().push(holder);
+
+                    true
+                }
+
+                Err(_) => {
+                    false
+                }
+            }
+        } else {
+            false
+        }
     }
 
-    pub fn remove_device(&mut self, index: usize) {
-        unimplemented!();
+    pub fn remove_device(&mut self, index: usize) -> bool {
+        if index < self.mem.devices_mut().capacity() {
+            self.mem.devices_mut().remove(index);
+
+            true
+        } else {
+            false
+        }
+    }
+
+    /// WARNING: This method might cause system instability,
+    /// make sue you know wat you're doing.
+    #[allow(non_snake_case)]
+    pub fn UNSAFE_device_data_ptr(&mut self, index: usize) -> Option<usize> {
+        self.mem.devices_mut().get_mut(index)
+            .map_or_else(
+                || None,
+                |dev| Some(dev.device_mut().data_ptr() as usize)
+            )
+    }
+
+    pub fn device_size(&self, index: usize) -> Option<u16> {
+        self.mem.devices().get(index)
+            .map_or(
+                None,
+            |dev| Some(dev.device().size())
+            )
     }
 
     pub fn tmp_to_str(&self) -> String {

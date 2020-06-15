@@ -1,4 +1,4 @@
-use super::BoxedDev;
+use crate::dev::BoxedDev;
 use std::ops::Range;
 
 pub struct DeviceHolder {
@@ -21,6 +21,10 @@ impl DeviceHolder {
 
     pub fn device_mut(&mut self) -> &mut BoxedDev {
         &mut self.device
+    }
+
+    pub fn device(&self) -> &BoxedDev {
+        &self.device
     }
 
     pub fn range(&self)  -> &Range<u16> {
