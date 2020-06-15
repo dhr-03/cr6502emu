@@ -65,6 +65,12 @@ impl MemManager {
         self.bus.data()
     }
 
+    /// Mut borrows the data bus value
+    pub fn data_ref_mut(&mut self) -> &mut u8 {
+        self.bus.data_mut_ref()
+    }
+
+
     /// Sets the data bus value
     pub fn set_data(&mut self, data: u8) {
         *self.bus.data_mut_ref() = data;

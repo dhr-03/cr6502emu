@@ -43,6 +43,10 @@ pub fn dec_pc(inter: &mut CPUInterface) {
     inter.reg.pc -= 1;
 }
 
+pub fn set_target_a(inter: &mut CPUInterface) {
+    inter.target_is_mem = false;
+}
+
 // ############### Flags ###############
 #[inline]
 fn set_flag(inter: &mut CPUInterface, flag: FlagPositionOffset) {
@@ -124,7 +128,6 @@ pub fn read_at_pc(inter: &mut CPUInterface) {
 
     inter.reg.pc += 1;
 }
-
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {
@@ -338,9 +341,11 @@ pub fn dey(inter: &mut CPUInterface) {
 
 /* #######################  Shifts  ####################### */
 pub fn asl(inter: &mut CPUInterface) {
-    let old = inter.reg.a;
+    let target = inter.target_mut();
 
-    inter.reg.a <<= 1;
+    let old = *target;
+
+    *target <<= 1;
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
@@ -353,9 +358,11 @@ pub fn asl(inter: &mut CPUInterface) {
 }
 
 pub fn lsr(inter: &mut CPUInterface) {
-    let old = inter.reg.a;
+    let target = inter.target_mut();
 
-    inter.reg.a >>= 1;
+    let old = *target;
+
+    *target >>= 1;
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
@@ -372,8 +379,9 @@ pub fn rol(inter: &mut CPUInterface) {
 
     asl(inter);
 
-    inter.reg.a &= !0b1;
-    inter.reg.a |= old_carry;
+    let target = inter.target_mut();
+    *target &= !0b1;
+    *target |= old_carry;
 }
 
 pub fn ror(inter: &mut CPUInterface) {
@@ -381,8 +389,9 @@ pub fn ror(inter: &mut CPUInterface) {
 
     lsr(inter);
 
-    inter.reg.a &= !(1 << 7);
-    inter.reg.a |= old_carry << 7;
+    let target = inter.target_mut();
+    *target &= !(1 << 7);
+    *target |= old_carry << 7;
 }
 
 

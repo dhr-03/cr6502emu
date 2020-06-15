@@ -34,10 +34,15 @@ impl Decoder {
             None => &NOP
         };
 
-        (
-            &addr::IMP as &AddressingActions,
-            opcode
+        let addr_mode = if c == 2 && a < 4 {
+            &addr::A__
+        } else {
+            &addr::IMP
+        };
 
+        (
+            addr_mode,
+            opcode
         )
     }
 

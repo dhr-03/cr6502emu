@@ -11,7 +11,7 @@ pub struct CPU {
 
     opcode: CurrentOpcode,
 
-    extra_cycle: Option<AddressingCycleRef>
+    extra_cycle: Option<AddressingCycleRef>,
 }
 
 impl CPU {
@@ -21,7 +21,7 @@ impl CPU {
 
             opcode: CurrentOpcode::new(),
 
-            extra_cycle: None
+            extra_cycle: None,
         }
     }
 
@@ -32,6 +32,8 @@ impl CPU {
             reg: &mut self.reg,
 
             next_cycle: &mut self.extra_cycle,
+
+            target_is_mem: true,
         };
 
         self.opcode.execute(&mut inter);

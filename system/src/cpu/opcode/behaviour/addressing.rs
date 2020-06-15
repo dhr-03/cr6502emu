@@ -7,7 +7,12 @@ pub const IMP: [&AddressingCycle; 1] = [
     ]
 ];
 
-pub use IMP as A__;
+pub const A__: [&AddressingCycle; 1] = [
+    &[
+        CycleRef::Fn(operation::set_target_a),
+        CycleRef::OpHardRef(0),
+    ]
+];
 
 pub const IMM: [&AddressingCycle; 1] = [
     &[
@@ -15,6 +20,7 @@ pub const IMM: [&AddressingCycle; 1] = [
         CycleRef::OpHardRef(0),
     ]
 ];
+
 
 //TODO: implement, rmw
 pub const ZP_: [&AddressingCycle; 0] = [];
