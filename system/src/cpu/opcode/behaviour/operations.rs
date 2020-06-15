@@ -140,11 +140,13 @@ pub const LSR: [InstructionFn; 1] = [
 ];
 
 
-//TODO: impl
-pub const ROL: [InstructionFn; 0] = [];
+pub const ROL: [InstructionFn; 1] = [
+    rol
+];
 
-//TODO: impl
-pub const ROR: [InstructionFn; 0] = [];
+pub const ROR: [InstructionFn; 1] = [
+    ror
+];
 
 /* #######################  Jumps & Calls  ####################### */
 

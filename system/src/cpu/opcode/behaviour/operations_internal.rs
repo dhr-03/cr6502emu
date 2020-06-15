@@ -354,11 +354,23 @@ pub fn lsr(inter: &mut CPUInterface) {
     }
 }
 
-//TODO: impl
-pub fn rol(inter: &mut CPUInterface) {}
+pub fn rol(inter: &mut CPUInterface) {
+    let old_carry = (inter.reg.p >> FlagPositionOffset::Carry as u8) & 0b1;
 
-//TODO: impl
-pub fn ror(inter: &mut CPUInterface) {}
+    asl(inter);
+
+    inter.reg.a &= !0b1;
+    inter.reg.a |= old_carry;
+}
+
+pub fn ror(inter: &mut CPUInterface) {
+    let old_carry = (inter.reg.p >> FlagPositionOffset::Carry as u8) & 0b1;
+
+    lsr(inter);
+
+    inter.reg.a &= !(1 << 7);
+    inter.reg.a |= old_carry << 7;
+}
 
 
 /* #######################  Jumps & Calls  ####################### */
