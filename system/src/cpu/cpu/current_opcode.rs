@@ -56,13 +56,6 @@ impl CurrentOpcode {
                 rt
             });
 
-        if self.action_i == 1 { //always the second cycle is a fetch, even on 1 byte opcodes
-            inter.mem.set_addr(inter.reg.pc);
-            inter.mem.read_at_addr();
-
-            inter.reg.pc += 1;
-        }
-
         for action in *actions {
             match action {
                 CycleRef::Fn(fn_ref) => fn_ref(inter),

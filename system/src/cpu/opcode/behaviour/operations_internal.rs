@@ -27,7 +27,7 @@ fn on_unsupported_feature(name: &str) {
     alert_2("This feature is not supported: ", name);
 }
 
-//This should be only be used when a feature such as decimal mode is not yet implemented,
+//This should only be used when a feature such as decimal mode is not yet implemented,
 //but might be in the future.
 fn on_unimplemented_feature(name: &str) {
     alert_2("This feature is not implemented: ", name);
@@ -118,6 +118,13 @@ pub fn pc_bdata(inter: &mut CPUInterface) {
     inter.mem.read_at_addr();
 }
 
+//############### Memory ###############
+pub fn read_at_pc(inter: &mut CPUInterface) {
+    pc_bdata(inter);
+
+    inter.reg.pc += 1;
+}
+
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {
@@ -129,10 +136,16 @@ pub fn lda(inter: &mut CPUInterface) {
 
 pub fn ldx(inter: &mut CPUInterface) {
     inter.reg.x = inter.mem.data();
+
+    set_flag_is_zero(inter, inter.reg.x);
+    set_flag_is_negative(inter, inter.reg.x);
 }
 
 pub fn ldy(inter: &mut CPUInterface) {
     inter.reg.y = inter.mem.data();
+
+    set_flag_is_zero(inter, inter.reg.y);
+    set_flag_is_negative(inter, inter.reg.y);
 }
 
 //TODO: impl

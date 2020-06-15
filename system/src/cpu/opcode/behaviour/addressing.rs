@@ -3,7 +3,6 @@ use super::operations_internal as operation;
 
 pub const IMP: [&AddressingCycle; 1] = [
     &[
-        CycleRef::Fn(operation::dec_pc),
         CycleRef::OpHardRef(0),
     ]
 ];
@@ -12,6 +11,7 @@ pub use IMP as A__;
 
 pub const IMM: [&AddressingCycle; 1] = [
     &[
+        CycleRef::Fn(operation::read_at_pc),
         CycleRef::OpHardRef(0),
     ]
 ];
