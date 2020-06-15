@@ -83,8 +83,8 @@ impl System {
         }
     }
 
-    /// WARNING: This method might cause system instability,
-    /// make sue you know wat you're doing.
+    /// WARNING: Raw pointers might cause system instability,
+    /// make sure you know what you're doing.
     #[allow(non_snake_case)]
     pub fn UNSAFE_device_data_ptr(&mut self, index: usize) -> Option<usize> {
         self.mem.devices_mut().get_mut(index)
@@ -105,7 +105,7 @@ impl System {
     pub fn tmp_to_str(&self) -> String {
         format!("{}\nbus data: {}\nbus addr: {}",
                 self.cpu.tmp_to_str(),
-                self.mem.get_data(),
+                self.mem.data(),
                 self.mem.addr()
         )
     }

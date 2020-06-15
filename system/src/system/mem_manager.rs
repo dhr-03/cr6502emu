@@ -61,18 +61,13 @@ impl MemManager {
 //bus proxy
 impl MemManager {
     /// Returns the data bus value
-    pub fn get_data(&self) -> u8 {
+    pub fn data(&self) -> u8 {
         self.bus.data()
     }
 
     /// Sets the data bus value
     pub fn set_data(&mut self, data: u8) {
         *self.bus.data_mut_ref() = data;
-    }
-
-    /// Returns the address that the bus in pointing to
-    pub fn addr(&self) -> u16 {
-        self.bus.addr()
     }
 
     /// Reads and returns the value in the address `self.addr()`
@@ -122,6 +117,11 @@ impl MemManager {
 
             alert("unk addr: write");
         }
+    }
+
+    /// Returns the address that the bus in pointing to
+    pub fn addr(&self) -> u16 {
+        self.bus.addr()
     }
 
     /// Sets the address pointer to some value

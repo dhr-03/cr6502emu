@@ -12,7 +12,7 @@ const OPCODES_IMP: [&InstructionActions; 30] = [
 
 //XXX: this is messy
 impl Decoder {
-    pub fn decode_imp(a: u8, b: u8, c: u8) -> DecodedInstruction {
+    pub(in super) fn decode_imp(a: u8, b: u8, c: u8) -> DecodedInstruction {
         let offset: isize;
 
         if b == 2 {
@@ -41,7 +41,7 @@ impl Decoder {
         )
     }
 
-    pub fn is_imp(a: u8, b: u8, c: u8) -> bool {
+    pub(in super) fn is_imp(a: u8, b: u8, c: u8) -> bool {
         c != 3 && (
             (b == 0 && c == 0 && a < 4) || //OPCODES_IMP row 0
                 (b == 2 && c != 1) || //OPCODES_IMP row 2 and 3

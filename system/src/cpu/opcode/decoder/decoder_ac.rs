@@ -93,7 +93,7 @@ const ADDR_MASK_AC: [[u8; 8]; 3] = [
 ];
 
 impl Decoder {
-    pub fn decode_c(a: u8, b: u8, c: u8) -> DecodedInstruction {
+    pub(in super) fn decode_c(a: u8, b: u8, c: u8) -> DecodedInstruction {
         let mapped_b;
         if c == 2 && (a == 4 || a == 5) && (b == 5 || b == 7) { //LDX/STX ZPX/ABSX -> ZPY/ABSY
             mapped_b = b - 1

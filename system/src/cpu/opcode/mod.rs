@@ -8,7 +8,6 @@ pub use behaviour::cycle_ref::CycleRef;
 pub use decoder::Decoder;
 
 // ###################
-//TODO: check code for non type references
 pub type CycleFn = fn(inter: &mut super::CPUInterface);
 
 pub type AddressingCycle = [CycleRef];

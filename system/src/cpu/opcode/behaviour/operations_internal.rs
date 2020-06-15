@@ -16,6 +16,7 @@ enum FlagPositionOffset {
 }
 
 use wasm_bindgen::prelude::wasm_bindgen;
+
 #[wasm_bindgen]
 extern {
     #[wasm_bindgen(inline_js = "function alert_2(a, b) {alert(a + b)}")]
@@ -37,6 +38,7 @@ fn on_unimplemented_feature(name: &str) {
 pub fn inc_pc(inter: &mut CPUInterface) {
     inter.reg.pc += 1;
 }
+
 pub fn dec_pc(inter: &mut CPUInterface) {
     inter.reg.pc -= 1;
 }
@@ -67,13 +69,21 @@ fn set_flag_is_negative(inter: &mut CPUInterface, value: u8) {
     inter.reg.p |= (value & (1 << 7))
 }
 
-//TODO
-#[inline]
-fn set_flag_is_carry(inter: &mut CPUInterface, val_1: u8, val_2: u8) {}
+fn set_flag_is_carry(inter: &mut CPUInterface, val: i16) {
+    if val > std::i8::MAX as i16 {
+        set_flag(inter, FlagPositionOffset::Carry)
+    } else {
+        clear_flag(inter, FlagPositionOffset::Carry)
+    }
+}
 
-//TODO
-#[inline]
-fn set_flag_is_overflow(inter: &mut CPUInterface, val_1: u8, val_2: u8) {}
+fn set_flag_is_overflow(inter: &mut CPUInterface, val_1: u8, val_2: u8) {
+    if val_1 & (1 << 7) != val_2 & (1 << 7) {
+        set_flag(inter, FlagPositionOffset::Overflow)
+    } else {
+        clear_flag(inter, FlagPositionOffset::Overflow)
+    }
+}
 
 // ############### Abstractions ###############
 
@@ -111,18 +121,18 @@ pub fn pc_bdata(inter: &mut CPUInterface) {
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {
-    inter.reg.a = inter.mem.get_data();
+    inter.reg.a = inter.mem.data();
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
 }
 
 pub fn ldx(inter: &mut CPUInterface) {
-    inter.reg.x = inter.mem.get_data();
+    inter.reg.x = inter.mem.data();
 }
 
 pub fn ldy(inter: &mut CPUInterface) {
-    inter.reg.y = inter.mem.get_data();
+    inter.reg.y = inter.mem.data();
 }
 
 //TODO: impl
@@ -197,21 +207,21 @@ pub fn plp(inter: &mut CPUInterface) {}
 
 /* #######################  Logical  ####################### */
 pub fn and(inter: &mut CPUInterface) {
-    inter.reg.a &= inter.mem.get_data();
+    inter.reg.a &= inter.mem.data();
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
 }
 
 pub fn eor(inter: &mut CPUInterface) {
-    inter.reg.a ^= inter.mem.get_data();
+    inter.reg.a ^= inter.mem.data();
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
 }
 
 pub fn ora(inter: &mut CPUInterface) {
-    inter.reg.a |= inter.mem.get_data();
+    inter.reg.a |= inter.mem.data();
 
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
@@ -222,28 +232,42 @@ pub fn bit(inter: &mut CPUInterface) {}
 /* #######################  Arithmetic  ####################### */
 pub fn adc(inter: &mut CPUInterface) {
     let val_1 = inter.reg.a;
-    let val_2 = inter.mem.get_data();
+    let val_2 = inter.mem.data();
 
-    inter.reg.a = alu_add__flag_zn(inter, val_1, val_2);
+    let carry = (inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1;
 
-    set_flag_is_carry(inter, val_1, val_2);
+    let result: i16 = (val_1 + val_2 + carry) as i16;
+
+    inter.reg.alu = result as u8;
+    inter.reg.a = inter.reg.alu;
+
+    set_flag_is_zero(inter, inter.reg.alu);
+    set_flag_is_negative(inter, inter.reg.alu);
+
+    set_flag_is_carry(inter, result);
     set_flag_is_overflow(inter, val_1, val_2);
 }
 
 pub fn sbc(inter: &mut CPUInterface) {
     let val_1 = inter.reg.a;
-    let val_2 = inter.mem.get_data();
+    let val_2 = inter.mem.data();
 
-    inter.reg.a = alu_sub__flag_zn(inter, val_1, val_2);
+    let carry = (inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1;
 
-    set_flag_is_carry(inter, val_1, val_2);
+    let result: i16 = (val_1 - val_2 - (1 - carry)) as i16;
+
+    inter.reg.alu = result as u8;
+    inter.reg.a = inter.reg.alu;
+
+    set_flag_is_zero(inter, inter.reg.alu);
+    set_flag_is_negative(inter, inter.reg.alu);
+
+    set_flag_is_carry(inter, result);
     set_flag_is_overflow(inter, val_1, val_2);
 }
 
 fn __generic_cmp(inter: &mut CPUInterface, reg: u8) {
-    let val = inter.mem.get_data();
-
-    //TODO: alu sbc?
+    let val = inter.mem.data();
 
     if reg >= val {
         set_flag(inter, FlagPositionOffset::Carry);
@@ -254,7 +278,6 @@ fn __generic_cmp(inter: &mut CPUInterface, reg: u8) {
     if reg == val {
         set_flag(inter, FlagPositionOffset::Zero);
 
-        //TODO: n ok?
         clear_flag(inter, FlagPositionOffset::Negative);
     } else {
         clear_flag(inter, FlagPositionOffset::Zero);

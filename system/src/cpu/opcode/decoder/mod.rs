@@ -5,5 +5,3 @@ mod decoder_rel;
 mod decoder_non_pattern;
 
 pub use decoder::Decoder;
-
-//TODO: keep methods private

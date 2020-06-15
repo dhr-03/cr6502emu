@@ -1,5 +1,7 @@
 use super::super::DecodedInstruction;
 
+use super::decoder_non_pattern;
+
 pub struct Decoder {}
 
 impl Decoder {

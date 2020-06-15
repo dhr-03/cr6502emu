@@ -5,7 +5,7 @@ use super::super::behaviour::{operations as o, addressing as a};
 
 
 impl Decoder {
-    pub fn decode_non_pattern(op: u8) -> DecodedInstruction {
+    pub(in super) fn decode_non_pattern(op: u8) -> DecodedInstruction {
         match op {
             0x20 => (
                 &a::ASB,
@@ -30,7 +30,7 @@ impl Decoder {
         }
     }
 
-    pub fn is_non_pattern(op: u8) -> bool {
+    pub(in super) fn is_non_pattern(op: u8) -> bool {
         match op {
             0x20 => true, //JSR
             0x6D => true, //JMP ()

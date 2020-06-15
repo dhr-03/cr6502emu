@@ -8,14 +8,14 @@ const OPCODES_REL_A: [&InstructionActions; 8] = [
 ];
 
 impl Decoder {
-    pub fn decode_rel(a: u8) -> DecodedInstruction {
+    pub(in super) fn decode_rel(a: u8) -> DecodedInstruction {
         (
             &addressing::REL,
             OPCODES_REL_A[a as usize] //a == 0bXXX
         )
     }
 
-    pub fn is_rel(_: u8, b: u8, c: u8) -> bool {
+    pub(in super) fn is_rel(_: u8, b: u8, c: u8) -> bool {
         b == 4 && c == 0
     }
 }
