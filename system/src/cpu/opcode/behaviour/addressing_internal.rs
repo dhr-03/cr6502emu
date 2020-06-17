@@ -48,13 +48,13 @@ pub fn zp_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressing
 }
 
 pub fn zp_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    if let AddressingModifier::Read = op_mod {
+    if op_mod.is_read() {
         inter.mem.read_at_addr();
     }
 
     op_fn(inter);
 
-    if let AddressingModifier::Write = op_mod {
+    if op_mod.is_write() {
         inter.mem.write_at_addr()
     }
 }

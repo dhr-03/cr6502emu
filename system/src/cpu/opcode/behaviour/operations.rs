@@ -67,13 +67,13 @@ pub const CPY: AnnotatedOpcode = (cpy, AddressingModifier::Read);
 
 /* #######################  Increments & Decrements  ####################### */
 
-pub const INC: AnnotatedOpcode = (inc, AddressingModifier::PlaceHolder);
+pub const INC: AnnotatedOpcode = (inc, AddressingModifier::RMW);
 
 pub const INX: AnnotatedOpcode = (inx, AddressingModifier::None);
 
 pub const INY: AnnotatedOpcode = (iny, AddressingModifier::None);
 
-pub const DEC: AnnotatedOpcode = (dec, AddressingModifier::PlaceHolder);
+pub const DEC: AnnotatedOpcode = (dec, AddressingModifier::RMW);
 
 pub const DEX: AnnotatedOpcode = (dex, AddressingModifier::None);
 
@@ -82,13 +82,13 @@ pub const DEY: AnnotatedOpcode = (dey, AddressingModifier::None);
 
 /* #######################  Shifts  ####################### */
 
-pub const ASL: AnnotatedOpcode = (asl, AddressingModifier::PlaceHolder);
+pub const ASL: AnnotatedOpcode = (asl, AddressingModifier::RMW);
 
-pub const LSR: AnnotatedOpcode = (lsr, AddressingModifier::PlaceHolder);
+pub const LSR: AnnotatedOpcode = (lsr, AddressingModifier::RMW);
 
-pub const ROL: AnnotatedOpcode = (rol, AddressingModifier::PlaceHolder);
+pub const ROL: AnnotatedOpcode = (rol, AddressingModifier::RMW);
 
-pub const ROR: AnnotatedOpcode = (ror, AddressingModifier::PlaceHolder);
+pub const ROR: AnnotatedOpcode = (ror, AddressingModifier::RMW);
 
 
 /* #######################  Jumps & Calls  ####################### */

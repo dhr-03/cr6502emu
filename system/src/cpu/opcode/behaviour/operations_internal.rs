@@ -305,8 +305,11 @@ pub fn cpy(inter: &mut CPUInterface) {
 }
 
 /* #######################  Increments & Decrements  ####################### */
-//TODO: impl
-pub fn inc(inter: &mut CPUInterface) {}
+pub fn inc(inter: &mut CPUInterface) {
+    inter.mem.set_data(
+        inter.mem.data() + 1
+    );
+}
 
 pub fn inx(inter: &mut CPUInterface) {
     inter.reg.x = alu_add__flag_zn(inter, inter.reg.x, 1)
@@ -316,8 +319,11 @@ pub fn iny(inter: &mut CPUInterface) {
     inter.reg.y = alu_add__flag_zn(inter, inter.reg.y, 1);
 }
 
-//TODO: impl
-pub fn dec(inter: &mut CPUInterface) {}
+pub fn dec(inter: &mut CPUInterface) {
+    inter.mem.set_data(
+        inter.mem.data() - 1
+    );
+}
 
 pub fn dex(inter: &mut CPUInterface) {
     inter.reg.x = alu_sub__flag_zn(inter, inter.reg.x, 1);
