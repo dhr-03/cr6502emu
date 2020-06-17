@@ -13,10 +13,9 @@ pub const IMM: [AddressingFn; 1] = [
     imm
 ];
 
-pub const ZP_: [AddressingFn; 3] = [
+pub const ZP_: [AddressingFn; 2] = [
     zp_1,
     zp_2,
-    zp_3,
 ];
 
 //TODO: implement, rmw
