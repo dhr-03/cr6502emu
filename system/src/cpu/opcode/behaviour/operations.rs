@@ -17,13 +17,13 @@ pub const STX: AnnotatedOpcode = (stx, AddressingModifier::PlaceHolder);
 
 /* #######################  Register Transfers  ####################### */
 
-pub const TAX: AnnotatedOpcode = (tax, AddressingModifier::PlaceHolder);
+pub const TAX: AnnotatedOpcode = (tax, AddressingModifier::None);
 
-pub const TAY: AnnotatedOpcode = (tay, AddressingModifier::PlaceHolder);
+pub const TAY: AnnotatedOpcode = (tay, AddressingModifier::None);
 
-pub const TXA: AnnotatedOpcode = (txa, AddressingModifier::PlaceHolder);
+pub const TXA: AnnotatedOpcode = (txa, AddressingModifier::None);
 
-pub const TYA: AnnotatedOpcode = (tya, AddressingModifier::PlaceHolder);
+pub const TYA: AnnotatedOpcode = (tya, AddressingModifier::None);
 
 
 /* #######################  Stack Operations  ####################### */
@@ -69,15 +69,15 @@ pub const CPY: AnnotatedOpcode = (cpy, AddressingModifier::PlaceHolder);
 
 pub const INC: AnnotatedOpcode = (inc, AddressingModifier::PlaceHolder);
 
-pub const INX: AnnotatedOpcode = (inx, AddressingModifier::PlaceHolder);
+pub const INX: AnnotatedOpcode = (inx, AddressingModifier::None);
 
-pub const INY: AnnotatedOpcode = (iny, AddressingModifier::PlaceHolder);
+pub const INY: AnnotatedOpcode = (iny, AddressingModifier::None);
 
 pub const DEC: AnnotatedOpcode = (dec, AddressingModifier::PlaceHolder);
 
-pub const DEX: AnnotatedOpcode = (dex, AddressingModifier::PlaceHolder);
+pub const DEX: AnnotatedOpcode = (dex, AddressingModifier::None);
 
-pub const DEY: AnnotatedOpcode = (dey, AddressingModifier::PlaceHolder);
+pub const DEY: AnnotatedOpcode = (dey, AddressingModifier::None);
 
 
 /* #######################  Shifts  ####################### */
@@ -121,25 +121,25 @@ pub const BVS: AnnotatedOpcode = (bvs, AddressingModifier::PlaceHolder);
 
 /* #######################  Status Flag Changes  ####################### */
 
-pub const CLC: AnnotatedOpcode = (clc, AddressingModifier::PlaceHolder);
+pub const CLC: AnnotatedOpcode = (clc, AddressingModifier::None);
 
-pub const CLD: AnnotatedOpcode = (cld, AddressingModifier::PlaceHolder);
+pub const CLD: AnnotatedOpcode = (cld, AddressingModifier::None);
 
-pub const CLI: AnnotatedOpcode = (cli, AddressingModifier::PlaceHolder);
+pub const CLI: AnnotatedOpcode = (cli, AddressingModifier::None);
 
-pub const CLV: AnnotatedOpcode = (clv, AddressingModifier::PlaceHolder);
+pub const CLV: AnnotatedOpcode = (clv, AddressingModifier::None);
 
-pub const SEC: AnnotatedOpcode = (sec, AddressingModifier::PlaceHolder);
+pub const SEC: AnnotatedOpcode = (sec, AddressingModifier::None);
 
-pub const SED: AnnotatedOpcode = (sed, AddressingModifier::PlaceHolder);
+pub const SED: AnnotatedOpcode = (sed, AddressingModifier::None);
 
-pub const SEI: AnnotatedOpcode = (sei, AddressingModifier::PlaceHolder);
+pub const SEI: AnnotatedOpcode = (sei, AddressingModifier::None);
 
 
 /* #######################  System Functions  ####################### */
 
 pub const BRK: AnnotatedOpcode = (brk, AddressingModifier::PlaceHolder);
 
-pub const NOP: AnnotatedOpcode = (nop, AddressingModifier::PlaceHolder);
+pub const NOP: AnnotatedOpcode = (nop, AddressingModifier::None);
 
 pub const RTI: AnnotatedOpcode = (rti, AddressingModifier::PlaceHolder);
