@@ -14,7 +14,11 @@ pub const IMM: [AddressingFn; 1] = [
 ];
 
 //TODO: implement, rmw
-pub const ZP_: [AddressingFn; 0] = [];
+pub const ZP_: [AddressingFn; 3] = [
+    zp_1,
+    zp_2,
+    zp_3,
+];
 
 //TODO: implement, rmw
 pub const ZPX: [AddressingFn; 0] = [];

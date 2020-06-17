@@ -45,34 +45,36 @@ fn clear_flag(inter: &mut CPUInterface, flag: FlagPositionOffset) {
 }
 
 #[inline]
-fn set_flag_is_zero(inter: &mut CPUInterface, value: u8) {
-    if value == 0 {
-        set_flag(inter, FlagPositionOffset::Zero);
+fn set_flag_bool(inter: &mut CPUInterface, flag: FlagPositionOffset, value: bool) {
+    if value {
+        set_flag(inter, flag);
     } else {
-        clear_flag(inter, FlagPositionOffset::Zero);
+        clear_flag(inter, flag);
     }
+}
+
+#[inline]
+fn set_flag_is_zero(inter: &mut CPUInterface, value: u8) {
+    set_flag_bool(inter, FlagPositionOffset::Zero, value == 0);
 }
 
 #[inline]
 fn set_flag_is_negative(inter: &mut CPUInterface, value: u8) {
     // if the most significant bit is set, the number is considered negative
+    inter.reg.p &= !(1 << 7);
     inter.reg.p |= (value & (1 << 7))
 }
 
 fn set_flag_is_carry(inter: &mut CPUInterface, val: i16) {
-    if val > std::i8::MAX as i16 {
-        set_flag(inter, FlagPositionOffset::Carry)
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry)
-    }
+    let is_carry = (val > std::i8::MAX as i16) || (val < std::i8::MIN as i16);
+
+    set_flag_bool(inter, FlagPositionOffset::Carry, is_carry);
 }
 
 fn set_flag_is_overflow(inter: &mut CPUInterface, val_1: u8, val_2: u8) {
-    if val_1 & (1 << 7) != val_2 & (1 << 7) {
-        set_flag(inter, FlagPositionOffset::Overflow)
-    } else {
-        clear_flag(inter, FlagPositionOffset::Overflow)
-    }
+    let is_overflow = val_1 & (1 << 7) != val_2 & (1 << 7);
+
+    set_flag_bool(inter, FlagPositionOffset::Overflow, is_overflow);
 }
 
 // ############### Abstractions ###############
@@ -100,7 +102,6 @@ fn alu_sub__flag_zn(inter: &mut CPUInterface, val_1: u8, val_2: u8) -> u8 {
 }
 
 
-
 // ############### Operations ###############
 
 /* #######################  Load/Store Operations  ####################### */
@@ -125,16 +126,18 @@ pub fn ldy(inter: &mut CPUInterface) {
     set_flag_is_negative(inter, inter.reg.y);
 }
 
-//TODO: impl
-pub fn sta(inter: &mut CPUInterface) {}
+pub fn sta(inter: &mut CPUInterface) {
+    inter.mem.set_data(inter.reg.a);
+}
+
+pub fn sty(inter: &mut CPUInterface) {
+    inter.mem.set_data(inter.reg.y);
+}
 
 
-//TODO: impl
-pub fn sty(inter: &mut CPUInterface) {}
-
-
-//TODO: impl
-pub fn stx(inter: &mut CPUInterface) {}
+pub fn stx(inter: &mut CPUInterface) {
+    inter.mem.set_data(inter.reg.x);
+}
 
 
 /* #######################  Register Transfers  ####################### */
@@ -217,7 +220,18 @@ pub fn ora(inter: &mut CPUInterface) {
     set_flag_is_negative(inter, inter.reg.a);
 }
 
-pub fn bit(inter: &mut CPUInterface) {}
+pub fn bit(inter: &mut CPUInterface) {
+    let pattern = inter.reg.a;
+    let value = inter.mem.data();
+
+    let and_rs = value & pattern;
+    set_flag_is_zero(inter, and_rs);
+
+    let bit_6 = value & (1 << 6);
+    set_flag_bool(inter, FlagPositionOffset::Overflow, bit_6 != 0);
+
+    set_flag_is_negative(inter, value);
+}
 
 /* #######################  Arithmetic  ####################### */
 pub fn adc(inter: &mut CPUInterface) {

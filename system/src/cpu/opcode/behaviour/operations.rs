@@ -2,17 +2,17 @@ use super::super::{AnnotatedOpcode, AddressingModifier};
 use super::operations_internal::*;
 
 /* #######################  Load/Store Operations  ####################### */
-pub const LDA: AnnotatedOpcode = (lda, AddressingModifier::PlaceHolder);
+pub const LDA: AnnotatedOpcode = (lda, AddressingModifier::Read);
 
-pub const LDX: AnnotatedOpcode = (ldx, AddressingModifier::PlaceHolder);
+pub const LDX: AnnotatedOpcode = (ldx, AddressingModifier::Read);
 
-pub const LDY: AnnotatedOpcode = (ldy, AddressingModifier::PlaceHolder);
+pub const LDY: AnnotatedOpcode = (ldy, AddressingModifier::Read);
 
-pub const STA: AnnotatedOpcode = (sta, AddressingModifier::PlaceHolder);
+pub const STA: AnnotatedOpcode = (sta, AddressingModifier::Write);
 
-pub const STY: AnnotatedOpcode = (sty, AddressingModifier::PlaceHolder);
+pub const STY: AnnotatedOpcode = (sty, AddressingModifier::Write);
 
-pub const STX: AnnotatedOpcode = (stx, AddressingModifier::PlaceHolder);
+pub const STX: AnnotatedOpcode = (stx, AddressingModifier::Write);
 
 
 /* #######################  Register Transfers  ####################### */
@@ -43,26 +43,26 @@ pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::PlaceHolder);
 
 /* #######################  Logical  ####################### */
 
-pub const AND: AnnotatedOpcode = (and, AddressingModifier::PlaceHolder);
+pub const AND: AnnotatedOpcode = (and, AddressingModifier::Read);
 
-pub const EOR: AnnotatedOpcode = (eor, AddressingModifier::PlaceHolder);
+pub const EOR: AnnotatedOpcode = (eor, AddressingModifier::Read);
 
-pub const ORA: AnnotatedOpcode = (ora, AddressingModifier::PlaceHolder);
+pub const ORA: AnnotatedOpcode = (ora, AddressingModifier::Read);
 
-pub const BIT: AnnotatedOpcode = (bit, AddressingModifier::PlaceHolder);
+pub const BIT: AnnotatedOpcode = (bit, AddressingModifier::Read);
 
 
 /* #######################  Arithmetic  ####################### */
 
-pub const ADC: AnnotatedOpcode = (adc, AddressingModifier::PlaceHolder);
+pub const ADC: AnnotatedOpcode = (adc, AddressingModifier::Read);
 
-pub const SBC: AnnotatedOpcode = (sbc, AddressingModifier::PlaceHolder);
+pub const SBC: AnnotatedOpcode = (sbc, AddressingModifier::Read);
 
-pub const CMP: AnnotatedOpcode = (cmp, AddressingModifier::PlaceHolder);
+pub const CMP: AnnotatedOpcode = (cmp, AddressingModifier::Read);
 
-pub const CPX: AnnotatedOpcode = (cpx, AddressingModifier::PlaceHolder);
+pub const CPX: AnnotatedOpcode = (cpx, AddressingModifier::Read);
 
-pub const CPY: AnnotatedOpcode = (cpy, AddressingModifier::PlaceHolder);
+pub const CPY: AnnotatedOpcode = (cpy, AddressingModifier::Read);
 
 
 /* #######################  Increments & Decrements  ####################### */
