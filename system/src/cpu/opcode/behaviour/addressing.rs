@@ -27,8 +27,12 @@ pub const ZPY: [AddressingFn; 0] = [];
 //TODO: implement
 pub const REL: [AddressingFn; 0] = [];
 
-//TODO: implement
-pub const ABS: [AddressingFn; 0] = [];
+//TODO: rmw
+pub const ABS: [AddressingFn; 3] = [
+    abs_1,
+    abs_2,
+    abs_3,
+];
 
 //TODO: implement, rmw
 pub const ABX: [AddressingFn; 0] = [];

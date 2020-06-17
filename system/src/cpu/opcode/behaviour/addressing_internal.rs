@@ -15,8 +15,11 @@ fn read_at_pc_inc(inter: &mut CPUInterface) {
 }
 
 
-// ############### Functions ###############
+// A few functions do exactly the same thing, but with different names.
+// I'm doing this simplicity and to avoid bugs in the future,
+// surely the compiler will detect those and "unify" them.
 
+// ############### Functions ###############
 
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
@@ -57,7 +60,34 @@ pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingMo
     }
 }
 
-// #######  #######
+// ####### Absolute #######
+pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    inter.reg.itr = inter.mem.data()
+}
+
+pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    inter.mem.set_addr_hi(inter.mem.data());
+    inter.mem.set_addr_lo(inter.reg.itr)
+}
+
+
+
+pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    if op_mod.is_read() {
+        inter.mem.read_at_addr();
+    }
+
+    op_fn(inter);
+
+    if op_mod.is_write() {
+        inter.mem.write_at_addr()
+    }
+}
+
 // #######  #######
 // #######  #######
 // #######  #######

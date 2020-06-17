@@ -42,7 +42,7 @@ pub struct RegisterContainer {
     /// Internal (custom) Temp Register
     /// ---
     /// Used by the CPU to store values temporally.
-    pub itr: AddrRegister,
+    pub itr: DataRegister,
 }
 
 impl RegisterContainer {
@@ -59,8 +59,7 @@ impl RegisterContainer {
             pc: AddrRegister::zero(),
             s: DataRegister::zero(),
 
-            //XXX: are we using this ?
-            itr: AddrRegister::zero(),
+            itr: DataRegister::zero(),
         };
 
         tmp.reset();
