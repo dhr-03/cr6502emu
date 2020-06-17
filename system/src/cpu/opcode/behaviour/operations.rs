@@ -1,230 +1,145 @@
-use super::super::InstructionFn;
+use super::super::{AnnotatedOpcode, AddressingModifier};
 use super::operations_internal::*;
 
 /* #######################  Load/Store Operations  ####################### */
-pub const LDA: [InstructionFn; 1] = [
-    lda
-];
+pub const LDA: AnnotatedOpcode = (lda, AddressingModifier::PlaceHolder);
 
-pub const LDX: [InstructionFn; 1] = [
-    ldx
-];
+pub const LDX: AnnotatedOpcode = (ldx, AddressingModifier::PlaceHolder);
 
-pub const LDY: [InstructionFn; 1] = [
-    ldy
-];
+pub const LDY: AnnotatedOpcode = (ldy, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const STA: [InstructionFn; 0] = [];
+pub const STA: AnnotatedOpcode = (sta, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const STY: [InstructionFn; 0] = [];
+pub const STY: AnnotatedOpcode = (sty, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const STX: [InstructionFn; 0] = [];
+pub const STX: AnnotatedOpcode = (stx, AddressingModifier::PlaceHolder);
+
 
 /* #######################  Register Transfers  ####################### */
 
-pub const TAX: [InstructionFn; 1] = [
-    tax
-];
+pub const TAX: AnnotatedOpcode = (tax, AddressingModifier::PlaceHolder);
 
-pub const TAY: [InstructionFn; 1] = [
-    tay
-];
+pub const TAY: AnnotatedOpcode = (tay, AddressingModifier::PlaceHolder);
 
-pub const TXA: [InstructionFn; 1] = [
-    txa
-];
+pub const TXA: AnnotatedOpcode = (txa, AddressingModifier::PlaceHolder);
 
-pub const TYA: [InstructionFn; 1] = [
-    tya
-];
+pub const TYA: AnnotatedOpcode = (tya, AddressingModifier::PlaceHolder);
+
 
 /* #######################  Stack Operations  ####################### */
 
-pub const TSX: [InstructionFn; 1] = [
-    tsx
-];
+pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::PlaceHolder);
 
-pub const TXS: [InstructionFn; 1] = [
-    txs
-];
+pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const PHA: [InstructionFn; 0] = [];
+pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const PHP: [InstructionFn; 0] = [];
+pub const PHP: AnnotatedOpcode = (php, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const PLA: [InstructionFn; 0] = [];
+pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const PLP: [InstructionFn; 0] = [];
+pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::PlaceHolder);
+
 
 /* #######################  Logical  ####################### */
 
-pub const AND: [InstructionFn; 1] = [
-    and
-];
+pub const AND: AnnotatedOpcode = (and, AddressingModifier::PlaceHolder);
 
-pub const EOR: [InstructionFn; 1] = [
-    eor
-];
+pub const EOR: AnnotatedOpcode = (eor, AddressingModifier::PlaceHolder);
 
-pub const ORA: [InstructionFn; 1] = [
-    ora
-];
+pub const ORA: AnnotatedOpcode = (ora, AddressingModifier::PlaceHolder);
 
-pub const BIT: [InstructionFn; 1] = [
-    bit
-];
+pub const BIT: AnnotatedOpcode = (bit, AddressingModifier::PlaceHolder);
+
 
 /* #######################  Arithmetic  ####################### */
 
-pub const ADC: [InstructionFn; 1] = [
-    adc
-];
+pub const ADC: AnnotatedOpcode = (adc, AddressingModifier::PlaceHolder);
 
-pub const SBC: [InstructionFn; 1] = [
-    sbc
-];
+pub const SBC: AnnotatedOpcode = (sbc, AddressingModifier::PlaceHolder);
 
-pub const CMP: [InstructionFn; 1] = [
-    cmp
-];
+pub const CMP: AnnotatedOpcode = (cmp, AddressingModifier::PlaceHolder);
 
-pub const CPX: [InstructionFn; 1] = [
-    cpx
-];
+pub const CPX: AnnotatedOpcode = (cpx, AddressingModifier::PlaceHolder);
 
-pub const CPY: [InstructionFn; 1] = [
-    cpy
-];
+pub const CPY: AnnotatedOpcode = (cpy, AddressingModifier::PlaceHolder);
 
 
 /* #######################  Increments & Decrements  ####################### */
 
+pub const INC: AnnotatedOpcode = (inc, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const INC: [InstructionFn; 0] = [];
+pub const INX: AnnotatedOpcode = (inx, AddressingModifier::PlaceHolder);
 
-pub const INX: [InstructionFn; 1] = [
-    inx
-];
+pub const INY: AnnotatedOpcode = (iny, AddressingModifier::PlaceHolder);
 
-pub const INY: [InstructionFn; 1] = [
-    iny
-];
+pub const DEC: AnnotatedOpcode = (dec, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const DEC: [InstructionFn; 0] = [];
+pub const DEX: AnnotatedOpcode = (dex, AddressingModifier::PlaceHolder);
 
-pub const DEX: [InstructionFn; 1] = [
-    dex
-];
+pub const DEY: AnnotatedOpcode = (dey, AddressingModifier::PlaceHolder);
 
-pub const DEY: [InstructionFn; 1] = [
-    dey
-];
 
 /* #######################  Shifts  ####################### */
 
-pub const ASL: [InstructionFn; 1] = [
-    asl
-];
+pub const ASL: AnnotatedOpcode = (asl, AddressingModifier::PlaceHolder);
 
-pub const LSR: [InstructionFn; 1] = [
-    lsr
-];
+pub const LSR: AnnotatedOpcode = (lsr, AddressingModifier::PlaceHolder);
 
+pub const ROL: AnnotatedOpcode = (rol, AddressingModifier::PlaceHolder);
 
-pub const ROL: [InstructionFn; 1] = [
-    rol
-];
+pub const ROR: AnnotatedOpcode = (ror, AddressingModifier::PlaceHolder);
 
-pub const ROR: [InstructionFn; 1] = [
-    ror
-];
 
 /* #######################  Jumps & Calls  ####################### */
 
+pub const JMP: AnnotatedOpcode = (jmp, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const JMP: [InstructionFn; 0] = [];
+pub const JSR: AnnotatedOpcode = (jsr, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const JSR: [InstructionFn; 0] = [];
+pub const RTS: AnnotatedOpcode = (rts, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const RTS: [InstructionFn; 0] = [];
 
 /* #######################  Branches  ####################### */
 
+pub const BCC: AnnotatedOpcode = (bcc, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BCC: [InstructionFn; 0] = [];
+pub const BCS: AnnotatedOpcode = (bcs, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BCS: [InstructionFn; 0] = [];
+pub const BEQ: AnnotatedOpcode = (beq, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BEQ: [InstructionFn; 0] = [];
+pub const BMI: AnnotatedOpcode = (bmi, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BMI: [InstructionFn; 0] = [];
+pub const BNE: AnnotatedOpcode = (bne, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BNE: [InstructionFn; 0] = [];
+pub const BPL: AnnotatedOpcode = (bpl, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BPL: [InstructionFn; 0] = [];
+pub const BVC: AnnotatedOpcode = (bvc, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BVC: [InstructionFn; 0] = [];
+pub const BVS: AnnotatedOpcode = (bvs, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BVS: [InstructionFn; 0] = [];
 
 /* #######################  Status Flag Changes  ####################### */
 
-pub const CLC: [InstructionFn; 1] = [
-    clc
-];
+pub const CLC: AnnotatedOpcode = (clc, AddressingModifier::PlaceHolder);
 
-pub const CLD: [InstructionFn; 1] = [
-    cld
-];
+pub const CLD: AnnotatedOpcode = (cld, AddressingModifier::PlaceHolder);
 
-pub const CLI: [InstructionFn; 1] = [
-    cli
-];
+pub const CLI: AnnotatedOpcode = (cli, AddressingModifier::PlaceHolder);
 
-pub const CLV: [InstructionFn; 1] = [
-    clv
-];
+pub const CLV: AnnotatedOpcode = (clv, AddressingModifier::PlaceHolder);
 
-pub const SEC: [InstructionFn; 1] = [
-    sec
-];
+pub const SEC: AnnotatedOpcode = (sec, AddressingModifier::PlaceHolder);
 
-pub const SED: [InstructionFn; 1] = [
-    sed
-];
+pub const SED: AnnotatedOpcode = (sed, AddressingModifier::PlaceHolder);
 
-pub const SEI: [InstructionFn; 1] = [
-    sei
-];
+pub const SEI: AnnotatedOpcode = (sei, AddressingModifier::PlaceHolder);
+
+
 /* #######################  System Functions  ####################### */
 
+pub const BRK: AnnotatedOpcode = (brk, AddressingModifier::PlaceHolder);
 
-//TODO: impl
-pub const BRK: [InstructionFn; 0] = [];
+pub const NOP: AnnotatedOpcode = (nop, AddressingModifier::PlaceHolder);
 
-pub const NOP: [InstructionFn; 1] = [
-    nop
-];
-
-//TODO: impl
-pub const RTI: [InstructionFn; 0] = [];
+pub const RTI: AnnotatedOpcode = (rti, AddressingModifier::PlaceHolder);

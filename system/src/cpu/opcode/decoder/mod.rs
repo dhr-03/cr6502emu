@@ -1,7 +1,5 @@
 mod decoder;
-mod decoder_ac;
-mod decoder_imp;
-mod decoder_rel;
-mod decoder_non_pattern;
+mod data;
 
 pub use decoder::Decoder;
+pub(in self) use data::DECODE_TABLE;

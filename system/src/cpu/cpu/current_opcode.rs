@@ -3,14 +3,15 @@ use super::CPUInterface;
 use crate::cpu::opcode::Decoder;
 use super::super::opcode::{
     AddressingActions,
-    InstructionActions, CycleRef,
+    AnnotatedOpcode,
     addressing, operations,
 };
 
 
 pub struct CurrentOpcode {
     actions: &'static AddressingActions,
-    op: &'static InstructionActions,
+
+    op: AnnotatedOpcode,
 
     action_i: usize,
 }
@@ -19,13 +20,13 @@ impl CurrentOpcode {
     pub fn new() -> Self {
         CurrentOpcode {
             actions: &addressing::IMP,
-            op: &operations::NOP,
+            op: operations::NOP,
 
             action_i: std::usize::MAX, //force a self.re_init()
         }
     }
 
-    pub fn re_init(&mut self, actions: &'static AddressingActions, op: &'static InstructionActions) {
+    pub fn re_init(&mut self, actions: &'static AddressingActions, op: AnnotatedOpcode) {
         self.actions = actions;
         self.op = op;
 
@@ -40,6 +41,7 @@ impl CurrentOpcode {
         let opcode = inter.mem.read_at_addr();
 
         let (addr, op) = Decoder::decode(opcode);
+
         self.re_init(addr, op);
 
         inter.reg.pc += 1;
@@ -48,7 +50,7 @@ impl CurrentOpcode {
     fn unchecked_execute(&mut self, inter: &mut CPUInterface) {
         let mut owned_inserted = inter.next_cycle.take(); // consume and replace with None
 
-        let actions = owned_inserted
+        let addr_action = owned_inserted
             .get_or_insert_with(|| {
                 let rt = self.actions[self.action_i];
                 self.action_i += 1;
@@ -56,23 +58,8 @@ impl CurrentOpcode {
                 rt
             });
 
-        for action in *actions {
-            match action {
-                CycleRef::Fn(fn_ref) => fn_ref(inter),
 
-                CycleRef::OpHardRef(i) => {
-                    self.op[*i as usize](inter)
-                }
-
-                CycleRef::OpSoftRef(i) => {
-                    let fn_opt = self.op.get(*i as usize);
-
-                    if let Some(fn_ref) = fn_opt {
-                        fn_ref(inter);
-                    }
-                }
-            }
-        }
+        addr_action(inter, self.op.0, self.op.1);
     }
 
     pub fn is_done(&self) -> bool {

@@ -1,7 +1,7 @@
 use super::{CPUInterface, CurrentOpcode};
 use super::super::{
     register::RegisterContainer,
-    opcode::AddressingCycleRef,
+    opcode::AddressingFn,
 };
 
 use crate::system::MemManager;
@@ -11,7 +11,7 @@ pub struct CPU {
 
     opcode: CurrentOpcode,
 
-    extra_cycle: Option<AddressingCycleRef>,
+    extra_cycle: Option<AddressingFn>,
 }
 
 impl CPU {

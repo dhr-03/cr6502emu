@@ -1,68 +1,59 @@
-use super::super::{CycleRef, AddressingCycle};
-use super::operations_internal as operation;
+use super::super::AddressingFn;
+use super::addressing_internal::*;
 
-pub const IMP: [&AddressingCycle; 1] = [
-    &[
-        CycleRef::OpHardRef(0),
-    ]
+pub const IMP: [AddressingFn; 1] = [
+    imp
 ];
 
-pub const A__: [&AddressingCycle; 1] = [
-    &[
-        CycleRef::Fn(operation::set_target_a),
-        CycleRef::OpHardRef(0),
-    ]
+pub const A__: [AddressingFn; 1] = [
+    a__
 ];
 
-pub const IMM: [&AddressingCycle; 1] = [
-    &[
-        CycleRef::Fn(operation::read_at_pc),
-        CycleRef::OpHardRef(0),
-    ]
+pub const IMM: [AddressingFn; 1] = [
+    imm
 ];
 
+//TODO: implement, rmw
+pub const ZP_: [AddressingFn; 0] = [];
 
 //TODO: implement, rmw
-pub const ZP_: [&AddressingCycle; 0] = [];
+pub const ZPX: [AddressingFn; 0] = [];
+
+//TODO: implement
+pub const ZPY: [AddressingFn; 0] = [];
+
+//TODO: implement
+pub const REL: [AddressingFn; 0] = [];
+
+//TODO: implement
+pub const ABS: [AddressingFn; 0] = [];
 
 //TODO: implement, rmw
-pub const ZPX: [&AddressingCycle; 0] = [];
+pub const ABX: [AddressingFn; 0] = [];
 
 //TODO: implement
-pub const ZPY: [&AddressingCycle; 0] = [];
+pub const ABY: [AddressingFn; 0] = [];
 
 //TODO: implement
-pub const REL: [&AddressingCycle; 0] = [];
+pub const IND: [AddressingFn; 0] = [];
 
 //TODO: implement
-pub const ABS: [&AddressingCycle; 0] = [];
-
-//TODO: implement, rmw
-pub const ABX: [&AddressingCycle; 0] = [];
+pub const IDX: [AddressingFn; 0] = [];
 
 //TODO: implement
-pub const ABY: [&AddressingCycle; 0] = [];
+pub const IXD: [AddressingFn; 0] = [];
 
 //TODO: implement
-pub const IND: [&AddressingCycle; 0] = [];
+pub const ASB: [AddressingFn; 0] = []; //absolute JSR
 
 //TODO: implement
-pub const IDX: [&AddressingCycle; 0] = [];
+pub const SPH: [AddressingFn; 0] = []; //stack push
 
 //TODO: implement
-pub const IXD: [&AddressingCycle; 0] = [];
+pub const SPL: [AddressingFn; 0] = []; //stack pull
 
 //TODO: implement
-pub const ASB: [&AddressingCycle; 0] = []; //absolute JSR
+pub const SRT: [AddressingFn; 0] = []; //stack RTS
 
 //TODO: implement
-pub const SPH: [&AddressingCycle; 0] = []; //stack push
-
-//TODO: implement
-pub const SPL: [&AddressingCycle; 0] = []; //stack pull
-
-//TODO: implement
-pub const SRT: [&AddressingCycle; 0] = []; //stack RTS
-
-//TODO: implement
-pub const SBK: [&AddressingCycle; 0] = []; //stack BRK
+pub const SBK: [AddressingFn; 0] = []; //stack BRK

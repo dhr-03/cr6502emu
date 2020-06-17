@@ -1,20 +1,18 @@
 mod behaviour;
 mod decoder;
+mod addr_modifier;
 
 pub use behaviour::{addressing, operations};
 
-pub use behaviour::cycle_ref::CycleRef;
-
 pub use decoder::Decoder;
 
+pub use addr_modifier::AddressingModifier;
+
 // ###################
-pub type CycleFn = fn(inter: &mut super::CPUInterface);
+pub type InstructionFn = fn(inter: &mut super::CPUInterface);
+pub type AddressingFn = fn(inter: &mut super::CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier);
 
-pub type AddressingCycle = [CycleRef];
-pub type AddressingCycleRef = &'static [CycleRef];
-pub type AddressingActions = [&'static AddressingCycle];
+pub type AnnotatedOpcode = (InstructionFn, AddressingModifier);
+pub type AddressingActions = [AddressingFn];
 
-pub type InstructionFn = CycleFn;
-pub type InstructionActions = [InstructionFn];
-
-pub type DecodedInstruction = (&'static AddressingActions, &'static InstructionActions);
+pub type DecodedInstruction = (&'static AddressingActions, AnnotatedOpcode);

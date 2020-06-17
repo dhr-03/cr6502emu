@@ -33,20 +33,6 @@ fn on_unimplemented_feature(name: &str) {
     alert_2("This feature is not implemented: ", name);
 }
 
-// ############### Tools ###############
-
-pub fn inc_pc(inter: &mut CPUInterface) {
-    inter.reg.pc += 1;
-}
-
-pub fn dec_pc(inter: &mut CPUInterface) {
-    inter.reg.pc -= 1;
-}
-
-pub fn set_target_a(inter: &mut CPUInterface) {
-    inter.target_is_mem = false;
-}
-
 // ############### Flags ###############
 #[inline]
 fn set_flag(inter: &mut CPUInterface, flag: FlagPositionOffset) {
@@ -113,21 +99,9 @@ fn alu_sub__flag_zn(inter: &mut CPUInterface, val_1: u8, val_2: u8) -> u8 {
     inter.reg.alu
 }
 
-//############### Transfers ###############
-pub fn pc_bdata(inter: &mut CPUInterface) {
-    inter.mem.set_addr(
-        inter.reg.pc
-    );
 
-    inter.mem.read_at_addr();
-}
 
-//############### Memory ###############
-pub fn read_at_pc(inter: &mut CPUInterface) {
-    pc_bdata(inter);
-
-    inter.reg.pc += 1;
-}
+// ############### Operations ###############
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {

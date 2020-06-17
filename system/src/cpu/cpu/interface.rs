@@ -1,6 +1,6 @@
 use crate::cpu::{
     register::RegisterContainer,
-    opcode::AddressingCycleRef,
+    opcode::AddressingFn,
 };
 
 use crate::system::MemManager;
@@ -10,7 +10,7 @@ pub struct CPUInterface<'a> {
 
     pub reg: &'a mut RegisterContainer,
 
-    pub next_cycle: &'a mut Option<AddressingCycleRef>,
+    pub next_cycle: &'a mut Option<AddressingFn>,
 
     pub target_is_mem: bool,
 }
