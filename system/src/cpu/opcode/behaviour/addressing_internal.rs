@@ -43,12 +43,12 @@ pub fn a__(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingMo
 // ####### Zero Page #######
 pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
-
-    inter.mem.set_addr_hi(0);
-    inter.mem.set_addr_lo(inter.mem.data())
 }
 
 pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr_hi(0);
+    inter.mem.set_addr_lo(inter.mem.data());
+
     if op_mod.is_read() {
         inter.mem.read_at_addr();
     }
@@ -69,13 +69,13 @@ pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressin
 
 pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
-
-    inter.mem.set_addr_hi(inter.mem.data());
-    inter.mem.set_addr_lo(inter.reg.itr)
 }
 
 
 pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr_hi(inter.mem.data());
+    inter.mem.set_addr_lo(inter.reg.itr);
+
     if op_mod.is_read() {
         inter.mem.read_at_addr();
     }
