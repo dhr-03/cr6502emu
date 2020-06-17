@@ -62,12 +62,13 @@ impl CurrentOpcode {
         addr_action(inter, self.op.0, self.op.1);
     }
 
-    pub fn is_done(&self) -> bool {
-        self.action_i >= self.actions.len()
+    pub fn is_done(&self, inter: &mut CPUInterface) -> bool {
+        self.action_i >= self.actions.len() &&
+            inter.next_cycle.is_none()
     }
 
     pub fn execute(&mut self, inter: &mut CPUInterface) {
-        if self.is_done() {
+        if self.is_done(inter) {
             self.fetch(inter);
 
             *inter.next_cycle = None;

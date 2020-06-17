@@ -75,7 +75,6 @@ pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressin
 }
 
 
-
 pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
     if op_mod.is_read() {
         inter.mem.read_at_addr();
@@ -83,9 +82,19 @@ pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
 
     op_fn(inter);
 
-    if op_mod.is_write() {
-        inter.mem.write_at_addr()
+    if let AddressingModifier::Write = op_mod {
+        inter.mem.write_at_addr();
+    } else if let AddressingModifier::RMW = op_mod {
+        *inter.next_cycle = Some(abs_extra_1);
     }
+}
+
+fn abs_extra_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    *inter.next_cycle = Some(abs_extra_2);
+}
+
+fn abs_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.write_at_addr();
 }
 
 // #######  #######
