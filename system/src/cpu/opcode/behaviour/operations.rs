@@ -93,7 +93,7 @@ pub const ROR: AnnotatedOpcode = (ror, AddressingModifier::RMW);
 
 /* #######################  Jumps & Calls  ####################### */
 
-pub const JMP: AnnotatedOpcode = (jmp, AddressingModifier::PlaceHolder);
+pub const JMP: AnnotatedOpcode = (jmp, AddressingModifier::None);
 
 pub const JSR: AnnotatedOpcode = (jsr, AddressingModifier::PlaceHolder);
 

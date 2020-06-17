@@ -71,7 +71,6 @@ pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressin
     read_at_pc_inc(inter);
 }
 
-
 pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
     inter.mem.set_addr_hi(inter.mem.data());
     inter.mem.set_addr_lo(inter.reg.itr);
@@ -97,7 +96,19 @@ fn abs_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Address
     inter.mem.write_at_addr();
 }
 
-// #######  #######
+// ####### ASB (ABS JUMP) #######
+pub fn asb_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    inter.reg.itr = inter.mem.data()
+}
+
+pub fn asb_2(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    op_fn(inter);
+}
+
 // #######  #######
 // #######  #######
 

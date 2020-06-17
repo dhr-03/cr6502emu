@@ -390,9 +390,14 @@ pub fn ror(inter: &mut CPUInterface) {
 
 
 /* #######################  Jumps & Calls  ####################### */
-//TODO: impl
-pub fn jmp(inter: &mut CPUInterface) {}
+pub fn jmp(inter: &mut CPUInterface) {
+    let mut new_addr: u16 = 0;
 
+    new_addr = inter.reg.itr as u16;
+    new_addr |= (inter.mem.data() as u16) << 8;
+
+    inter.reg.pc = new_addr;
+}
 
 //TODO: impl
 pub fn jsr(inter: &mut CPUInterface) {}
