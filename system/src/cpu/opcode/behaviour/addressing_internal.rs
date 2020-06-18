@@ -60,6 +60,41 @@ pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingMo
     }
 }
 
+// ####### Relative #######
+pub fn rel(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    // We don't have any direct way of communicating with the opcode fn.
+    // If the fn changes itr, a branch must be taken.
+    inter.reg.itr = 0;
+
+    op_fn(inter);
+
+    if inter.reg.itr != 0 {
+        *inter.next_cycle = Some(rel_extra_1); //take branch
+    }
+}
+
+fn rel_extra_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let offset = inter.mem.data();
+
+    // the cpu can only work with 8bit numbers, if the op carries, it needs a extra cycle.
+    if (std::u8::MAX - (inter.reg.pc as u8)) < offset {
+        *inter.next_cycle = Some(rel_extra_2);
+    } else {
+        rel_extra_2(inter, _op_fn, _op_mod);
+    }
+}
+
+fn rel_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let offset = inter.mem.data();
+    let offset_signed = offset as i16;
+
+    let new_pc = (inter.reg.pc as i16) + offset_signed;
+
+    inter.reg.pc = new_pc as u16;
+}
+
 // ####### Absolute #######
 pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);

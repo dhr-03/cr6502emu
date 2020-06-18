@@ -24,8 +24,9 @@ pub const ZPX: [AddressingFn; 0] = [];
 //TODO: implement
 pub const ZPY: [AddressingFn; 0] = [];
 
-//TODO: implement
-pub const REL: [AddressingFn; 0] = [];
+pub const REL: [AddressingFn; 1] = [
+    rel
+];
 
 pub const ABS: [AddressingFn; 3] = [
     abs_1,

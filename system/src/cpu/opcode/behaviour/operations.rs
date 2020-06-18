@@ -102,21 +102,21 @@ pub const RTS: AnnotatedOpcode = (rts, AddressingModifier::PlaceHolder);
 
 /* #######################  Branches  ####################### */
 
-pub const BCC: AnnotatedOpcode = (bcc, AddressingModifier::PlaceHolder);
+pub const BCC: AnnotatedOpcode = (bcc, AddressingModifier::None);
 
-pub const BCS: AnnotatedOpcode = (bcs, AddressingModifier::PlaceHolder);
+pub const BCS: AnnotatedOpcode = (bcs, AddressingModifier::None);
 
-pub const BEQ: AnnotatedOpcode = (beq, AddressingModifier::PlaceHolder);
+pub const BEQ: AnnotatedOpcode = (beq, AddressingModifier::None);
 
-pub const BMI: AnnotatedOpcode = (bmi, AddressingModifier::PlaceHolder);
+pub const BMI: AnnotatedOpcode = (bmi, AddressingModifier::None);
 
-pub const BNE: AnnotatedOpcode = (bne, AddressingModifier::PlaceHolder);
+pub const BNE: AnnotatedOpcode = (bne, AddressingModifier::None);
 
-pub const BPL: AnnotatedOpcode = (bpl, AddressingModifier::PlaceHolder);
+pub const BPL: AnnotatedOpcode = (bpl, AddressingModifier::None);
 
-pub const BVC: AnnotatedOpcode = (bvc, AddressingModifier::PlaceHolder);
+pub const BVC: AnnotatedOpcode = (bvc, AddressingModifier::None);
 
-pub const BVS: AnnotatedOpcode = (bvs, AddressingModifier::PlaceHolder);
+pub const BVS: AnnotatedOpcode = (bvs, AddressingModifier::None);
 
 
 /* #######################  Status Flag Changes  ####################### */

@@ -408,36 +408,54 @@ pub fn rts(inter: &mut CPUInterface) {}
 
 
 /* #######################  Branches  ####################### */
-//TODO: impl
-pub fn bcc(inter: &mut CPUInterface) {}
+#[inline]
+fn __generic_branch_if_set(inter: &mut CPUInterface, flag: FlagPositionOffset) {
+    if (inter.reg.p & (1 << flag as u8)) != 0 {
+        inter.reg.itr = flag as u8;
+    }
+}
+
+#[inline]
+fn __generic_branch_if_not_set(inter: &mut CPUInterface, flag: FlagPositionOffset) {
+    if (inter.reg.p & (1 << flag as u8)) == 0 {
+        inter.reg.itr = flag as u8;
+    }
+}
+
+pub fn bcc(inter: &mut CPUInterface) {
+    __generic_branch_if_not_set(inter, FlagPositionOffset::Carry);
+}
 
 
-//TODO: impl
-pub fn bcs(inter: &mut CPUInterface) {}
+pub fn bcs(inter: &mut CPUInterface) {
+    __generic_branch_if_set(inter, FlagPositionOffset::Carry);
+}
 
 
-//TODO: impl
-pub fn beq(inter: &mut CPUInterface) {}
+pub fn beq(inter: &mut CPUInterface) {
+    __generic_branch_if_set(inter, FlagPositionOffset::Zero);
+}
 
 
-//TODO: impl
-pub fn bmi(inter: &mut CPUInterface) {}
+pub fn bmi(inter: &mut CPUInterface) {
+    __generic_branch_if_set(inter, FlagPositionOffset::Negative);
+}
 
+pub fn bne(inter: &mut CPUInterface) {
+    __generic_branch_if_not_set(inter, FlagPositionOffset::Zero);
+}
 
-//TODO: impl
-pub fn bne(inter: &mut CPUInterface) {}
+pub fn bpl(inter: &mut CPUInterface) {
+    __generic_branch_if_not_set(inter, FlagPositionOffset::Negative);
+}
 
+pub fn bvc(inter: &mut CPUInterface) {
+    __generic_branch_if_not_set(inter, FlagPositionOffset::Overflow);
+}
 
-//TODO: impl
-pub fn bpl(inter: &mut CPUInterface) {}
-
-
-//TODO: impl
-pub fn bvc(inter: &mut CPUInterface) {}
-
-
-//TODO: impl
-pub fn bvs(inter: &mut CPUInterface) {}
+pub fn bvs(inter: &mut CPUInterface) {
+    __generic_branch_if_set(inter, FlagPositionOffset::Overflow);
+}
 
 
 /* #######################  Status Flag Changes  ####################### */
