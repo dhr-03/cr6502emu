@@ -35,13 +35,13 @@ impl MacroFactory {
                     }
                 }
 
-                "u8" => {
+                "byte" => {
                     let val: u8 = parse_or_log(args[2])?;
 
                     Ok(MacroWrite::new_zp(val))
                 }
 
-                "u16" => {
+                "byte_2" => {
                     let val: u16 = parse_or_log(args[2])?;
 
                     Ok(MacroWrite::new_abs(val))
