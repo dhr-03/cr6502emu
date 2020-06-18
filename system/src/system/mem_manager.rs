@@ -146,4 +146,10 @@ impl MemManager {
         *self.bus.addr_mut_ref() &= 0x00FF;
         *self.bus.addr_mut_ref() |= (addr as u16) << 8;
     }
+
+    /// Resets the bus to 0
+    pub fn reset_bus(&mut self) {
+        *self.bus.addr_mut_ref() = 0;
+        *self.bus.data_mut_ref() = 0;
+    }
 }

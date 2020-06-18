@@ -67,6 +67,10 @@ impl CurrentOpcode {
             inter.next_cycle.is_none()
     }
 
+    pub fn force_is_done(&mut self) {
+        self.action_i = std::usize::MAX;
+    }
+
     pub fn execute(&mut self, inter: &mut CPUInterface) {
         if self.is_done(inter) {
             self.fetch(inter);

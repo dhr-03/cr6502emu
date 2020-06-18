@@ -39,9 +39,10 @@ impl CPU {
         self.opcode.execute(&mut inter);
     }
 
-    //TODO: reset
     pub fn reset(&mut self) {
-        unimplemented!()
+        self.reg.reset();
+        self.opcode.force_is_done();
+        self.extra_cycle = None;
     }
 
     pub fn tmp_to_str(&self) -> String {

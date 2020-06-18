@@ -45,8 +45,26 @@ impl System {
         }
     }
 
-    pub fn reset(&mut self) {
-        unimplemented!();
+    /// Resets the system, clearing all non-persistent data containers.
+    pub fn reset_system(&mut self) {
+        self.cpu.reset();
+
+        self.mem.reset_bus();
+
+        for dev in self.mem.devices_mut() {
+            dev.device_mut().reset_system();
+        }
+    }
+
+    /// Resets the system, clearing all data containers, including persistent ones like the rom.
+    pub fn reset_hard(&mut self) {
+        self.cpu.reset();
+
+        self.mem.reset_bus();
+
+        for dev in self.mem.devices_mut() {
+            dev.device_mut().reset_hard();
+        }
     }
 
     pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool{
