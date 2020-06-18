@@ -3,8 +3,6 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use std::collections::HashMap;
 use core::hint::unreachable_unchecked;
 
-use std::ptr;
-
 use crate::assembler::{AssemblerInterface};
 use crate::assembler::components::{CodeItemTrait, Instruction, Label, MacroFactory};
 
@@ -19,9 +17,7 @@ use crate::lang::assembler as lang;
 #[wasm_bindgen]
 pub struct Assembler {
     //hashmaps dont deallocate all the memory after deleting items, keeping it as a member can save a few os calls
-    identifiers: HashMap<String, u16>,
-
-    test_tmp: [u8; 50],
+    identifiers: HashMap<String, u16>
 }
 
 //public api
@@ -31,14 +27,12 @@ impl Assembler {
     pub fn new() -> Assembler {
         Assembler {
             identifiers: HashMap::new(),
-
-            test_tmp: [0; 50],
         }
     }
 
-    pub fn assemble(&mut self, lines: &str) -> *const u8 {
+    pub fn assemble(&mut self, lines: &str, rom: &mut [u8]) -> bool {
         let mut interface = AssemblerInterface::new(
-            &mut self.test_tmp,
+            rom,
             &mut self.identifiers,
         );
 
@@ -143,13 +137,13 @@ impl Assembler {
 
             self.identifiers.clear();
 
-            &self.test_tmp[0]
+            true
         } else {
             err_msg(lang::ERR_ASM_FAILED);
 
             self.identifiers.clear();
 
-            ptr::null()
+            false
         }
     }
 
