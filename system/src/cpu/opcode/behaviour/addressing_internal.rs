@@ -46,8 +46,7 @@ pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressing
 }
 
 pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr_hi(0);
-    inter.mem.set_addr_lo(inter.mem.data());
+    inter.mem.set_addr(inter.mem.data() as u16);
 
     if op_mod.is_read() {
         inter.mem.read_at_addr();
