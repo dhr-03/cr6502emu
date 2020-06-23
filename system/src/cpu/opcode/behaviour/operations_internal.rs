@@ -411,14 +411,14 @@ pub fn rts(inter: &mut CPUInterface) {}
 #[inline]
 fn __generic_branch_if_set(inter: &mut CPUInterface, flag: FlagPositionOffset) {
     if (inter.reg.p & (1 << flag as u8)) != 0 {
-        inter.reg.itr = flag as u8;
+        inter.reg.itr = 1;
     }
 }
 
 #[inline]
 fn __generic_branch_if_not_set(inter: &mut CPUInterface, flag: FlagPositionOffset) {
     if (inter.reg.p & (1 << flag as u8)) == 0 {
-        inter.reg.itr = flag as u8;
+        inter.reg.itr = 1;
     }
 }
 

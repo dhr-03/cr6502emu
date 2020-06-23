@@ -52,11 +52,25 @@ pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingMo
         inter.mem.read_at_addr();
     }
 
+    if let AddressingModifier::RMW = op_mod {
+        *inter.next_cycle = Some(zp_extra_1);
+    } else {
+        op_fn(inter);
+
+        if let AddressingModifier::Write = op_mod {
+            inter.mem.write_at_addr();
+        }
+    }
+}
+
+fn zp_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 
-    if op_mod.is_write() {
-        inter.mem.write_at_addr()
-    }
+    *inter.next_cycle = Some(abs_extra_2);
+}
+
+fn zp_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.write_at_addr();
 }
 
 // ####### Relative #######
@@ -113,16 +127,20 @@ pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
         inter.mem.read_at_addr();
     }
 
-    op_fn(inter);
-
-    if let AddressingModifier::Write = op_mod {
-        inter.mem.write_at_addr();
-    } else if let AddressingModifier::RMW = op_mod {
+    if let AddressingModifier::RMW = op_mod {
         *inter.next_cycle = Some(abs_extra_1);
+    } else {
+        op_fn(inter);
+
+        if let AddressingModifier::Write = op_mod {
+            inter.mem.write_at_addr();
+        }
     }
 }
 
-fn abs_extra_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+fn abs_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    op_fn(inter);
+
     *inter.next_cycle = Some(abs_extra_2);
 }
 

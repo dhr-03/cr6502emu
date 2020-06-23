@@ -46,7 +46,7 @@ impl CPU {
     }
 
     pub fn tmp_to_str(&self) -> String {
-        format!("a: {}\nx: {}\ny: {}\npc: {}flags: {:#08b}",
+        format!("a       : {}\nx       : {}\ny       : {}\npc      : {}\nflags   : {:#08b}",
                 self.reg.a, self.reg.x, self.reg.y, self.reg.pc, self.reg.p)
     }
 }
