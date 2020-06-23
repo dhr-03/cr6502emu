@@ -87,7 +87,7 @@ fn rel_extra_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Address
 
 fn rel_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     let offset = inter.mem.data();
-    let offset_signed = offset as i16;
+    let offset_signed: i16 = (offset as i8).into();
 
     let new_pc = (inter.reg.pc as i16) + offset_signed;
 
