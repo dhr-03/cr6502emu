@@ -38,11 +38,16 @@ impl Instruction {
 
     pub fn get_map_value(&self, asm: &AssemblerInterface) -> ParseResult<ParsedValue> {
         if let AddressingMode::RelativeTarget = self.value.addr_mode() {
-            let position = asm.offset() as i32 - 1;
+            let position = asm.offset() as i32;
             let target = self.value.resolve(asm)
                 .ok_or(ParseError::UnknownIdentifier)? as i32;
 
-            let offset = target - position;
+            let mut offset = target - position;
+            if offset > 0 {
+                offset -= 3;
+            } else {
+                offset -= 1
+            }
 
             if offset > 127 {
                 err_msg(lang_macro::ERR_TARGET_TOO_FAR);
