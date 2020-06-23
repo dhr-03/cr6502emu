@@ -5,7 +5,7 @@ use super::common::{CodeItemTrait, to_boxed_result};
 use crate::js_logger::{err_msg, err_code};
 use crate::lang::macros as lang;
 
-use super::{MacroWrite, CustomOpcodeParser};
+use super::{MacroWrite, MacroDefine, CustomOpcodeParser};
 
 pub struct MacroFactory {}
 
@@ -13,6 +13,8 @@ impl MacroFactory {
     pub fn from_str_boxed(line: &str) -> ParseResult<Box<dyn CodeItemTrait>> {
             if line.starts_with("store") {
                 to_boxed_result(Self::macro_write(line))
+            } else if line.starts_with("define") {
+              to_boxed_result(MacroDefine::from_str(line))
             } else if CustomOpcodeParser::is_cust_instruction(line){
                 CustomOpcodeParser::from_str(line)
             }else{
@@ -20,6 +22,7 @@ impl MacroFactory {
             }
     }
 
+    //todo: this shouldn't be here
     fn macro_write(line: &str) -> ParseResult<MacroWrite> {
         let args: Vec<&str> = line.splitn(3, " ").collect();
 
@@ -41,7 +44,7 @@ impl MacroFactory {
                     Ok(MacroWrite::new_zp(val))
                 }
 
-                "byte_2" => {
+                "bytex2" => {
                     let val: u16 = parse_or_log(args[2])?;
 
                     Ok(MacroWrite::new_abs(val))
@@ -53,8 +56,6 @@ impl MacroFactory {
             Err(ParseError::SyntaxError)
         }
     }
-
-
 }
 
 fn parse_or_log<T: std::str::FromStr>(txt: &str) -> ParseResult<T> {
