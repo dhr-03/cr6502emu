@@ -10,6 +10,8 @@
 </template>
 
 <style lang="less">
+    @import "../node_modules/uikit/src/less/uikit";
+
     #app {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
