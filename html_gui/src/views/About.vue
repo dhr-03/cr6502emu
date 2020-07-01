@@ -1,5 +1,11 @@
 <template>
-    <div class="about">
-        <h1>This is an about page</h1>
+    <div class="cr-container">
+        <p>
+            cr6502emu is an assembler and emulator of the MOS 6502 CPU.
+        </p>
+
+        <a href="https://github.com/dhreck/cr6502emu">
+            <font-awesome-icon icon="code"/> Github Repo
+        </a>
     </div>
 </template>

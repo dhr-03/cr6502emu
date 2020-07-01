@@ -1,35 +1,57 @@
 <template>
-    <div id="app">
-        <div id="nav">
-            <router-link to="/">Home</router-link>
-            |
-            <router-link to="/about">About</router-link>
-        </div>
+    <div id="app" class="uk-light">
+        <TheNavbar/>
+
         <router-view/>
     </div>
 </template>
 
+<script>
+    import TheNavbar from "./components/TheNavbar";
+    export default {
+        components: {TheNavbar}
+    }
+</script>
+
 <style lang="less">
+    @import "../node_modules/open-color/open-color";
     @import "../node_modules/uikit/src/less/uikit";
 
     #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
+        background: @oc-gray-7;
+
+        min-height: 100%;
     }
 
-    #nav {
-        padding: 30px;
+    ::-webkit-scrollbar {
+        width: 0.5em;
+        height: 0.5em;
+    }
 
-        a {
-            font-weight: bold;
-            color: #2c3e50;
+    ::-webkit-scrollbar-corner {
+        background: #444;
+    }
 
-            &.router-link-exact-active {
-                color: #42b983;
-            }
-        }
+    ::-webkit-scrollbar-track {
+        background: #444
+    }
+
+
+    ::-webkit-scrollbar-thumb {
+        background: #AAA;
+    }
+
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #CCC;
+    }
+
+    .cr-container {
+        .uk-container();
+
+        background: darken(@oc-gray-7, 6%);
+        border-radius: 2pt;
+
+        padding: 1em;
     }
 </style>
