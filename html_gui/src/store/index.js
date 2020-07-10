@@ -3,9 +3,10 @@ import Vuex from "vuex"
 
 Vue.use(Vuex)
 
+import {EnvironmentStore} from "./components/environment";
+
 export default new Vuex.Store({
-    state: {},
-    mutations: {},
-    actions: {},
-    modules: {}
+    modules: {
+        env: EnvironmentStore
+    }
 })

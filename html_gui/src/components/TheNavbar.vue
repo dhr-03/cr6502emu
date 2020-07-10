@@ -1,12 +1,7 @@
 <template>
-    <nav class="uk-navbar uk-navbar-container uk-navbar-transparent">
+    <nav class="cr-navbar uk-navbar uk-navbar-container uk-navbar-transparent">
         <div class="uk-navbar-left">
-            <router-link
-                    :to="{name: 'Home'}"
-                    class="uk-navbar-item uk-logo"
-            >
-                cr6502emu
-            </router-link>
+            <span class="cr-navbar-logo uk-navbar-item uk-logo">CrDemo</span>
 
             <ul class="uk-navbar-nav">
                 <BaseNavbarItem target="Home" :match-exact="true"/>
@@ -19,6 +14,7 @@
 
 <script>
     import BaseNavbarItem from "./BaseNavbarItem";
+
     export default {
         name: "TheNavbar",
         components: {BaseNavbarItem},
@@ -28,9 +24,12 @@
 <style lang="less" scoped>
     @import "~open-color/open-color.less";
 
-    .uk-navbar {
+    .cr-navbar {
         background: @oc-gray-8;
-        margin-bottom: 2em;
-
     }
+
+    .cr-navbar-logo {
+        min-height: 0!important;
+    }
+
 </style>

@@ -54,4 +54,8 @@
 
         padding: 1em;
     }
+
+    .cr-mg-top {
+        margin-top: 2em;
+    }
 </style>

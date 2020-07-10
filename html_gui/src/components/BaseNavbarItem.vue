@@ -56,8 +56,12 @@
     }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
     .cr-nav-item {
         text-transform: capitalize;
+
+        a{
+            min-height: 60px;
+        }
     }
 </style>

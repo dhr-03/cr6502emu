@@ -15,7 +15,7 @@ const routes = [
     {
         path: "/project/:pid",
         name: "Project",
-        component: () => import(/* webpackChunkName: "about" */ "../views/Project.vue")
+        component: () => import(/* webpackChunkName: "environment" */ "../views/Environment.vue")
     },
 
     {
