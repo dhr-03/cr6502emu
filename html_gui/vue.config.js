@@ -5,5 +5,7 @@ module.exports = {
             options[0].ignore.push('wasm/*_dev*')
             return [options]
         })
-    }
+    },
+
+    productionSourceMap: false
 }
