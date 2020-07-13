@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen(raw_module = "./logger.js")]
+#[wasm_bindgen(raw_module = "../shared/logger.js")]
 extern {
     pub type Logger;
 
