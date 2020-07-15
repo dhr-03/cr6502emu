@@ -1,6 +1,10 @@
+const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
+const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
+
 export const EnvironmentState = {
-    INITIALIZING: 0,
-    FAILED_TO_INIT: 1,
+    SETTING_UP: 0,
+    INITIALIZING: 1,
+    FAILED_TO_INIT: 2,
 
     IDLE: 10,
 
@@ -18,12 +22,26 @@ export const EnvironmentStore = {
         lockConfig: false,
 
         buildSuccessful: false,
-        status: EnvironmentState.IDLE,
+        status: EnvironmentState.SETTING_UP,
+
+        wasm: {
+            assembler: null,
+            system: null,
+        },
 
         messages: [],
     },
 
     mutations: {
+        __setAsm(state, obj) {
+            state.wasm.assembler = obj;
+        },
+
+        __setSys(state, obj) {
+            state.wasm.system = obj;
+        },
+
+
         buildStatus(state, value) {
             state.buildSuccessful = value;
         },
@@ -38,11 +56,69 @@ export const EnvironmentStore = {
         },
 
         resetMessages(state) {
-          state.messages = [];
+            state.messages = [];
         }
     },
 
     actions: {
+        setup(context, callback) {
+            asmLib.default(process.env.VUE_APP_ASM_WASM_PATH).then(
+                wasm => {
+                    let assembler = new asmLib.Assembler();
+                    assembler.memory = wasm.memory;
+
+                    asmLib.set_panic_hook();
+
+                    context.commit("__setAsm", assembler);
+                }
+            )
+                .then(
+                    _ => {
+                        return sysLib.default(process.env.VUE_APP_SYS_WASM_PATH).then(
+                            wasm => {
+                                let system = new sysLib.System();
+                                system.memory = wasm.memory;
+
+                                sysLib.set_panic_hook();
+
+                                context.commit("__setSys", system);
+                            }
+                        )
+                    })
+
+                .then(
+                    _ => context.commit("currentStatus", EnvironmentState.INITIALIZING)
+                )
+
+                .then(
+                    _ => {
+                        if (typeof callback === "function") {
+                            callback();
+                        }
+                    }
+                )
+
+                .catch(
+                    err => {
+                        console.error("Failed to setup env: ", err);
+
+                        context.commit("currentStatus", EnvironmentState.FAILED_TO_INIT);
+                    }
+                )
+        },
+
+        initialize(context) {
+            const sys = context.getters.__system;
+
+            const DeviceId = sysLib.DeviceId;
+            sys.add_device(DeviceId.Ram, 0, 0x1000);
+            sys.add_device(DeviceId.Rom, 0x1000, 0x1000);
+
+
+            context.commit("currentStatus", EnvironmentState.IDLE);
+        },
+
+
         buildToRom(context) {
             context.commit("buildStatus", Math.random() >= 0.5);
         },
@@ -63,24 +139,33 @@ export const EnvironmentStore = {
             }
         }
 
-
     },
 
     getters: {
+        __assembler(state) {
+            return state.wasm.assembler;
+        },
+
+        __system(state) {
+            return state.wasm.system;
+        },
+
+
         messagesList(state) {
             return state.messages
         },
 
 
-
         isInitializing(state) {
-            return state.status === EnvironmentState.INITIALIZING;
+            return (
+                state.status === EnvironmentState.SETTING_UP ||
+                state.status === EnvironmentState.INITIALIZING
+            );
         },
 
         successfulInitialize(state) {
             return state.status !== EnvironmentState.FAILED_TO_INIT;
         },
-
 
 
         isRunning(state) {

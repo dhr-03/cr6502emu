@@ -67,14 +67,20 @@
             "buildToRom",
             "toggleRun",
             "toggleDebug",
-        ])
+        ]),
+
+        created() {
+            this.$store.dispatch("env/setup",
+                _ => this.$store.dispatch("env/initialize")
+            );
+        }
     }
 </script>
 
 <style lang="less" scoped>
-     @import "../assets/less/namedColors";
+    @import "../assets/less/namedColors";
 
-     //TODO: temp
+    //TODO: temp
     .cr-initialize {
         display: flex;
         height: 70vh;
