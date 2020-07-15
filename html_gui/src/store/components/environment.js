@@ -120,7 +120,21 @@ export const EnvironmentStore = {
 
 
         buildToRom(context) {
-            context.commit("buildStatus", Math.random() >= 0.5);
+            context.commit("resetMessages");
+
+            const asm = context.getters.__assembler;
+            const sys = context.getters.__system;
+
+            let romId = 1;
+            let ptr = sys.UNSAFE_device_data_ptr(romId);
+            let size = sys.device_size(romId);
+
+            let program = document.querySelector("#editor").innerText;
+            let rom = new Uint8Array(sys.memory.buffer, ptr, size);
+
+            let success = asm.assemble(program, rom);
+
+            context.commit("buildStatus", success);
         },
 
         toggleRun(context) {
