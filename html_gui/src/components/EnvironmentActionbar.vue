@@ -24,6 +24,7 @@
                             explanation="Reset"
 
                             :enabled="ableToReset"
+                            :on-click="onReset"
                     />
 
                 </ul>
@@ -127,6 +128,9 @@
                 this.$emit("env_build")
             },
 
+            onReset() {
+              this.$emit("env_reset");
+            },
 
             onRunToggled() {
                 this.$emit("env_toggle-run")

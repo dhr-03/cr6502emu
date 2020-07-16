@@ -18,6 +18,7 @@
     <div v-else>
         <EnvironmentActionbar
                 @env_build="buildToRom"
+                @env_reset="resetSystem"
                 @env_toggle-run="toggleRun"
                 @env_toggle-debug="toggleDebug"
         />
@@ -65,6 +66,7 @@
 
         methods: mapActions("env", [
             "buildToRom",
+            "resetSystem",
             "toggleRun",
             "toggleDebug",
         ]),

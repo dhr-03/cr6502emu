@@ -137,6 +137,10 @@ export const EnvironmentStore = {
             context.commit("buildStatus", success);
         },
 
+        resetSystem(context) {
+          context.state.wasm.system.reset_system();
+        },
+
         toggleRun(context) {
             if (context.getters.isRunning) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
