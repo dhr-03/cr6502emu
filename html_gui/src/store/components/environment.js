@@ -138,7 +138,7 @@ export const EnvironmentStore = {
         },
 
         resetSystem(context) {
-          context.state.wasm.system.reset_system();
+          context.getters.__system.reset_system();
         },
 
         toggleRun(context) {
