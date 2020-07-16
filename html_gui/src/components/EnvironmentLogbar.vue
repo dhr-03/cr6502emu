@@ -23,14 +23,20 @@
             <Badge
                     type="err"
                     v-if="errMsgCount > 0"
+
+                    :value="errMsgCount"
             />
             <Badge
                     type="warn"
                     v-if="warnMsgCount > 0"
+
+                    :value="warnMsgCount"
             />
             <Badge
                     type="info"
                     v-if="infoMsgCount"
+
+                    :value="infoMsgCount"
             />
 
         </div>
