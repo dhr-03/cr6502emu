@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 // optional capture groups return ""
 
 
-#[wasm_bindgen(module = "/js_snippets/regex.js")]
+#[wasm_bindgen(raw_module = "../shared/regex.js")]
 extern {
     /*
     common, returns:

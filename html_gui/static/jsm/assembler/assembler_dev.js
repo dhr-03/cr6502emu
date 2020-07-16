@@ -1,1 +1,0 @@
-../../../../assembler/pkg/assembler_dev.js

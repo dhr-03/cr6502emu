@@ -1,0 +1,1 @@
+alert("WASM NOT BUILT");
