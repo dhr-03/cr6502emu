@@ -62,6 +62,7 @@
                             color-name="yellow"
 
                             :enabled="ableToStep"
+                            :on-click="onStepShort"
                     />
 
                     <EnvironmentActionbarButton
@@ -136,9 +137,12 @@
                 this.$emit("env_toggle-run")
             },
 
-
             onDebugToggled() {
                 this.$emit("env_toggle-debug")
+            },
+
+            onStepShort() {
+              this.$emit("env_step-short");
             },
         },
     }

@@ -155,7 +155,11 @@ export const EnvironmentStore = {
             } else {
                 context.commit("currentStatus", EnvironmentState.DEBUGGING);
             }
-        }
+        },
+
+        cpuShortStep(context) {
+          context.getters.__system.tick();
+        },
 
     },
 
