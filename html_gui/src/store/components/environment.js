@@ -10,7 +10,7 @@ export const EnvironmentState = {
 
     RUNNING: 20,
     DEBUGGING: 21,
-};
+}
 
 export const EnvironmentStore = {
     namespaced: true,
@@ -174,7 +174,7 @@ export const EnvironmentStore = {
 
 
         messagesList(state) {
-            return state.messages
+            return state.messages;
         },
 
 
@@ -232,4 +232,4 @@ export const EnvironmentStore = {
         },
 
     }
-};
+}

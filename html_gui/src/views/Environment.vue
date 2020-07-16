@@ -47,12 +47,12 @@
 </template>
 
 <script>
-    import EnvironmentEditor from "../components/EnvironmentEditor";
-    import EnvironmentWidgetsHolder from "../components/EnvironmentWidgetsHolder";
-    import EnvironmentWidget from "../components/EnvironmentWidget";
-    import EnvironmentActionbar from "../components/EnvironmentActionbar";
-    import EnvironmentLogbar from "../components/EnvironmentLogbar";
-    import {mapGetters, mapActions} from "vuex";
+    import EnvironmentEditor from "../components/EnvironmentEditor"
+    import EnvironmentWidgetsHolder from "../components/EnvironmentWidgetsHolder"
+    import EnvironmentWidget from "../components/EnvironmentWidget"
+    import EnvironmentActionbar from "../components/EnvironmentActionbar"
+    import EnvironmentLogbar from "../components/EnvironmentLogbar"
+    import {mapGetters, mapActions} from "vuex"
 
     export default {
         name: "Environment",

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import BaseNavbarItem from "./BaseNavbarItem";
+    import BaseNavbarItem from "./BaseNavbarItem"
 
     export default {
         name: "TheNavbar",

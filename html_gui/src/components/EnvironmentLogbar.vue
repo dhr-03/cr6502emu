@@ -75,11 +75,11 @@
 </template>
 
 <script>
-    import Badge from "./Badge";
+    import Badge from "./Badge"
 
     import {Logger} from "../assets/wasm/shared/logger"
-    import Alert from "./Alert";
-    import {mapMutations, mapGetters} from "vuex";
+    import Alert from "./Alert"
+    import {mapMutations, mapGetters} from "vuex"
 
     export default {
         name: "EnvironmentLogbar",

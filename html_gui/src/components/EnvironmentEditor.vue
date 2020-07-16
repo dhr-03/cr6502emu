@@ -15,18 +15,18 @@ LDA #02
 </template>
 
 <script>
-    import "../assets/vendor/prism/prism.js"; //prism core
-    import "../assets/js/asm6502-lang.js"; //prism semi-custom lang
+    import "../assets/vendor/prism/prism.js" //prism core
+    import "../assets/js/asm6502-lang.js" //prism semi-custom lang
 
 
     //convert prism into an editor
-    import "../assets/vendor/bililite/range/bililiteRange.js";
-    import "../assets/vendor/bililite/range/bililiteRange.undo.js";
-    import "../assets/vendor/bililite/range/bililiteRange.util.js";
-    import "../assets/vendor/bililite/range/bililiteRange.fancytext.js";
+    import "../assets/vendor/bililite/range/bililiteRange.js"
+    import "../assets/vendor/bililite/range/bililiteRange.undo.js"
+    import "../assets/vendor/bililite/range/bililiteRange.util.js"
+    import "../assets/vendor/bililite/range/bililiteRange.fancytext.js"
 
     //fix line numbers feature broken by the scripts above
-    import "../assets/vendor/bililite/prism.linenumber.js";
+    import "../assets/vendor/bililite/prism.linenumber.js"
 
     export default {
         name: "EnvironmentEditor",

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import MixinStatusElement from "./MixinStatusElement";
+    import MixinStatusElement from "./MixinStatusElement"
 
     export default {
         name: "Alert",

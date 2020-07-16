@@ -3,7 +3,7 @@ import VueRouter from "vue-router"
 import Home from "../views/Home.vue"
 import ErrorNotFound from "../components/ErrorNotFound"
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
     {
@@ -28,10 +28,10 @@ const routes = [
         path: "*",
         component: ErrorNotFound,
     }
-]
+];
 
 const router = new VueRouter({
     routes,
-})
+});
 
 export default router

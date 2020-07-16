@@ -97,9 +97,9 @@
 </template>
 
 <script>
-    import EnvironmentActionbarButton from "./EnvironmentActionbarButton";
-    import EnvironmentActionbarSeparator from "./EnvironmentActionbarSeparator";
-    import {mapGetters, mapActions} from "vuex";
+    import EnvironmentActionbarButton from "./EnvironmentActionbarButton"
+    import EnvironmentActionbarSeparator from "./EnvironmentActionbarSeparator"
+    import {mapGetters, mapActions} from "vuex"
 
     export default {
         name: "EnvironmentActionbar",
@@ -126,7 +126,7 @@
             ]),
 
             onBuild() {
-                this.$emit("env_build")
+                this.$emit("env_build");
             },
 
             onReset() {
@@ -134,11 +134,11 @@
             },
 
             onRunToggled() {
-                this.$emit("env_toggle-run")
+                this.$emit("env_toggle-run");
             },
 
             onDebugToggled() {
-                this.$emit("env_toggle-debug")
+                this.$emit("env_toggle-debug");
             },
 
             onStepShort() {

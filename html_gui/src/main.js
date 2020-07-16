@@ -48,13 +48,13 @@ library.add(
     faChevronRight, faGhost, faChevronDown,
 );
 
-Vue.component("font-awesome-icon", FontAwesomeIcon)
+Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 new Vue({
     router,
     store,
     render: h => h(App)
-}).$mount("#app")
+}).$mount("#app");
