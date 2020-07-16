@@ -58,10 +58,9 @@
                                 :is="part.isCode ? 'code' : 'span'"
                                 :key="index"
 
+                                class="cr-alert-part"
                                 :class="{__code_reset: part.isCode}"
-                        >
-                            {{ part.content }}
-                        </component>
+                        >{{ part.content }}</component>
                     </slot>
                 </Alert>
             </div>
@@ -170,6 +169,10 @@
         &::-webkit-scrollbar-track {
             background: #2b8a3e
         }
+    }
+
+    .cr-alert-part {
+        margin-right: 0.3em;
     }
 
     .__code_reset {
