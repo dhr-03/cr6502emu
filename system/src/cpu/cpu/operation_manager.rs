@@ -8,7 +8,7 @@ use super::super::opcode::{
 };
 
 
-pub struct CurrentOpcode {
+pub struct CPUOperationManager {
     actions: &'static AddressingActions,
 
     op: AnnotatedOpcode,
@@ -16,9 +16,9 @@ pub struct CurrentOpcode {
     action_i: usize,
 }
 
-impl CurrentOpcode {
+impl CPUOperationManager {
     pub fn new() -> Self {
-        CurrentOpcode {
+        CPUOperationManager {
             actions: &addressing::IMP,
             op: operations::NOP,
 

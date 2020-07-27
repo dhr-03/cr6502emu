@@ -60,7 +60,7 @@
     .cr-nav-item {
         text-transform: capitalize;
 
-        a{
+        a {
             min-height: 60px;
         }
     }

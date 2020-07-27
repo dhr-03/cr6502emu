@@ -16,13 +16,17 @@ export const EnvironmentStore = {
     namespaced: true,
 
     state: {
-        lockBuild: false,
-        lockReset: false,
-        lockRun: false,
-        lockConfig: false,
+        lock: {
+            build: false,
+            reset: false,
+            execute: false,
+            config: false,
+        },
 
-        buildSuccessful: false,
-        status: EnvironmentState.SETTING_UP,
+        status: {
+            buildSuccessful: false,
+            currentAction: EnvironmentState.SETTING_UP,
+        },
 
         wasm: {
             assembler: null,
@@ -43,11 +47,11 @@ export const EnvironmentStore = {
 
 
         buildStatus(state, value) {
-            state.buildSuccessful = value;
+            state.status.buildSuccessful = value;
         },
 
         currentStatus(state, value = EnvironmentState.IDLE) {
-            state.status = value;
+            state.status.currentAction = value;
         },
 
 
@@ -126,7 +130,7 @@ export const EnvironmentStore = {
             const sys = context.getters.__system;
 
             let romId = 1;
-            let ptr = sys.UNSAFE_device_data_ptr(romId);
+            let ptr = sys.device_data_ptr(romId);
             let size = sys.device_size(romId);
 
             let program = document.querySelector("#editor").innerText;
@@ -138,7 +142,7 @@ export const EnvironmentStore = {
         },
 
         resetSystem(context) {
-          context.getters.__system.reset_system();
+            context.getters.__system.reset_system();
         },
 
         toggleRun(context) {
@@ -158,7 +162,7 @@ export const EnvironmentStore = {
         },
 
         cpuShortStep(context) {
-          context.getters.__system.tick();
+            context.getters.__system.tick();
         },
 
     },
@@ -180,22 +184,22 @@ export const EnvironmentStore = {
 
         isInitializing(state) {
             return (
-                state.status === EnvironmentState.SETTING_UP ||
-                state.status === EnvironmentState.INITIALIZING
+                state.status.currentAction === EnvironmentState.SETTING_UP ||
+                state.status.currentAction === EnvironmentState.INITIALIZING
             );
         },
 
         successfulInitialize(state) {
-            return state.status !== EnvironmentState.FAILED_TO_INIT;
+            return state.status.currentAction !== EnvironmentState.FAILED_TO_INIT;
         },
 
 
         isRunning(state) {
-            return state.status === EnvironmentState.RUNNING;
+            return state.status.currentAction === EnvironmentState.RUNNING;
         },
 
         isDebugging(state) {
-            return state.status === EnvironmentState.DEBUGGING;
+            return state.status.currentAction === EnvironmentState.DEBUGGING;
         },
 
         isExecuting(state, getters) {
@@ -203,24 +207,24 @@ export const EnvironmentStore = {
         },
 
         isBuilt(state) {
-            return state.buildSuccessful;
+            return state.status.buildSuccessful;
         },
 
 
         ableToBuild(state, getters) {
-            return !(state.lockBuild || getters.isExecuting);
+            return !(state.lock.build || getters.isExecuting);
         },
 
         ableToReset(state, getters) {
-            return !(state.lockReset || getters.isExecuting) && getters.isBuilt;
+            return !(state.lock.reset || getters.isExecuting) && getters.isBuilt;
         },
 
         ableToRun(state, getters) {
-            return !(state.lockRun || getters.isDebugging) && getters.isBuilt;
+            return !(state.lock.execute || getters.isDebugging) && getters.isBuilt;
         },
 
         ableToDebug(state, getters) {
-            return !(state.lockRun || getters.isRunning) && getters.isBuilt;
+            return !(state.lock.execute || getters.isRunning) && getters.isBuilt;
         },
 
         ableToStep(state, getters) {
@@ -228,7 +232,7 @@ export const EnvironmentStore = {
         },
 
         ableToConfig(state, getters) {
-            return !(state.lockConfig || getters.isExecuting);
+            return !(state.lock.config || getters.isExecuting);
         },
 
     }

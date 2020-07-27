@@ -391,7 +391,7 @@ pub fn ror(inter: &mut CPUInterface) {
 
 /* #######################  Jumps & Calls  ####################### */
 pub fn jmp(inter: &mut CPUInterface) {
-    let mut new_addr: u16 = 0;
+    let mut new_addr: u16;
 
     new_addr = inter.reg.itr as u16;
     new_addr |= (inter.mem.data() as u16) << 8;

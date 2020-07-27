@@ -1,20 +1,14 @@
 use super::super::{
     DecodedInstruction,
-    behaviour::{operations, addressing},
-    InstructionFn, AddressingModifier, AddressingFn, AnnotatedOpcode, AddressingActions,
+    operations, addressing,
 };
-
-fn a(inter: &mut crate::cpu::CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {}
-
-fn b(inter: &mut crate::cpu::CPUInterface) {}
-
-const A: [AddressingFn; 1] = [a];
 
 mod __table {
     use super::{addressing, operations, DecodedInstruction};
 
     use addressing::*;
     use operations::*;
+
     // --------------------------------------------------------------------------------------------------------------------------------------------------------------
     const INVALID_OPC: DecodedInstruction = (&IMP, NOP);
     pub static DECODE_TABLE: [DecodedInstruction; 256] = [

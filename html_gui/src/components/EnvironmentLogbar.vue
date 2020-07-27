@@ -66,7 +66,8 @@
 
                                 class="cr-alert-part"
                                 :class="{__code_reset: part.isCode}"
-                        >{{ part.content }}</component>
+                        >{{ part.content }}
+                        </component>
                     </slot>
                 </Alert>
             </div>

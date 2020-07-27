@@ -130,7 +130,7 @@
             },
 
             onReset() {
-              this.$emit("env_reset");
+                this.$emit("env_reset");
             },
 
             onRunToggled() {
@@ -142,7 +142,7 @@
             },
 
             onStepShort() {
-              this.$emit("env_step-short");
+                this.$emit("env_step-short");
             },
         },
     }

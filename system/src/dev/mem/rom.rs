@@ -33,13 +33,13 @@ impl AddressableDeviceTrait for Rom {
         self.contents.len() as u16
     }
 
-    fn data_ptr(&mut self) -> *const u8 {
-        self.contents.as_ptr()
-    }
-
     fn read(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)
         }
+    }
+
+    fn data_ptr(&mut self) -> *const u8 {
+        self.contents.as_ptr()
     }
 }
