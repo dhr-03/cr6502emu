@@ -27,7 +27,7 @@ impl DeviceHolder {
         &self.device
     }
 
-    pub fn range(&self)  -> &Range<u16> {
+    pub fn range(&self) -> &Range<u16> {
         &self.range
     }
 }

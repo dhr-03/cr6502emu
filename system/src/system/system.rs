@@ -41,7 +41,6 @@ impl System {
 
         self.mem.reset_bus();
         self.mem.reset_devices();
-
     }
 
     /// Resets the system, clearing all data containers, including persistent ones like the rom.
@@ -52,7 +51,7 @@ impl System {
         self.mem.reset_devices_hard();
     }
 
-    pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool{
+    pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool {
         if (std::u16::MAX - size) >= start { //check for overflows
             let result = DeviceFactory::with_size(device, size);
 
@@ -88,7 +87,7 @@ impl System {
         self.mem.devices().get(index)
             .map_or(
                 None,
-            |dev| Some(dev.device().size())
+                |dev| Some(dev.device().size()),
             )
     }
 }

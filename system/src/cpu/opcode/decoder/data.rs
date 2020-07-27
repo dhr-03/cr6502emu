@@ -8,6 +8,7 @@ mod __table {
 
     use addressing::*;
     use operations::*;
+
     // --------------------------------------------------------------------------------------------------------------------------------------------------------------
     const INVALID_OPC: DecodedInstruction = (&IMP, NOP);
     pub static DECODE_TABLE: [DecodedInstruction; 256] = [

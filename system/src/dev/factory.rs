@@ -31,8 +31,6 @@ impl DeviceFactory {
                         mem::Ram::with_size(size)
                     ))
                 }
-
-
             }
         }
     }
