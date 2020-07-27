@@ -1,4 +1,4 @@
-use crate::dev::BoxedDev;
+use crate::dev::{DeviceHolder, BoxedDev};
 use super::{DevHolderVec, Bus};
 
 // The design is kind of weird because i was having trouble with the lack of support for
@@ -18,10 +18,6 @@ impl MemManager {
 
             devices: DevHolderVec::new(),
         }
-    }
-
-    pub fn devices_mut(&mut self) -> &mut DevHolderVec {
-        &mut self.devices
     }
 
     pub fn devices(&self) -> &DevHolderVec {
@@ -55,6 +51,41 @@ impl MemManager {
         }
 
         result
+    }
+
+    pub fn add_device_unchecked_range(&mut self, dev: BoxedDev, start: u16, end: u16) {
+        let holden_dev = DeviceHolder::new(dev, start, end);
+        self.devices.push(holden_dev);
+    }
+
+    pub fn remove_device_by(&mut self, index: usize) -> bool {
+        if index < self.devices.capacity() {
+            self.devices.remove(index);
+
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn device_data_ptr(&mut self, index: usize) -> Option<usize> {
+        self.devices.get_mut(index)
+            .map_or_else(
+                || None,
+                |dev| Some(dev.device_mut().data_ptr() as usize),
+            )
+    }
+
+    pub fn reset_devices(&mut self) {
+        for dev in &mut self.devices {
+            dev.device_mut().reset_system();
+        }
+    }
+
+    pub fn reset_devices_hard(&mut self) {
+        for dev in &mut self.devices {
+            dev.device_mut().reset_hard();
+        }
     }
 }
 

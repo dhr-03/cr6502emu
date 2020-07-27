@@ -2,11 +2,20 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 #[repr(u8)]
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub enum DeviceId {
     // IO
 
     // MEM
     Rom = 100,
     Ram = 101,
+}
+
+impl DeviceId {
+    pub fn fixed_size_of(&self) -> Option<u16> {
+        match self {
+            Self::Rom => None,
+            Self::Ram => None,
+        }
+    }
 }

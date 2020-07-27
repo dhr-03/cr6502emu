@@ -40,10 +40,8 @@ impl System {
         self.cpu.reset();
 
         self.mem.reset_bus();
+        self.mem.reset_devices();
 
-        for dev in self.mem.devices_mut() {
-            dev.device_mut().reset_system();
-        }
     }
 
     /// Resets the system, clearing all data containers, including persistent ones like the rom.
@@ -51,10 +49,7 @@ impl System {
         self.cpu.reset();
 
         self.mem.reset_bus();
-
-        for dev in self.mem.devices_mut() {
-            dev.device_mut().reset_hard();
-        }
+        self.mem.reset_devices_hard();
     }
 
     pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool{
@@ -65,9 +60,7 @@ impl System {
                 Ok(dev) => {
                     let end = start + dev.size();
 
-                    let holder = DeviceHolder::new(dev, start, end);
-
-                    self.mem.devices_mut().push(holder);
+                    self.mem.add_device_unchecked_range(dev, start, end);
 
                     true
                 }
@@ -82,24 +75,13 @@ impl System {
     }
 
     pub fn remove_device(&mut self, index: usize) -> bool {
-        if index < self.mem.devices_mut().capacity() {
-            self.mem.devices_mut().remove(index);
-
-            true
-        } else {
-            false
-        }
+        self.mem.remove_device_by(index)
     }
 
     /// WARNING: Using raw pointers might cause system instability,
     /// make sure you know what you're doing.
-    #[allow(non_snake_case)]
     pub fn device_data_ptr(&mut self, index: usize) -> Option<usize> {
-        self.mem.devices_mut().get_mut(index)
-            .map_or_else(
-                || None,
-                |dev| Some(dev.device_mut().data_ptr() as usize)
-            )
+        self.mem.device_data_ptr(index)
     }
 
     pub fn device_size(&self, index: usize) -> Option<u16> {
