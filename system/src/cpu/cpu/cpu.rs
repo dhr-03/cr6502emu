@@ -1,4 +1,4 @@
-use super::{CPUInterface, CurrentOpcode};
+use super::{CPUInterface, CPUOperationManager};
 use super::super::{
     register::RegisterContainer,
     opcode::AddressingFn,
@@ -9,7 +9,7 @@ use crate::system::MemManager;
 pub struct CPU {
     reg: RegisterContainer,
 
-    opcode: CurrentOpcode,
+    opcode: CPUOperationManager,
 
     extra_cycle: Option<AddressingFn>,
 }
@@ -19,7 +19,7 @@ impl CPU {
         CPU {
             reg: RegisterContainer::new(),
 
-            opcode: CurrentOpcode::new(),
+            opcode: CPUOperationManager::new(),
 
             extra_cycle: None,
         }

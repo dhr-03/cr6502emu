@@ -1,8 +1,8 @@
 mod cpu;
 mod interface;
 
-mod current_opcode;
+mod operation_manager;
 
 pub use cpu::CPU;
 pub use interface::CPUInterface;
-use current_opcode::CurrentOpcode;
+use operation_manager::CPUOperationManager;
