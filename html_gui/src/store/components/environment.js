@@ -19,7 +19,7 @@ export const EnvironmentStore = {
         lock: {
             build: false,
             reset: false,
-            run: false,
+            execute: false,
             config: false,
         },
 
@@ -220,11 +220,11 @@ export const EnvironmentStore = {
         },
 
         ableToRun(state, getters) {
-            return !(state.lock.run || getters.isDebugging) && getters.isBuilt;
+            return !(state.lock.execute || getters.isDebugging) && getters.isBuilt;
         },
 
         ableToDebug(state, getters) {
-            return !(state.lock.run || getters.isRunning) && getters.isBuilt;
+            return !(state.lock.execute || getters.isRunning) && getters.isBuilt;
         },
 
         ableToStep(state, getters) {
