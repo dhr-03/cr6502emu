@@ -5,7 +5,8 @@
         </p>
 
         <a href="https://github.com/dhreck/cr6502emu">
-            <font-awesome-icon icon="code"/> Github Repo
+            <font-awesome-icon icon="code"/>
+            Github Repo
         </a>
     </div>
 </template>

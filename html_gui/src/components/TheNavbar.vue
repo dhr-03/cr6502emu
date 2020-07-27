@@ -29,7 +29,7 @@
     }
 
     .cr-navbar-logo {
-        min-height: 0!important;
+        min-height: 0 !important;
     }
 
 </style>
