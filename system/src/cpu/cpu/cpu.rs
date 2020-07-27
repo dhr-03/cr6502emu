@@ -44,9 +44,4 @@ impl CPU {
         self.opcode.force_is_done();
         self.extra_cycle = None;
     }
-
-    pub fn tmp_to_str(&self) -> String {
-        format!("a       : {}\nx       : {}\ny       : {}\npc      : {}\nflags   : {:#08b}",
-                self.reg.a, self.reg.x, self.reg.y, self.reg.pc, self.reg.p)
-    }
 }

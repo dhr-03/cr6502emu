@@ -23,16 +23,6 @@ impl System {
         }
     }
 
-    pub fn with_default_mem_map() -> Self {
-        let mut sys = Self::new();
-
-        //TODO: invalid
-        sys.add_device(DeviceId::Ram, 0, 0x1000);
-        sys.add_device(DeviceId::Rom, 0x1000, 0x1000);
-
-        sys
-    }
-
     pub fn tick(&mut self) {
         self.mem.tick(); //tick the bus and all the devices
 
@@ -101,10 +91,10 @@ impl System {
         }
     }
 
-    /// WARNING: Raw pointers might cause system instability,
+    /// WARNING: Using raw pointers might cause system instability,
     /// make sure you know what you're doing.
     #[allow(non_snake_case)]
-    pub fn UNSAFE_device_data_ptr(&mut self, index: usize) -> Option<usize> {
+    pub fn device_data_ptr(&mut self, index: usize) -> Option<usize> {
         self.mem.devices_mut().get_mut(index)
             .map_or_else(
                 || None,
@@ -118,13 +108,5 @@ impl System {
                 None,
             |dev| Some(dev.device().size())
             )
-    }
-
-    pub fn tmp_to_str(&self) -> String {
-        format!("{}\nbus data: {}\nbus addr: {}",
-                self.cpu.tmp_to_str(),
-                self.mem.data(),
-                self.mem.addr()
-        )
     }
 }

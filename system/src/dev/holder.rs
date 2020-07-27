@@ -30,8 +30,5 @@ impl DeviceHolder {
     pub fn range(&self)  -> &Range<u16> {
         &self.range
     }
-    pub fn range_mut(&mut self)  -> &mut Range<u16> {
-        &mut self.range
-    }
 }
 
