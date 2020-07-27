@@ -5,7 +5,7 @@ use crate::utils::Unsigned;
 // if you don't agree, feel free to change it.
 
 // Just replace the type for a struct, and modify all usages in
-// super::super::opcode::behaviour::{operations, addressing}
+// super::super::opcode::{operations, addressing}
 
 #[allow(type_alias_bounds)] //the bounds are just for reference, the compiler ignores them on types
 pub type GenericRegister<T: Unsigned> = T;

@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use super::MemManager;
 
 use crate::cpu::CPU;
-use crate::dev::{DeviceId, DeviceFactory, DeviceHolder};
+use crate::dev::{DeviceId, DeviceFactory};
 
 #[wasm_bindgen]
 pub struct System {

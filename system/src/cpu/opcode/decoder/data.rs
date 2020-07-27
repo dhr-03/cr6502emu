@@ -1,7 +1,6 @@
 use super::super::{
     DecodedInstruction,
     operations, addressing,
-    InstructionFn, AddressingModifier, AddressingFn, AnnotatedOpcode, AddressingActions,
 };
 
 mod __table {
