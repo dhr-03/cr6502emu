@@ -1,6 +1,6 @@
 use super::super::{
     DecodedInstruction,
-    behaviour::{operations, addressing},
+    operations, addressing,
     InstructionFn, AddressingModifier, AddressingFn, AnnotatedOpcode, AddressingActions,
 };
 

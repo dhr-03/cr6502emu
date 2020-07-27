@@ -1,5 +1,5 @@
 use super::super::AddressingFn;
-use super::addressing_internal::*;
+use super::internal::*;
 
 pub const IMP: [AddressingFn; 1] = [
     imp

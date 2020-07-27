@@ -1,5 +1,5 @@
 use super::super::{AnnotatedOpcode, AddressingModifier};
-use super::operations_internal::*;
+use super::internal::*;
 
 /* #######################  Load/Store Operations  ####################### */
 pub const LDA: AnnotatedOpcode = (lda, AddressingModifier::Read);

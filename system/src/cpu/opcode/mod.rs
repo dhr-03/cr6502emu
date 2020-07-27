@@ -1,8 +1,11 @@
-mod behaviour;
+mod addressing_actions;
+mod operations_actions;
+
 mod decoder;
 mod addr_modifier;
 
-pub use behaviour::{addressing, operations};
+pub use addressing_actions::export as addressing;
+pub use operations_actions::export as operations;
 
 pub use decoder::Decoder;
 
