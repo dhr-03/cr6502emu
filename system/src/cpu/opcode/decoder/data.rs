@@ -4,12 +4,6 @@ use super::super::{
     InstructionFn, AddressingModifier, AddressingFn, AnnotatedOpcode, AddressingActions,
 };
 
-fn a(inter: &mut crate::cpu::CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {}
-
-fn b(inter: &mut crate::cpu::CPUInterface) {}
-
-const A: [AddressingFn; 1] = [a];
-
 mod __table {
     use super::{addressing, operations, DecodedInstruction};
 
