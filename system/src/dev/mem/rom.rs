@@ -33,7 +33,7 @@ impl AddressableDeviceTrait for Rom {
         self.contents.len() as u16
     }
 
-    fn read(&self, offset: u16) -> u8 {
+    fn read_unchecked(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)
         }

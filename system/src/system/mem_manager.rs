@@ -114,7 +114,7 @@ impl MemManager {
         let mapped = self.map_addr_mut(self.bus.addr());
 
         if let Some((dev, offset)) = mapped {
-            let val = dev.read(offset);
+            let val = dev.read_unchecked(offset);
 
             *self.bus.data_mut_ref() = val;
         } else {
@@ -143,7 +143,7 @@ impl MemManager {
         let mapped = self.map_addr_mut(self.bus.addr());
 
         if let Some((dev, offset)) = mapped {
-            dev.write(offset, current_data);
+            dev.write_unchecked(offset, current_data);
         } else {
             //TODO: temp
             use wasm_bindgen::prelude::wasm_bindgen;

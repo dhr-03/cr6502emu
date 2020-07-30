@@ -29,13 +29,13 @@ impl AddressableDeviceTrait for Ram {
         self.contents.len() as u16
     }
 
-    fn read(&self, offset: u16) -> u8 {
+    fn read_unchecked(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)
         }
     }
 
-    fn write(&mut self, offset: u16, value: u8) {
+    fn write_unchecked(&mut self, offset: u16, value: u8) {
         unsafe {
             *self.contents.get_unchecked_mut(offset as usize) = value;
         }
