@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use super::MemManager;
 
 use crate::cpu::CPU;
-use crate::dev::{DeviceId, DeviceFactory};
+use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation};
 
 #[wasm_bindgen]
 pub struct System {
@@ -51,7 +51,7 @@ impl System {
         self.mem.reset_devices_hard();
     }
 
-    pub fn add_device(&mut self, device: DeviceId, start: u16, size: u16) -> bool {
+    pub fn add_device_with_uid(&mut self, device: DeviceId, start: u16, size: u16, uid: u16) -> bool {
         if (std::u16::MAX - size) >= start { //check for overflows
             let result = DeviceFactory::with_size(device, size);
 
@@ -59,35 +59,40 @@ impl System {
                 Ok(dev) => {
                     let end = start + dev.size();
 
-                    self.mem.add_device_unchecked_range(dev, start, end);
+                    self.mem.add_device_unchecked_range(dev, start, end, uid);
 
                     true
                 }
 
                 Err(_) => {
+                    // for now the only possible error (in the factory) is an invalid size,
+                    // in the future we might want to be more explicit.
                     false
                 }
             }
         } else {
+            // the range should have already been validated by the client,
+            // this wont be reached if properly implemented.
             false
         }
     }
 
-    pub fn remove_device(&mut self, index: usize) -> bool {
+    pub fn remove_device_by_index(&mut self, index: usize) -> bool {
         self.mem.remove_device_by(index)
+    }
+
+    // we cant (yet?) send a Vec/n size array (at least not without using serde and its huge dependencies),
+    // maybe we could change this in the future.
+    /// Returns a representation of device [Index], if it exists, or a None/null.
+    pub fn device_representation_by_index(&self, index: usize) -> Option<DeviceRepresentation> {
+        self.mem.devices()
+            .get(index)
+            .map(|dev| DeviceRepresentation::from_dev_holder(dev))
     }
 
     /// WARNING: Using raw pointers might cause system instability,
     /// make sure you know what you're doing.
-    pub fn device_data_ptr(&mut self, index: usize) -> Option<usize> {
+    pub fn device_data_ptr_by_index(&mut self, index: usize) -> Option<usize> {
         self.mem.device_data_ptr(index)
-    }
-
-    pub fn device_size(&self, index: usize) -> Option<u16> {
-        self.mem.devices().get(index)
-            .map_or(
-                None,
-                |dev| Some(dev.device().size()),
-            )
     }
 }

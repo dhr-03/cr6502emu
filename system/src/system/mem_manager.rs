@@ -53,8 +53,8 @@ impl MemManager {
         result
     }
 
-    pub fn add_device_unchecked_range(&mut self, dev: BoxedDev, start: u16, end: u16) {
-        let holden_dev = DeviceHolder::new(dev, start, end);
+    pub fn add_device_unchecked_range(&mut self, dev: BoxedDev, start: u16, end: u16, uid: u16) {
+        let holden_dev = DeviceHolder::new(dev, start, end, uid);
         self.devices.push(holden_dev);
     }
 
