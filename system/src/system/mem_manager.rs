@@ -53,8 +53,8 @@ impl MemManager {
         result
     }
 
-    pub fn add_device_unchecked_range(&mut self, dev: BoxedDev, start: u16, end: u16) {
-        let holden_dev = DeviceHolder::new(dev, start, end);
+    pub fn add_device_unchecked_range(&mut self, dev: BoxedDev, start: u16, end: u16, uid: u16) {
+        let holden_dev = DeviceHolder::new(dev, start, end, uid);
         self.devices.push(holden_dev);
     }
 
@@ -114,7 +114,7 @@ impl MemManager {
         let mapped = self.map_addr_mut(self.bus.addr());
 
         if let Some((dev, offset)) = mapped {
-            let val = dev.read(offset);
+            let val = dev.read_unchecked(offset);
 
             *self.bus.data_mut_ref() = val;
         } else {
@@ -143,7 +143,7 @@ impl MemManager {
         let mapped = self.map_addr_mut(self.bus.addr());
 
         if let Some((dev, offset)) = mapped {
-            dev.write(offset, current_data);
+            dev.write_unchecked(offset, current_data);
         } else {
             //TODO: temp
             use wasm_bindgen::prelude::wasm_bindgen;

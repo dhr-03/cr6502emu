@@ -5,10 +5,12 @@ pub struct DeviceHolder {
     range: Range<u16>,
 
     device: BoxedDev,
+
+    uid: u16,
 }
 
 impl DeviceHolder {
-    pub fn new(device: BoxedDev, start: u16, end: u16) -> Self {
+    pub fn new(device: BoxedDev, start: u16, end: u16, uid: u16) -> Self {
         DeviceHolder {
             range: Range {
                 start,
@@ -16,6 +18,7 @@ impl DeviceHolder {
             },
 
             device,
+            uid,
         }
     }
 
@@ -29,6 +32,10 @@ impl DeviceHolder {
 
     pub fn range(&self) -> &Range<u16> {
         &self.range
+    }
+
+    pub fn uid(&self) -> u16 {
+        self.uid
     }
 }
 

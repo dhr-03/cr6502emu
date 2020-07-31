@@ -1,4 +1,6 @@
-use super::super::{DeviceTrait, AddressableDeviceTrait};
+use js_sys::Map;
+
+use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId};
 
 pub struct Rom {
     contents: Box<[u8]>
@@ -26,6 +28,14 @@ impl DeviceTrait for Rom {
             *val = 0;
         }
     }
+
+    fn update_widget(&self) -> Option<Map> {
+        None //TODO: placeholder
+    }
+
+    fn device_id(&self) -> DeviceId {
+        DeviceId::Rom
+    }
 }
 
 impl AddressableDeviceTrait for Rom {
@@ -33,7 +43,7 @@ impl AddressableDeviceTrait for Rom {
         self.contents.len() as u16
     }
 
-    fn read(&self, offset: u16) -> u8 {
+    fn read_unchecked(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)
         }

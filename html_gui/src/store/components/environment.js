@@ -1,5 +1,9 @@
+import {DeviceIdTools} from "../../assets/js/deviceIdTools";
+
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
+
+import {DeviceRepresentation} from "../../assets/js/deviceRepresentation"
 
 export const EnvironmentState = {
     SETTING_UP: 0,
@@ -33,6 +37,8 @@ export const EnvironmentStore = {
             system: null,
         },
 
+        devices: [],
+
         messages: [],
     },
 
@@ -61,7 +67,28 @@ export const EnvironmentStore = {
 
         resetMessages(state) {
             state.messages = [];
-        }
+        },
+
+
+        purgeAndReloadDeviceCache(state) {
+            let sys = state.wasm.system;
+            let newCache = [
+                new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
+            ];
+
+            let index = 0;
+            let dev = sys.device_representation_by_index(0);
+
+            while (dev !== undefined) {
+                newCache.push(dev);
+
+                index++;
+
+                dev = sys.device_representation_by_index(index);
+            }
+
+            state.devices = newCache;
+        },
     },
 
     actions: {
@@ -115,10 +142,11 @@ export const EnvironmentStore = {
             const sys = context.getters.__system;
 
             const DeviceId = sysLib.DeviceId;
-            sys.add_device(DeviceId.Ram, 0, 0x1000);
-            sys.add_device(DeviceId.Rom, 0x1000, 0x1000);
+            sys.add_device_with_uid(DeviceId.Ram, 0, 0x1000, 0);
+            sys.add_device_with_uid(DeviceId.Rom, 0x1000, 0x1000, 1);
 
 
+            context.commit("purgeAndReloadDeviceCache");
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
@@ -129,15 +157,16 @@ export const EnvironmentStore = {
             const asm = context.getters.__assembler;
             const sys = context.getters.__system;
 
-            let romId = 1;
-            let ptr = sys.device_data_ptr(romId);
-            let size = sys.device_size(romId);
+            let romIndex = 1;
+            let ptr = sys.device_data_ptr_by_index(romIndex);
+            let size = context.state.devices[romIndex].size;
 
             let program = document.querySelector("#editor").innerText;
-            let rom = new Uint8Array(sys.memory.buffer, ptr, size);
+            let romData = new Uint8Array(sys.memory.buffer, ptr, size);
 
-            let success = asm.assemble(program, rom);
+            let success = asm.assemble(program, romData);
 
+            context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);
         },
 
@@ -164,6 +193,22 @@ export const EnvironmentStore = {
         cpuShortStep(context) {
             context.getters.__system.tick();
         },
+
+
+        updateDeviceWidget(context, index) {
+            let dev = context.state.devices[index];
+            let handler = DeviceIdTools.getUpdater(dev.type);
+
+            let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+
+            handler(dev.data, updatePackage)
+        },
+
+        updateAllDevicesWidgets(context) {
+            for (let i = 1; i < context.state.devices.length; i++) {
+                context.dispatch("updateDeviceWidget", i - 1) // first dev is always the cpu
+            }
+        }
 
     },
 
@@ -234,6 +279,11 @@ export const EnvironmentStore = {
         ableToConfig(state, getters) {
             return !(state.lock.config || getters.isExecuting);
         },
+
+
+        deviceList(state) {
+            return state.devices;
+        }
 
     }
 }

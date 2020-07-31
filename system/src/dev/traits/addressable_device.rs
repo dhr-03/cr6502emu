@@ -7,13 +7,13 @@ pub trait AddressableDeviceTrait: DeviceTrait {
     /// Read value at `offset`.
     ///
     /// The offset has already been validated by `system::MemManager`.
-    fn read(&self, offset: u16) -> u8;
+    fn read_unchecked(&self, offset: u16) -> u8;
 
     /// Write `value` at `offset`.
     ///
     /// The offset has already been validated by `system::MemManager`.
     #[allow(unused_variables)]
-    fn write(&mut self, offset: u16, value: u8) {
+    fn write_unchecked(&mut self, offset: u16, value: u8) {
         //TODO: temp
         use wasm_bindgen::prelude::wasm_bindgen;
         #[wasm_bindgen]

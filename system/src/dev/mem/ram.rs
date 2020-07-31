@@ -1,4 +1,6 @@
-use super::super::{DeviceTrait, AddressableDeviceTrait};
+use js_sys::Map;
+
+use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId};
 
 pub struct Ram {
     contents: Box<[u8]>
@@ -22,6 +24,14 @@ impl DeviceTrait for Ram {
     fn reset_hard(&mut self) {
         self.reset_system();
     }
+
+    fn update_widget(&self) -> Option<Map> {
+        None //TODO: placeholder
+    }
+
+    fn device_id(&self) -> DeviceId {
+        DeviceId::Ram
+    }
 }
 
 impl AddressableDeviceTrait for Ram {
@@ -29,13 +39,13 @@ impl AddressableDeviceTrait for Ram {
         self.contents.len() as u16
     }
 
-    fn read(&self, offset: u16) -> u8 {
+    fn read_unchecked(&self, offset: u16) -> u8 {
         unsafe {
             *self.contents.get_unchecked(offset as usize)
         }
     }
 
-    fn write(&mut self, offset: u16, value: u8) {
+    fn write_unchecked(&mut self, offset: u16, value: u8) {
         unsafe {
             *self.contents.get_unchecked_mut(offset as usize) = value;
         }

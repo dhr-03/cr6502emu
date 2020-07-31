@@ -9,6 +9,9 @@ pub enum DeviceId {
     // MEM
     Rom = 100,
     Ram = 101,
+
+    // Special
+    CPU = 255,
 }
 
 impl DeviceId {
@@ -16,6 +19,8 @@ impl DeviceId {
         match self {
             Self::Rom => None,
             Self::Ram => None,
+
+            Self::CPU => None,
         }
     }
 }

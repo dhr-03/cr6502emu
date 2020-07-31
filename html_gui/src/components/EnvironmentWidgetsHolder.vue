@@ -1,7 +1,7 @@
 <template>
     <div
-            class="cr-dev-holder uk-flex uk-flex-middle"
-            uk-sortable="group: widgets; handle: .cr-widget-handle-container"
+        class="cr-dev-holder uk-flex uk-flex-middle"
+        uk-sortable="group: widgets; handle: .cr-widget-handle-container"
     >
         <div class="cr-dev-holder-empty">
         <span>
@@ -47,6 +47,10 @@
 
         &:not(:only-child) {
             display: none;
+        }
+
+        &:only-child {
+            display: flex !important;
         }
     }
 </style>
