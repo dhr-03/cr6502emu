@@ -1,3 +1,5 @@
+use js_sys::Map;
+
 use super::super::{DeviceTrait, AddressableDeviceTrait};
 
 pub struct Rom {
@@ -25,6 +27,10 @@ impl DeviceTrait for Rom {
         for val in &mut *self.contents {
             *val = 0;
         }
+    }
+
+    fn update_widget(&self) -> Option<Map> {
+        None //TODO: placeholder
     }
 }
 

@@ -1,3 +1,5 @@
+use js_sys::Map;
+
 use super::super::{DeviceTrait, AddressableDeviceTrait};
 
 pub struct Ram {
@@ -21,6 +23,10 @@ impl DeviceTrait for Ram {
 
     fn reset_hard(&mut self) {
         self.reset_system();
+    }
+
+    fn update_widget(&self) -> Option<Map> {
+        None //TODO: placeholder
     }
 }
 
