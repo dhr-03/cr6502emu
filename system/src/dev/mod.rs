@@ -6,7 +6,7 @@ pub mod io;
 mod holder;
 
 mod id;
-mod representation;
+mod js_representation;
 mod factory;
 
 pub use traits::{DeviceTrait, AddressableDeviceTrait};
@@ -14,7 +14,7 @@ pub use traits::{DeviceTrait, AddressableDeviceTrait};
 pub use holder::DeviceHolder;
 
 pub use id::DeviceId;
-pub use representation::DeviceRepresentation;
+pub use js_representation::DeviceRepresentation;
 pub use factory::DeviceFactory;
 
 pub type BoxedDev = Box<dyn AddressableDeviceTrait>;
