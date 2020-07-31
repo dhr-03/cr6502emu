@@ -261,5 +261,10 @@ export const EnvironmentStore = {
             return !(state.lock.config || getters.isExecuting);
         },
 
+
+        deviceList(state) {
+            return state.devices;
+        }
+
     }
 }

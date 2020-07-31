@@ -3,8 +3,8 @@
         <div class="cr-widget-header uk-grid">
 
             <span
-                    class="cr-widget-title uk-width-expand"
-                    :title="title"
+                class="cr-widget-title uk-width-expand"
+                :title="title"
             >
                 {{ title }}
             </span>
@@ -16,7 +16,9 @@
 
         <div class="cr-widget-square">
             <div class="cr-widget-container">
-                <slot></slot>
+                <component
+                    :is="bodyElement"
+                />
             </div>
         </div>
     </div>
@@ -24,16 +26,29 @@
 </template>
 
 <script>
+    import {DeviceIdTools} from "../assets/js/deviceIdTools"
+
     export default {
         name: "EnvironmentWidget",
 
         props: {
-            title: {
-                type: String,
-                default: function () {
-                    return "Widget";
-                }
-            }
+            device: {
+                type: Object,
+                required: true,
+            },
+        },
+
+        data() {
+            return {
+                bodyElement: DeviceIdTools.getWidgetComponent(this.device.type)
+            };
+        },
+
+        computed: {
+            title() {
+                return this.device.data.title ||
+                    DeviceIdTools.getWidgetDefaultTitle(this.device.type);
+            },
         }
     }
 </script>
@@ -85,12 +100,10 @@
     .cr-widget-container {
         position: absolute;
 
-        background: @oc-grape-4;
+        background: @oc-gray-4;
 
-        padding: 1em;
-
-        min-width: calc(100% - 2em);
-        min-height: calc(100% - 2em);
+        min-width: 100%;
+        min-height: 100%;
 
         border-radius: 0 0 4pt 4pt;
     }

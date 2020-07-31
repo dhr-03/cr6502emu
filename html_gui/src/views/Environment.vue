@@ -1,15 +1,15 @@
 <template>
     <div
-            class="cr-container cr-initialize"
-            v-if="isInitializing"
+        class="cr-container cr-initialize"
+        v-if="isInitializing"
     >
         <font-awesome-icon class="uk-margin-small" icon="cog" spin size="4x"/>
         <span>Initializing</span>
     </div>
 
     <div
-            class="cr-container cr-initialize"
-            v-else-if="!successfulInitialize"
+        class="cr-container cr-initialize"
+        v-else-if="!successfulInitialize"
     >
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
         <span>Failed to initialize Environment</span>
@@ -17,13 +17,13 @@
 
     <div v-else>
         <EnvironmentActionbar
-                @env_build="buildToRom"
-                @env_reset="resetSystem"
+            @env_build="buildToRom"
+            @env_reset="resetSystem"
 
-                @env_toggle-run="toggleRun"
-                @env_toggle-debug="toggleDebug"
+            @env_toggle-run="toggleRun"
+            @env_toggle-debug="toggleDebug"
 
-                @env_step-short="cpuShortStep"
+            @env_step-short="cpuShortStep"
         />
 
         <div class="cr-environment uk-container uk-container-xlarge">
@@ -39,7 +39,17 @@
                 </div>
             </div>
 
-            <EnvironmentWidgetsHolder class="cr-devholder-pool"/>
+            <EnvironmentWidgetsHolder class="cr-devholder-pool">
+
+                <EnvironmentWidget
+                    v-for="(devData, index) in deviceList"
+                    :key="index"
+
+                    :device="devData"
+
+                />
+
+            </EnvironmentWidgetsHolder>
         </div>
 
         <EnvironmentLogbar/>
@@ -53,10 +63,12 @@
     import EnvironmentActionbar from "../components/EnvironmentActionbar"
     import EnvironmentLogbar from "../components/EnvironmentLogbar"
     import {mapGetters, mapActions} from "vuex"
+    import EnvironmentNumberContainer from "../components/EnvironmentNumberContainer";
 
     export default {
         name: "Environment",
         components: {
+            EnvironmentNumberContainer,
             EnvironmentLogbar,
             EnvironmentActionbar, EnvironmentWidget, EnvironmentWidgetsHolder, EnvironmentEditor
         },
@@ -64,7 +76,8 @@
         computed: mapGetters("env", [
             "isInitializing",
             "successfulInitialize",
-            "isExecuting"
+            "isExecuting",
+            "deviceList"
         ]),
 
         methods: mapActions("env", [
