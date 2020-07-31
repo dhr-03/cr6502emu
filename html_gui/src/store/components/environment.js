@@ -152,14 +152,14 @@ export const EnvironmentStore = {
             const asm = context.getters.__assembler;
             const sys = context.getters.__system;
 
-            let romId = 1;
-            let ptr = sys.device_data_ptr(romId);
-            let size = sys.device_size(romId);
+            let romIndex = 1;
+            let ptr = sys.device_data_ptr_by_index(romIndex);
+            let size = context.state.devices[romIndex].size;
 
             let program = document.querySelector("#editor").innerText;
-            let rom = new Uint8Array(sys.memory.buffer, ptr, size);
+            let romData = new Uint8Array(sys.memory.buffer, ptr, size);
 
-            let success = asm.assemble(program, rom);
+            let success = asm.assemble(program, romData);
 
             context.commit("buildStatus", success);
         },
