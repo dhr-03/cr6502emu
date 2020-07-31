@@ -1,6 +1,8 @@
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
 
+import {DeviceRepresentation} from "../../assets/js/deviceRepresentation"
+
 export const EnvironmentState = {
     SETTING_UP: 0,
     INITIALIZING: 1,
@@ -68,13 +70,14 @@ export const EnvironmentStore = {
 
         purgeAndReloadDeviceCache(state) {
           let sys = state.wasm.system;
-          let newCache = [];
+          let newCache = [
+              new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
+          ];
 
           let index = 0;
           let dev = sys.device_representation_by_index(0);
 
           while (dev !== undefined) {
-              dev.data = {};
               newCache.push(dev);
 
               index++;

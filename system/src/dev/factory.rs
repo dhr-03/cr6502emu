@@ -20,6 +20,8 @@ impl DeviceFactory {
             Err(())
         } else {
             match dev_type {
+                DeviceId::CPU => Err(()),
+
                 DeviceId::Rom => {
                     Ok(Box::new(
                         mem::Rom::with_size(size)

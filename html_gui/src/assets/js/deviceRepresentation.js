@@ -12,6 +12,9 @@ export class DeviceRepresentation {
 
         // The uid (unique-id) assigned to this device.
         this._uid = uid;
+
+        // Data used by the Widget.
+        this._data = {};
     }
 
     get type() {
@@ -34,5 +37,10 @@ export class DeviceRepresentation {
 
     get uid() {
         return this._uid;
+    }
+
+
+    get data() {
+        return this._data;
     }
 }
