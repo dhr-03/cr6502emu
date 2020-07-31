@@ -13,7 +13,7 @@ extern {
 impl DeviceRepresentation {
     pub fn from_dev_holder(holder: &DeviceHolder) -> Self {
         DeviceRepresentation::new(
-            DeviceId::Ram,
+            holder.device().device_id(),
 
             holder.range().start,
             holder.range().end,

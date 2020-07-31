@@ -1,5 +1,7 @@
 use js_sys::Map;
 
+use super::super::DeviceId;
+
 pub trait DeviceTrait {
     /// This method is called on every system + cpu tick.
     fn tick(&mut self) {}
@@ -18,4 +20,6 @@ pub trait DeviceTrait {
     /// Every device passes the relevant data on it's own format, so a special function is needed
     /// for every type/class of devices to handle the update package.
     fn update_widget(&self) -> Option<Map>;
+
+    fn device_id(&self) -> DeviceId;
 }

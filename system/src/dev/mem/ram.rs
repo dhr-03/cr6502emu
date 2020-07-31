@@ -1,6 +1,6 @@
 use js_sys::Map;
 
-use super::super::{DeviceTrait, AddressableDeviceTrait};
+use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId};
 
 pub struct Ram {
     contents: Box<[u8]>
@@ -27,6 +27,10 @@ impl DeviceTrait for Ram {
 
     fn update_widget(&self) -> Option<Map> {
         None //TODO: placeholder
+    }
+
+    fn device_id(&self) -> DeviceId {
+        DeviceId::Ram
     }
 }
 

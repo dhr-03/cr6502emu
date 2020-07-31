@@ -1,6 +1,6 @@
 use js_sys::Map;
 
-use super::super::{DeviceTrait, AddressableDeviceTrait};
+use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId};
 
 pub struct Rom {
     contents: Box<[u8]>
@@ -31,6 +31,10 @@ impl DeviceTrait for Rom {
 
     fn update_widget(&self) -> Option<Map> {
         None //TODO: placeholder
+    }
+
+    fn device_id(&self) -> DeviceId {
+        DeviceId::Rom
     }
 }
 
