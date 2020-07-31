@@ -1,4 +1,5 @@
 use wasm_bindgen::prelude::wasm_bindgen;
+use js_sys::Map;
 
 use super::MemManager;
 
@@ -94,5 +95,11 @@ impl System {
     /// make sure you know what you're doing.
     pub fn device_data_ptr_by_index(&mut self, index: usize) -> Option<usize> {
         self.mem.device_data_ptr(index)
+    }
+
+    pub fn device_widget_update_by_index(&self, index: usize) -> Option<Map> {
+        self.mem.devices()
+            .get(index)
+            .and_then(|dev| dev.device().update_widget())
     }
 }

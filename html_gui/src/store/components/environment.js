@@ -1,3 +1,5 @@
+import {DeviceIdTools} from "../../assets/js/deviceIdTools";
+
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
 
@@ -69,23 +71,23 @@ export const EnvironmentStore = {
 
 
         purgeAndReloadDeviceCache(state) {
-          let sys = state.wasm.system;
-          let newCache = [
-              new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
-          ];
+            let sys = state.wasm.system;
+            let newCache = [
+                new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
+            ];
 
-          let index = 0;
-          let dev = sys.device_representation_by_index(0);
+            let index = 0;
+            let dev = sys.device_representation_by_index(0);
 
-          while (dev !== undefined) {
-              newCache.push(dev);
+            while (dev !== undefined) {
+                newCache.push(dev);
 
-              index++;
+                index++;
 
-              dev = sys.device_representation_by_index(index);
-          }
+                dev = sys.device_representation_by_index(index);
+            }
 
-          state.devices = newCache;
+            state.devices = newCache;
         },
     },
 
@@ -164,6 +166,7 @@ export const EnvironmentStore = {
 
             let success = asm.assemble(program, romData);
 
+            context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);
         },
 
@@ -190,6 +193,22 @@ export const EnvironmentStore = {
         cpuShortStep(context) {
             context.getters.__system.tick();
         },
+
+
+        updateDeviceWidget(context, index) {
+            let dev = context.state.devices[index];
+            let handler = DeviceIdTools.getUpdater(dev.type);
+
+            let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+
+            handler(dev.data, updatePackage)
+        },
+
+        updateAllDevicesWidgets(context) {
+            for (let i = 1; i < context.state.devices.length; i++) {
+                context.dispatch("updateDeviceWidget", i - 1) // first dev is always the cpu
+            }
+        }
 
     },
 
