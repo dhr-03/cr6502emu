@@ -33,6 +33,8 @@ export const EnvironmentStore = {
             system: null,
         },
 
+        devices: [],
+
         messages: [],
     },
 
@@ -61,7 +63,27 @@ export const EnvironmentStore = {
 
         resetMessages(state) {
             state.messages = [];
-        }
+        },
+
+
+        purgeAndReloadDeviceCache(state) {
+          let sys = state.wasm.system;
+          let newCache = [];
+
+          let index = 0;
+          let dev = sys.device_representation_by_index(0);
+
+          while (dev !== undefined) {
+              dev.data = {};
+              newCache.push(dev);
+
+              index++;
+
+              dev = sys.device_representation_by_index(index);
+          }
+
+          state.devices = newCache;
+        },
     },
 
     actions: {
@@ -115,10 +137,11 @@ export const EnvironmentStore = {
             const sys = context.getters.__system;
 
             const DeviceId = sysLib.DeviceId;
-            sys.add_device(DeviceId.Ram, 0, 0x1000);
-            sys.add_device(DeviceId.Rom, 0x1000, 0x1000);
+            sys.add_device_with_uid(DeviceId.Ram, 0, 0x1000, 0);
+            sys.add_device_with_uid(DeviceId.Rom, 0x1000, 0x1000, 1);
 
 
+            context.commit("purgeAndReloadDeviceCache");
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
