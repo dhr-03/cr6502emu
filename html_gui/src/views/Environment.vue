@@ -42,10 +42,10 @@
             <EnvironmentWidgetsHolder class="cr-devholder-pool">
 
                 <EnvironmentWidget
-                    v-for="(devData, index) in deviceList"
+                    v-for="(device, index) in deviceList"
                     :key="index"
 
-                    :device="devData"
+                    :device="device"
 
                 />
 
@@ -63,12 +63,10 @@
     import EnvironmentActionbar from "../components/EnvironmentActionbar"
     import EnvironmentLogbar from "../components/EnvironmentLogbar"
     import {mapGetters, mapActions} from "vuex"
-    import EnvironmentNumberContainer from "../components/EnvironmentNumberContainer";
 
     export default {
         name: "Environment",
         components: {
-            EnvironmentNumberContainer,
             EnvironmentLogbar,
             EnvironmentActionbar, EnvironmentWidget, EnvironmentWidgetsHolder, EnvironmentEditor
         },
