@@ -40,9 +40,9 @@
 
         computed: {
             formattedValue() {
-                let strMaxLength = (2 ** (this.lengthInBytes * 8))
+                let strMaxLength = (2 ** (this.lengthInBytes * 8) - 1)
                     .toString(this.base)
-                    .length - 1;
+                    .length;
 
                 return this.watchedValue.toString(this.base).padStart(strMaxLength, "0");
             },
