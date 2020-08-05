@@ -139,14 +139,13 @@ export const EnvironmentStore = {
         },
 
         initialize(context) {
-            const sys = context.getters.__system;
-
             const DeviceId = sysLib.DeviceId;
-            sys.add_device_with_uid(DeviceId.Ram, 0, 0x1000, 0);
-            sys.add_device_with_uid(DeviceId.Rom, 0x1000, 0x1000, 1);
 
+            //context.commit("purgeAndReloadDeviceCache");
 
-            context.commit("purgeAndReloadDeviceCache");
+            context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000, uid: 0});
+            context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000, uid: 1});
+
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
@@ -195,7 +194,22 @@ export const EnvironmentStore = {
         },
 
 
-        updateDeviceWidget(context, index) {
+        addDeviceWithWidget(context, {type, start, end, uid}) {
+            let success = context.getters.__system.add_device_with_uid(type, start, end, uid);
+
+            if (success) {
+                let newDevIndex = context.state.devices.length; // assuming we are synchronized with rust
+
+                let newDev = context.getters.__system.device_representation_by_index(newDevIndex);
+                context.state.devices.push(newDev);
+
+                context.dispatch("updateDeviceWidgetByIndex", newDevIndex);
+            }
+
+            return success;
+        },
+
+        updateDeviceWidgetByIndex(context, index) {
             let dev = context.state.devices[index];
             let handler = DeviceIdTools.getUpdater(dev.type);
 
