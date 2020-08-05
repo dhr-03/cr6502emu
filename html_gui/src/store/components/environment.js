@@ -3,7 +3,6 @@ import {DeviceIdTools} from "../../assets/js/deviceIdTools";
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
 
-import {DeviceRepresentation} from "../../assets/js/deviceRepresentation"
 
 export const EnvironmentState = {
     SETTING_UP: 0,
@@ -72,9 +71,7 @@ export const EnvironmentStore = {
 
         purgeAndReloadDeviceCache(state) {
             let sys = state.wasm.system;
-            let newCache = [
-                new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
-            ];
+            let newCache = [];
 
             let index = 0;
             let dev = sys.device_representation_by_index(0);
@@ -141,7 +138,7 @@ export const EnvironmentStore = {
         initialize(context) {
             const DeviceId = sysLib.DeviceId;
 
-            //context.commit("purgeAndReloadDeviceCache");
+            context.commit("purgeAndReloadDeviceCache");
 
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000, uid: 0});
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000, uid: 1});
