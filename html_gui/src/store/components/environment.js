@@ -201,7 +201,7 @@ export const EnvironmentStore = {
 
             let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
-            handler(dev.data, updatePackage)
+            handler(dev.widget, updatePackage)
         },
 
         updateAllDevicesWidgets(context) {
