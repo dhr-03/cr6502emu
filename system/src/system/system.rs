@@ -4,7 +4,7 @@ use js_sys::Map;
 use super::MemManager;
 
 use crate::cpu::CPU;
-use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation};
+use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation, DeviceTrait};
 
 #[wasm_bindgen]
 pub struct System {
@@ -27,7 +27,7 @@ impl System {
     pub fn tick(&mut self) {
         self.mem.tick(); //tick the bus and all the devices
 
-        self.cpu.tick(&mut self.mem);
+        self.cpu.tick_with_mem(&mut self.mem);
     }
 
     pub fn tick_x(&mut self, amm: i32) {
@@ -38,7 +38,7 @@ impl System {
 
     /// Resets the system, clearing all non-persistent data containers.
     pub fn reset_system(&mut self) {
-        self.cpu.reset();
+        self.cpu.reset_system();
 
         self.mem.reset_bus();
         self.mem.reset_devices();
@@ -46,7 +46,7 @@ impl System {
 
     /// Resets the system, clearing all data containers, including persistent ones like the rom.
     pub fn reset_hard(&mut self) {
-        self.cpu.reset();
+        self.cpu.reset_hard();
 
         self.mem.reset_bus();
         self.mem.reset_devices_hard();

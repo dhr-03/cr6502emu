@@ -6,6 +6,10 @@ use super::super::{
 
 use crate::system::MemManager;
 
+use crate::dev::{DeviceTrait, DeviceId};
+
+use js_sys::Map;
+
 pub struct CPU {
     reg: RegisterContainer,
 
@@ -25,7 +29,7 @@ impl CPU {
         }
     }
 
-    pub fn tick(&mut self, mem_ref: &mut MemManager) {
+    pub fn tick_with_mem(&mut self, mem_ref: &mut MemManager) {
         let mut inter = CPUInterface {
             mem: mem_ref,
 
@@ -38,10 +42,29 @@ impl CPU {
 
         self.opcode.execute(&mut inter);
     }
+}
 
-    pub fn reset(&mut self) {
+impl DeviceTrait for CPU {
+    #[cfg(debug_assertions)]
+    fn tick(&mut self) {
+        panic!("Disabled method. Use CPU::tick_with_mem instead.")
+    }
+
+    fn reset_system(&mut self) {
         self.reg.reset();
         self.opcode.force_is_done();
         self.extra_cycle = None;
+    }
+
+    fn reset_hard(&mut self) {
+        self.reset_system();
+    }
+
+    fn update_widget(&self) -> Option<Map> {
+        todo!()
+    }
+
+    fn device_id(&self) -> DeviceId {
+        DeviceId::CPU
     }
 }
