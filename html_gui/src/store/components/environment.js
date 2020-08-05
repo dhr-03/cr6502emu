@@ -175,6 +175,7 @@ export const EnvironmentStore = {
 
         cpuShortStep(context) {
             context.getters.__system.tick();
+            context.dispatch("updateAllDevicesWidgets");
         },
 
 
@@ -236,7 +237,7 @@ export const EnvironmentStore = {
 
         updateAllDevicesWidgets(context) {
             for (let i = 0; i < context.state.devices.length; i++) {
-                context.dispatch("updateDeviceWidget", i);
+                context.dispatch("updateDeviceWidgetByIndex", i);
             }
         }
 
