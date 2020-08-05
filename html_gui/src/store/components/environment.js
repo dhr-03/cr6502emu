@@ -1,9 +1,9 @@
 import {DeviceIdTools} from "../../assets/js/deviceIdTools";
+import list from "less/lib/less/functions/list";
 
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
 
-import {DeviceRepresentation} from "../../assets/js/deviceRepresentation"
 
 export const EnvironmentState = {
     SETTING_UP: 0,
@@ -52,6 +52,11 @@ export const EnvironmentStore = {
         },
 
 
+        __setDevices(state, obj) {
+            state.devices = obj;
+        },
+
+
         buildStatus(state, value) {
             state.status.buildSuccessful = value;
         },
@@ -67,27 +72,6 @@ export const EnvironmentStore = {
 
         resetMessages(state) {
             state.messages = [];
-        },
-
-
-        purgeAndReloadDeviceCache(state) {
-            let sys = state.wasm.system;
-            let newCache = [
-                new DeviceRepresentation(sysLib.DeviceId.CPU, 0, 0, 0)
-            ];
-
-            let index = 0;
-            let dev = sys.device_representation_by_index(0);
-
-            while (dev !== undefined) {
-                newCache.push(dev);
-
-                index++;
-
-                dev = sys.device_representation_by_index(index);
-            }
-
-            state.devices = newCache;
         },
     },
 
@@ -141,7 +125,7 @@ export const EnvironmentStore = {
         initialize(context) {
             const DeviceId = sysLib.DeviceId;
 
-            //context.commit("purgeAndReloadDeviceCache");
+            context.dispatch("purgeAndReloadDeviceCache");
 
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000, uid: 0});
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000, uid: 1});
@@ -191,6 +175,29 @@ export const EnvironmentStore = {
 
         cpuShortStep(context) {
             context.getters.__system.tick();
+            context.dispatch("updateAllDevicesWidgets");
+        },
+
+
+        purgeAndReloadDeviceCache(context, updateWidgets = true) {
+            let sys = context.getters.__system;
+            let newCache = [];
+
+            let index = 0;
+            let dev = sys.device_representation_by_index(0);
+
+            while (dev !== undefined) {
+                newCache.push(dev);
+                if (updateWidgets) {
+                    context.dispatch("updateDeviceWidgetByIndex", [index, dev]);
+                }
+
+                index++;
+
+                dev = sys.device_representation_by_index(index);
+            }
+
+            context.commit("__setDevices", newCache);
         },
 
 
@@ -209,8 +216,18 @@ export const EnvironmentStore = {
             return success;
         },
 
-        updateDeviceWidgetByIndex(context, index) {
-            let dev = context.state.devices[index];
+        updateDeviceWidgetByIndex(context, data) {
+            let dev;
+            let index;
+
+            if (typeof data === "object") {
+                index = data[0];
+                dev = data[1];
+            } else {
+                index = data;
+                dev = context.state.devices[index];
+            }
+
             let handler = DeviceIdTools.getUpdater(dev.type);
 
             let updatePackage = context.getters.__system.device_widget_update_by_index(index);
@@ -219,8 +236,8 @@ export const EnvironmentStore = {
         },
 
         updateAllDevicesWidgets(context) {
-            for (let i = 1; i < context.state.devices.length; i++) {
-                context.dispatch("updateDeviceWidget", i - 1) // first dev is always the cpu
+            for (let i = 0; i < context.state.devices.length; i++) {
+                context.dispatch("updateDeviceWidgetByIndex", i);
             }
         }
 

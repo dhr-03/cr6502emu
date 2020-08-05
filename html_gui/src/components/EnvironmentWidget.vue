@@ -18,6 +18,7 @@
             <div class="cr-widget-container">
                 <component
                     :is="bodyElement"
+                    :device="device"
                 />
             </div>
         </div>

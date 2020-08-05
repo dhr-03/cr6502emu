@@ -4,7 +4,7 @@ use js_sys::Map;
 use super::MemManager;
 
 use crate::cpu::CPU;
-use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation};
+use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation, DeviceTrait};
 
 #[wasm_bindgen]
 pub struct System {
@@ -27,7 +27,7 @@ impl System {
     pub fn tick(&mut self) {
         self.mem.tick(); //tick the bus and all the devices
 
-        self.cpu.tick(&mut self.mem);
+        self.cpu.tick_with_mem(&mut self.mem);
     }
 
     pub fn tick_x(&mut self, amm: i32) {
@@ -38,7 +38,7 @@ impl System {
 
     /// Resets the system, clearing all non-persistent data containers.
     pub fn reset_system(&mut self) {
-        self.cpu.reset();
+        self.cpu.reset_system();
 
         self.mem.reset_bus();
         self.mem.reset_devices();
@@ -46,7 +46,7 @@ impl System {
 
     /// Resets the system, clearing all data containers, including persistent ones like the rom.
     pub fn reset_hard(&mut self) {
-        self.cpu.reset();
+        self.cpu.reset_hard();
 
         self.mem.reset_bus();
         self.mem.reset_devices_hard();
@@ -78,28 +78,49 @@ impl System {
         }
     }
 
+
+    //
+    // Notes about devices index:
+    //
+    // Device index 0 represents the cpu, so for added devices, the index actually is (index - 1).
+    //
+    // Instead of checking if index > 0 im just going to let it underflow (unless special behavior is required)
+    // and be handled by the invalid index branch.
+    //
+
+
     pub fn remove_device_by_index(&mut self, index: usize) -> bool {
-        self.mem.remove_device_by(index)
+        self.mem.remove_device_by(index - 1)
     }
 
     // we cant (yet?) send a Vec/n size array (at least not without using serde and its huge dependencies),
     // maybe we could change this in the future.
     /// Returns a representation of device [Index], if it exists, or a None/null.
     pub fn device_representation_by_index(&self, index: usize) -> Option<DeviceRepresentation> {
-        self.mem.devices()
-            .get(index)
-            .map(|dev| DeviceRepresentation::from_dev_holder(dev))
+        if index == 0 {
+            Some(
+                DeviceRepresentation::new(DeviceId::CPU, 0, 0, 0)
+            )
+        } else {
+            self.mem.devices()
+                .get(index - 1)
+                .map(|dev| DeviceRepresentation::from_dev_holder(dev))
+        }
     }
 
     /// WARNING: Using raw pointers might cause system instability,
     /// make sure you know what you're doing.
     pub fn device_data_ptr_by_index(&mut self, index: usize) -> Option<usize> {
-        self.mem.device_data_ptr(index)
+        self.mem.device_data_ptr(index - 1)
     }
 
     pub fn device_widget_update_by_index(&self, index: usize) -> Option<Map> {
-        self.mem.devices()
-            .get(index)
-            .and_then(|dev| dev.device().update_widget())
+        if index == 0 {
+            self.cpu.update_widget()
+        } else {
+            self.mem.devices()
+                .get(index - 1)
+                .and_then(|dev| dev.device().update_widget())
+        }
     }
 }

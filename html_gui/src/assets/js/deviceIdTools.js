@@ -1,22 +1,26 @@
+import {DeviceUpdaters} from "./deviceUpdaters";
+
 const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
+
+import EnvironmentWidgetCpu from "../../components/EnvironmentWidgetCpu";
 
 const DEVICE_DATA = {
     [DeviceId.CPU]: {
-        updater: null,
-        component: null,
+        updater: DeviceUpdaters.copyAll,
+        component: EnvironmentWidgetCpu,
 
         defaultTitle: "CPU",
     },
 
     [DeviceId.Rom]: {
-        updater: null,
+        updater: DeviceUpdaters.unimplemented,
         component: null,
 
         defaultTitle: "ROM",
     },
 
     [DeviceId.Ram]: {
-        updater: null,
+        updater: DeviceUpdaters.unimplemented,
         component: null,
 
         defaultTitle: "RAM",
