@@ -27,13 +27,14 @@
 
 <script>
     import {DeviceIdTools} from "../assets/js/deviceIdTools"
+    import {DeviceRepresentation} from "../assets/js/deviceRepresentation";
 
     export default {
         name: "EnvironmentWidget",
 
         props: {
             device: {
-                type: Object,
+                type: DeviceRepresentation,
                 required: true,
             },
         },
@@ -46,7 +47,7 @@
 
         computed: {
             title() {
-                return this.device.data.title ||
+                return this.device.widget.config.title ||
                     DeviceIdTools.getWidgetDefaultTitle(this.device.type);
             },
         }
