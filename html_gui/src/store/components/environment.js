@@ -163,6 +163,8 @@ export const EnvironmentStore = {
             if (context.getters.isRunning) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
             } else {
+                context.dispatch("resetSystem");
+
                 context.commit("currentStatus", EnvironmentState.RUNNING);
             }
         },
@@ -171,6 +173,8 @@ export const EnvironmentStore = {
             if (context.getters.isDebugging) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
             } else {
+                context.dispatch("resetSystem");
+
                 context.commit("currentStatus", EnvironmentState.DEBUGGING);
             }
         },
