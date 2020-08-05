@@ -6,7 +6,7 @@ use super::super::{
 
 use crate::system::MemManager;
 
-use crate::dev::{DeviceTrait, DeviceId};
+use crate::dev::{DeviceTrait, DeviceId, utils};
 
 use js_sys::Map;
 
@@ -16,6 +16,9 @@ pub struct CPU {
     opcode: CPUOperationManager,
 
     extra_cycle: Option<AddressingFn>,
+
+    // we only have access to MemManager in Self::tick_with_mem, but also need it Self::in update_widget
+    bus_value_widget_cache: (u16, u8),
 }
 
 impl CPU {
@@ -26,6 +29,8 @@ impl CPU {
             opcode: CPUOperationManager::new(),
 
             extra_cycle: None,
+
+            bus_value_widget_cache: (0, 0)
         }
     }
 
@@ -41,6 +46,9 @@ impl CPU {
         };
 
         self.opcode.execute(&mut inter);
+
+        self.bus_value_widget_cache.0 = mem_ref.addr();
+        self.bus_value_widget_cache.1 = mem_ref.data();
     }
 }
 
@@ -61,7 +69,22 @@ impl DeviceTrait for CPU {
     }
 
     fn update_widget(&self) -> Option<Map> {
-        todo!()
+        let mut pkg = Map::new();
+
+        // see crate::cpu::register::RegisterContainer for more info.
+
+        utils::js_map_add_entry_f64(&pkg, "a", self.reg.a);
+        utils::js_map_add_entry_f64(&pkg, "x", self.reg.x);
+        utils::js_map_add_entry_f64(&pkg, "y", self.reg.y);
+        utils::js_map_add_entry_f64(&pkg, "p", self.reg.p);
+
+        utils::js_map_add_entry_f64(&pkg, "pc", self.reg.pc);
+        utils::js_map_add_entry_f64(&pkg, "s", self.reg.s);
+
+        utils::js_map_add_entry_f64(&pkg, "busAddr", self.bus_value_widget_cache.0);
+        utils::js_map_add_entry_f64(&pkg, "busData", self.bus_value_widget_cache.1);
+
+        Some(pkg)
     }
 
     fn device_id(&self) -> DeviceId {

@@ -116,7 +116,7 @@ impl System {
 
     pub fn device_widget_update_by_index(&self, index: usize) -> Option<Map> {
         if index == 0 {
-            todo!()
+            self.cpu.update_widget()
         } else {
             self.mem.devices()
                 .get(index - 1)
