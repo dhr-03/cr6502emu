@@ -9,6 +9,8 @@ mod id;
 mod js_representation;
 mod factory;
 
+pub mod utils;
+
 pub use traits::{DeviceTrait, AddressableDeviceTrait};
 
 pub use holder::DeviceHolder;
