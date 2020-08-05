@@ -2,10 +2,12 @@ import {DeviceUpdaters} from "./deviceUpdaters";
 
 const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
+import EnvironmentWidgetCpu from "../../components/EnvironmentWidgetCpu";
+
 const DEVICE_DATA = {
     [DeviceId.CPU]: {
         updater: DeviceUpdaters.copyAll,
-        component: null,
+        component: EnvironmentWidgetCpu,
 
         defaultTitle: "CPU",
     },
