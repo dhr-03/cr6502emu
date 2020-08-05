@@ -155,6 +155,8 @@ export const EnvironmentStore = {
 
         resetSystem(context) {
             context.getters.__system.reset_system();
+
+            context.dispatch("updateAllDevicesWidgets");
         },
 
         toggleRun(context) {
@@ -175,6 +177,7 @@ export const EnvironmentStore = {
 
         cpuShortStep(context) {
             context.getters.__system.tick();
+
             context.dispatch("updateAllDevicesWidgets");
         },
 
@@ -189,6 +192,8 @@ export const EnvironmentStore = {
             while (dev !== undefined) {
                 newCache.push(dev);
                 if (updateWidgets) {
+                    // we need to update the devices widgets before they are committed (and thus rendered)
+                    // as the widget data is an empty object on creation and trying to access it could lead to exceptions.
                     context.dispatch("updateDeviceWidgetByIndex", [index, dev]);
                 }
 
