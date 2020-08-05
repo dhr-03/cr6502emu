@@ -1,3 +1,5 @@
+import {DeviceWidget} from "./deviceWidget";
+
 export class DeviceRepresentation {
     constructor(type, start, end, uid) {
         // The device type. (wasmSys.DeviceId)
@@ -14,7 +16,7 @@ export class DeviceRepresentation {
         this._uid = uid;
 
         // The Widget.
-        this._widget = {};
+        this._widget = new DeviceWidget();
     }
 
     get type() {
