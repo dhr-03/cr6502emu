@@ -98,7 +98,9 @@ impl System {
     /// Returns a representation of device [Index], if it exists, or a None/null.
     pub fn device_representation_by_index(&self, index: usize) -> Option<DeviceRepresentation> {
         if index == 0 {
-            todo!()
+            Some(
+                DeviceRepresentation::new(DeviceId::CPU, 0, 0, 0)
+            )
         } else {
             self.mem.devices()
                 .get(index - 1)
