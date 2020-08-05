@@ -235,8 +235,8 @@ export const EnvironmentStore = {
         },
 
         updateAllDevicesWidgets(context) {
-            for (let i = 1; i < context.state.devices.length; i++) {
-                context.dispatch("updateDeviceWidget", i - 1) // first dev is always the cpu
+            for (let i = 0; i < context.state.devices.length; i++) {
+                context.dispatch("updateDeviceWidget", i);
             }
         }
 
