@@ -218,9 +218,10 @@ export const EnvironmentStore = {
                 let newDevIndex = context.state.devices.length; // assuming we are synchronized with rust
 
                 let newDev = context.getters.__system.device_representation_by_index(newDevIndex);
-                context.state.devices.push(newDev);
 
-                context.dispatch("updateDeviceWidgetByIndex", newDevIndex);
+                context.dispatch("updateDeviceWidgetByIndex", [newDevIndex, newDev]);
+
+                context.state.devices.push(newDev);
             }
 
             return success;
