@@ -56,6 +56,6 @@
 
     .crl-reg-name:after {
         float: right;
-        content: "⟶";
+        content: "\27f6";
     }
 </style>
