@@ -3,6 +3,7 @@ import {DeviceUpdaters} from "./deviceUpdaters";
 const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
 import EnvironmentWidgetCpu from "../../components/EnvironmentWidgetCpu";
+import EnvironmentWidgetMemMonitor from "../../components/EnvironmentWidgetMemMonitor";
 
 const DEVICE_DATA = {
     [DeviceId.CPU]: {
@@ -13,15 +14,15 @@ const DEVICE_DATA = {
     },
 
     [DeviceId.Rom]: {
-        updater: DeviceUpdaters.unimplemented,
-        component: null,
+        updater: DeviceUpdaters.memMonitorUpdater,
+        component: EnvironmentWidgetMemMonitor,
 
         defaultTitle: "ROM",
     },
 
     [DeviceId.Ram]: {
-        updater: DeviceUpdaters.unimplemented,
-        component: null,
+        updater: DeviceUpdaters.memMonitorUpdater,
+        component: EnvironmentWidgetMemMonitor,
 
         defaultTitle: "RAM",
     },

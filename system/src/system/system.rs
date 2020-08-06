@@ -114,13 +114,13 @@ impl System {
         self.mem.device_data_ptr(index - 1)
     }
 
-    pub fn device_widget_update_by_index(&self, index: usize) -> Option<Map> {
+    pub fn device_widget_update_by_index(&mut self, index: usize) -> Option<Map> {
         if index == 0 {
             self.cpu.update_widget()
         } else {
-            self.mem.devices()
-                .get(index - 1)
-                .and_then(|dev| dev.device().update_widget())
+            self.mem.devices_mut()
+                .get_mut(index - 1)
+                .and_then(|dev| dev.device_mut().update_widget())
         }
     }
 }

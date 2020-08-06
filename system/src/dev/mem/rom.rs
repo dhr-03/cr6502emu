@@ -1,15 +1,19 @@
 use js_sys::Map;
 
-use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId};
+use super::super::{DeviceTrait, AddressableDeviceTrait, DeviceId, utils};
 
 pub struct Rom {
-    contents: Box<[u8]>
+    contents: Box<[u8]>,
+
+    widget_update: bool,
 }
 
 impl Rom {
     pub fn with_size(size: u16) -> Self {
         Rom {
-            contents: vec![0_u8; size as usize].into_boxed_slice()
+            contents: vec![0_u8; size as usize].into_boxed_slice(),
+
+            widget_update: true,
         }
     }
 
@@ -27,10 +31,18 @@ impl DeviceTrait for Rom {
         for val in &mut *self.contents {
             *val = 0;
         }
+
+        self.widget_update = true;
     }
 
-    fn update_widget(&self) -> Option<Map> {
-        None //TODO: placeholder
+    fn update_widget(&mut self) -> Option<Map> {
+        let pkg = Map::new();
+
+        utils::js_map_add_entry_bool(&pkg, "update", self.widget_update);
+
+        self.widget_update = false;
+
+        Some(pkg)
     }
 
     fn device_id(&self) -> DeviceId {
@@ -50,6 +62,8 @@ impl AddressableDeviceTrait for Rom {
     }
 
     fn data_ptr(&mut self) -> *const u8 {
+        self.widget_update = true;
+
         self.contents.as_ptr()
     }
 }

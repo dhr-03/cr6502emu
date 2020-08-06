@@ -68,8 +68,8 @@ impl DeviceTrait for CPU {
         self.reset_system();
     }
 
-    fn update_widget(&self) -> Option<Map> {
-        let mut pkg = Map::new();
+    fn update_widget(&mut self) -> Option<Map> {
+        let pkg = Map::new();
 
         // see crate::cpu::register::RegisterContainer for more info.
 

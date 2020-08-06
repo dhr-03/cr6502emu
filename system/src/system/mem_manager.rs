@@ -24,6 +24,10 @@ impl MemManager {
         &self.devices
     }
 
+    pub fn devices_mut(&mut self) -> &mut DevHolderVec {
+        &mut self.devices
+    }
+
     pub fn tick(&mut self) {
         self.bus.set_rw(true);
 
