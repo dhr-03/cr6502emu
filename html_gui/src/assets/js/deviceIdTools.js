@@ -40,4 +40,12 @@ export class DeviceIdTools {
     static getWidgetDefaultTitle(id) {
         return DEVICE_DATA[id].defaultTitle;
     }
+
+    static getRandomUID() {
+        const MAX_VALUE = (2 ** 16) - 1; // unsigned int 16
+
+        return Math.floor(
+            Math.random() * MAX_VALUE
+        );
+    }
 }
