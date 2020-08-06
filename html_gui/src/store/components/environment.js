@@ -1,5 +1,4 @@
 import {DeviceIdTools} from "../../assets/js/deviceIdTools";
-import list from "less/lib/less/functions/list";
 
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
@@ -127,8 +126,8 @@ export const EnvironmentStore = {
 
             context.dispatch("purgeAndReloadDeviceCache");
 
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000, uid: 0});
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000, uid: 1});
+            context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000});
+            context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000});
 
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
@@ -211,7 +210,9 @@ export const EnvironmentStore = {
 
 
         addDeviceWithWidget(context, {type, start, end, uid}) {
-            let success = context.getters.__system.add_device_with_uid(type, start, end, uid);
+            let actualUid = uid || DeviceIdTools.getRandomUID();
+
+            let success = context.getters.__system.add_device_with_uid(type, start, end, actualUid);
 
             if (success) {
                 let newDevIndex = context.state.devices.length; // assuming we are synchronized with rust
