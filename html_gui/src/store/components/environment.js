@@ -139,7 +139,7 @@ export const EnvironmentStore = {
             const asm = context.getters.__assembler;
             const sys = context.getters.__system;
 
-            let romIndex = 1;
+            let romIndex = 2; //TMP
             let ptr = sys.device_data_ptr_by_index(romIndex);
             let size = context.state.devices[romIndex].size;
 
@@ -243,7 +243,13 @@ export const EnvironmentStore = {
 
             let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
-            handler(dev.widget, updatePackage)
+            let getMemFn = function () {
+                let ptr = context.getters.__system.device_data_ptr_by_index(index);
+
+                return new Uint8Array(context.getters.__system.memory.buffer, ptr, dev.size);
+            }
+
+            handler(dev.widget, updatePackage, getMemFn)
         },
 
         updateAllDevicesWidgets(context) {
