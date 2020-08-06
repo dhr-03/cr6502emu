@@ -141,7 +141,6 @@
 
     .cr-disabled {
         filter: grayscale(100%);
-        opacity: 50%;
+        opacity: 0.5;
     }
-
 </style>
