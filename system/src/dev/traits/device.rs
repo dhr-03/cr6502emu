@@ -19,7 +19,7 @@ pub trait DeviceTrait {
     ///
     /// Every device passes the relevant data on it's own format, so a special function is needed
     /// for every type/class of devices to handle the update package.
-    fn update_widget(&self) -> Option<Map>;
+    fn update_widget(&mut self) -> Option<Map>;
 
     fn device_id(&self) -> DeviceId;
 }
