@@ -1,6 +1,6 @@
 [package]
 name = "system"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["dhr <dhr.git.pub@gmail.com>"]
 edition = "2018"
 license = "GNU AGPLv3"
@@ -24,3 +24,6 @@ console_error_panic_hook = { version = "0.1.1", optional = true }
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-mutable-globals"]
