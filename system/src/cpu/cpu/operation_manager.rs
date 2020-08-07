@@ -2,7 +2,7 @@ use super::CPUInterface;
 
 use crate::cpu::opcode::Decoder;
 use super::super::opcode::{
-    AddressingActions,
+    AddressingActions, AddressingFn,
     AnnotatedOpcode,
     addressing, operations,
 };
@@ -62,9 +62,14 @@ impl CPUOperationManager {
         addr_action(inter, self.op.0, self.op.1);
     }
 
-    pub fn is_done(&self, inter: &mut CPUInterface) -> bool {
+    fn is_done(&self, inter: &mut CPUInterface) -> bool {
         self.action_i >= self.actions.len() &&
             inter.next_cycle.is_none()
+    }
+
+    pub fn operation_is_done(&self, next_cycle: &Option<AddressingFn>) -> bool {
+        self.action_i >= self.actions.len() &&
+            next_cycle.is_none()
     }
 
     pub fn force_is_done(&mut self) {
