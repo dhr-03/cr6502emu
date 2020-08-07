@@ -25,10 +25,15 @@
 
             :length-in-bytes="2"
         />
+
         <EnvironmentWidgetCpuRegister
             name="Flags"
-            :value="widget.displayData.p"
-        />
+            value=""
+        >
+            <EnvironmentWidgetCpuFlags
+                :value="widget.displayData.p"
+            />
+        </EnvironmentWidgetCpuRegister>
 
 
         <hr class="crl-separator">
@@ -52,12 +57,13 @@
 <script>
     import EnvironmentWidgetCpuRegister from "./EnvironmentWidgetCpuRegister";
     import MixinEnvironmentWidget from "./MixinEnvironmentWidget";
+    import EnvironmentWidgetCpuFlags from "./EnvironmentWidgetCpuFlags";
 
     export default {
         name: "EnvironmentWidgetCpu",
         mixins: [MixinEnvironmentWidget],
 
-        components: {EnvironmentWidgetCpuRegister}
+        components: {EnvironmentWidgetCpuFlags, EnvironmentWidgetCpuRegister}
     }
 </script>
 
