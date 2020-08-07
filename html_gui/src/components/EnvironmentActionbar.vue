@@ -71,6 +71,7 @@
                             color-name="yellow"
 
                             :enabled="ableToStep"
+                            :on-click="onStepLong"
                     >
                         <font-awesome-icon icon="chevron-right"/>
                     </EnvironmentActionbarButton>
@@ -144,6 +145,11 @@
             onStepShort() {
                 this.$emit("env_step-short");
             },
+
+            onStepLong() {
+                this.$emit("env_step-long");
+            },
+
         },
     }
 </script>
