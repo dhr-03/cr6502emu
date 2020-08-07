@@ -36,6 +36,16 @@ impl System {
         }
     }
 
+    pub fn execute_operation(&mut self) {
+        let mut continue_execution = true;
+
+        while continue_execution {
+            self.tick();
+
+            continue_execution = !self.cpu.operation_is_done();
+        }
+    }
+
     /// Resets the system, clearing all non-persistent data containers.
     pub fn reset_system(&mut self) {
         self.cpu.reset_system();
