@@ -178,12 +178,18 @@ export const EnvironmentStore = {
             }
         },
 
-        cpuShortStep(context) {
+        systemTick(context) {
             context.getters.__system.tick();
 
             context.dispatch("updateAllDevicesWidgets");
         },
 
+        systemExecuteOperation(context) {
+            context.getters.__system.execute_operation();
+
+            context.dispatch("updateAllDevicesWidgets");
+        },
+        
 
         purgeAndReloadDeviceCache(context, updateWidgets = true) {
             let sys = context.getters.__system;
