@@ -23,7 +23,8 @@
             @env_toggle-run="toggleRun"
             @env_toggle-debug="toggleDebug"
 
-            @env_step-short="cpuShortStep"
+            @env_step-short="systemTick"
+            @env_step-long="systemExecuteOperation"
         />
 
         <div class="cr-environment uk-container uk-container-xlarge">
@@ -83,7 +84,8 @@
             "resetSystem",
             "toggleRun",
             "toggleDebug",
-            "cpuShortStep"
+            "systemTick",
+            "systemExecuteOperation"
         ]),
 
         created() {

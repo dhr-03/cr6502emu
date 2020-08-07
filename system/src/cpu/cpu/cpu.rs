@@ -30,7 +30,7 @@ impl CPU {
 
             extra_cycle: None,
 
-            bus_value_widget_cache: (0, 0)
+            bus_value_widget_cache: (0, 0),
         }
     }
 
@@ -49,6 +49,10 @@ impl CPU {
 
         self.bus_value_widget_cache.0 = mem_ref.addr();
         self.bus_value_widget_cache.1 = mem_ref.data();
+    }
+
+    pub fn operation_is_done(&self) -> bool {
+        return self.opcode.operation_is_done(&self.extra_cycle);
     }
 }
 
