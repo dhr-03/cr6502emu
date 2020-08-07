@@ -159,10 +159,24 @@ export const EnvironmentStore = {
         },
 
         toggleRun(context) {
+            const DEFAULT_DELAY_MS = 10;
+
+            function executeUntilStopped() {
+                setTimeout(_ => {
+                    context.dispatch("systemExecuteOperation");
+
+                    if (context.getters.isRunning) {
+                        executeUntilStopped();
+                    }
+                }, DEFAULT_DELAY_MS);
+            }
+
             if (context.getters.isRunning) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
             } else {
                 context.dispatch("resetSystem");
+
+                executeUntilStopped();
 
                 context.commit("currentStatus", EnvironmentState.RUNNING);
             }
@@ -189,7 +203,7 @@ export const EnvironmentStore = {
 
             context.dispatch("updateAllDevicesWidgets");
         },
-        
+
 
         purgeAndReloadDeviceCache(context, updateWidgets = true) {
             let sys = context.getters.__system;
