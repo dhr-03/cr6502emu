@@ -334,11 +334,7 @@ pub fn asl(inter: &mut CPUInterface) {
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
 
-    if (old & (1 << 7)) != 0 { //set to old bit
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, (old & (1 << 7)) != 0);
 }
 
 pub fn lsr(inter: &mut CPUInterface) {
@@ -351,11 +347,7 @@ pub fn lsr(inter: &mut CPUInterface) {
     set_flag_is_zero(inter, inter.reg.a);
     set_flag_is_negative(inter, inter.reg.a);
 
-    if (old & 1) != 0 { //set to old bit
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, (old & 1) != 0);
 }
 
 pub fn rol(inter: &mut CPUInterface) {
