@@ -16,16 +16,7 @@
     </div>
 
     <div v-else>
-        <EnvironmentActionbar
-            @env_build="buildToRom"
-            @env_reset="resetSystem"
-
-            @env_toggle-run="toggleRun"
-            @env_toggle-debug="toggleDebug"
-
-            @env_step-short="systemTick"
-            @env_step-long="systemExecuteOperation"
-        />
+        <EnvironmentActionbar/>
 
         <div class="cr-environment uk-container uk-container-xlarge">
             <div class="uk-grid uk-grid-small">
@@ -79,14 +70,7 @@
             "deviceList"
         ]),
 
-        methods: mapActions("env", [
-            "buildToRom",
-            "resetSystem",
-            "toggleRun",
-            "toggleDebug",
-            "systemTick",
-            "systemExecuteOperation"
-        ]),
+        methods: mapActions("env", []),
 
         created() {
             this.$store.dispatch("env/setup",
