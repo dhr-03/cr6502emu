@@ -70,12 +70,13 @@
             "deviceList"
         ]),
 
-        methods: mapActions("env", []),
+        methods: mapActions("env", [
+            "setup",
+            "initialize",
+        ]),
 
         created() {
-            this.$store.dispatch("env/setup",
-                _ => this.$store.dispatch("env/initialize")
-            );
+            this.setup(_ => this.initialize());
         }
     }
 </script>
