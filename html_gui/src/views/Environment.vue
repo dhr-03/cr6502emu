@@ -126,33 +126,4 @@
         margin-top: 3em;
     }
 
-
-    /* override default uikit styles */
-    .uk-notification {
-        width: fit-content;
-    }
-
-    .uk-notification-message {
-        background: #EEE;
-    }
-
-    .uk-notification a {
-        display: none !important;
-    }
-
-    /* custom animation */
-    @keyframes rotate-opacity {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            transform: rotate(360deg);
-            opacity: 1;
-        }
-    }
-
-    .cr-animation-rotate-opacity {
-        animation: rotate-opacity 0.5s ease;
-    }
 </style>
