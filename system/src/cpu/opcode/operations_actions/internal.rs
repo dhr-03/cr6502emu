@@ -273,21 +273,11 @@ pub fn sbc(inter: &mut CPUInterface) {
 fn __generic_cmp(inter: &mut CPUInterface, reg: u8) {
     let val = inter.mem.data();
 
-    if reg >= val {
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, reg >= val);
 
-    if reg == val {
-        set_flag(inter, FlagPositionOffset::Zero);
+    set_flag_bool(inter, FlagPositionOffset::Zero, reg == val);
 
-        clear_flag(inter, FlagPositionOffset::Negative);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Zero);
-
-        set_flag_is_negative(inter, reg);
-    }
+    set_flag_is_negative(inter, reg - val);
 }
 
 pub fn cmp(inter: &mut CPUInterface) {
