@@ -1,6 +1,6 @@
 <template>
     <div class="cr-logbar">
-        <div class="cr-log-bar-header">
+        <div class="cr-logbar-header">
 
             <div
                     class="cr-logbar-toggle"
@@ -132,6 +132,10 @@
         z-index: 9999999999;
 
         overflow-y: scroll;
+    }
+
+    .cr-logbar-header {
+        user-select: none;
     }
 
     .cr-logbar-toggle {
