@@ -1,5 +1,5 @@
 <template>
-    <div class="cr-container" id="err">
+    <div class="crg-container" id="err">
         <p>404</p>
 
         <router-link :to="{name: 'Home'}">

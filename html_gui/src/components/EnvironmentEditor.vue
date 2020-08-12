@@ -54,7 +54,7 @@ LDA #02
     }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
     @import "../assets/vendor/prism/prism.css";
 
     #editor {

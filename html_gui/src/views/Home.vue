@@ -1,5 +1,5 @@
 <template>
-    <div class="cr-container cr-mg-top">
+    <div class="crg-container crg-mg-top">
         <router-link :to="{name: 'Project', params: {pid: 'test'}}">
             + New Project
         </router-link>

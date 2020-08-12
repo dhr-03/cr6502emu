@@ -1,6 +1,6 @@
 <template>
     <div
-        class="cr-container cr-initialize"
+        class="crg-container cr-initialize"
         v-if="isInitializing"
     >
         <font-awesome-icon class="uk-margin-small" icon="cog" spin size="4x"/>
@@ -8,7 +8,7 @@
     </div>
 
     <div
-        class="cr-container cr-initialize"
+        class="crg-container cr-initialize"
         v-else-if="!successfulInitialize"
     >
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
