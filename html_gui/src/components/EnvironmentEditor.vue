@@ -59,8 +59,7 @@ LDA #02
 
     #editor {
         box-sizing: border-box;
-        height: 100%;
-        min-height: 60vh;
+        height: 60vh;
 
         padding: 1em;
         margin: 0 !important;
