@@ -331,8 +331,9 @@ pub fn asl(inter: &mut CPUInterface) {
 
     *target <<= 1;
 
-    set_flag_is_zero(inter, inter.reg.a);
-    set_flag_is_negative(inter, inter.reg.a);
+    let target_val = *target; //copied as inter and target are both muts.
+    set_flag_is_zero(inter, target_val);
+    set_flag_is_negative(inter, target_val);
 
     set_flag_bool(inter, FlagPositionOffset::Carry, (old & (1 << 7)) != 0);
 }
@@ -344,8 +345,9 @@ pub fn lsr(inter: &mut CPUInterface) {
 
     *target >>= 1;
 
-    set_flag_is_zero(inter, inter.reg.a);
-    set_flag_is_negative(inter, inter.reg.a);
+    let target_val = *target;  //copied as inter and target are both muts.
+    set_flag_is_zero(inter, target_val);
+    set_flag_is_negative(inter, target_val);
 
     set_flag_bool(inter, FlagPositionOffset::Carry, (old & 1) != 0);
 }
