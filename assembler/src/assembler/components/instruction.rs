@@ -38,7 +38,7 @@ impl Instruction {
 
     pub fn get_map_value(&self, asm: &AssemblerInterface) -> ParseResult<ParsedValue> {
         if let AddressingMode::RelativeTarget = self.value.addr_mode() {
-            let position = asm.offset() as i32;
+            let position = asm.write_ptr() as i32;
             let target = self.value.resolve(asm)
                 .ok_or(ParseError::UnknownIdentifier)? as i32;
 

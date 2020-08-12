@@ -2,23 +2,27 @@ use std::collections::HashMap;
 
 pub struct AssemblerInterface<'a> {
     rom: &'a mut [u8],
-    offset: u16,
+    write_ptr: u16,
     map: &'a mut HashMap<String, u16>,
+
+    rom_start: u16,
 }
 
 impl<'a> AssemblerInterface<'a> {
-    pub fn new(rom: &'a mut [u8], map: &'a mut HashMap<String, u16>) -> AssemblerInterface<'a> {
+    pub fn new(rom: &'a mut [u8], map: &'a mut HashMap<String, u16>, rom_start: u16) -> AssemblerInterface<'a> {
         AssemblerInterface {
             rom,
-            offset: 0,
-            map
+            write_ptr: 0,
+            map,
+
+            rom_start,
         }
     }
 
     pub fn write(&mut self, b: u8) {
-        self.rom[self.offset as usize] = b;
+        self.rom[self.write_ptr as usize] = b;
 
-        self.offset += 1;
+        self.write_ptr += 1;
     }
 
     /*pub fn contains_label(&self, k: &str) -> bool {
@@ -34,19 +38,23 @@ impl<'a> AssemblerInterface<'a> {
         self.map.insert(String::from(k), v);
     }
 
-    pub fn offset(&self) -> u16 {
-        self.offset
+    pub fn write_ptr(&self) -> u16 {
+        self.write_ptr
     }
 
     pub fn increase_offset(&mut self, amm: u16) {
-        self.offset += amm;
+        self.write_ptr += amm;
     }
 
     pub fn rom_size(&self) -> u16 {
         self.rom.len() as u16
     }
 
+    pub fn rom_start(&self) -> u16 {
+        self.rom_start
+    }
+
     pub fn reset_counter(&mut self) {
-        self.offset = 0;
+        self.write_ptr = 0;
     }
 }
