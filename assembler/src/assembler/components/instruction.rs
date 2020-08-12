@@ -42,12 +42,7 @@ impl Instruction {
             let target = self.value.resolve(asm)
                 .ok_or(ParseError::UnknownIdentifier)? as i32;
 
-            let mut offset = target - position;
-            if offset > 0 {
-                offset -= 3;
-            } else {
-                offset -= 1
-            }
+            let offset = target - (position - 1);
 
             if offset > 127 {
                 err_msg(lang_macro::ERR_TARGET_TOO_FAR);
@@ -63,21 +58,24 @@ impl Instruction {
                     ValueMode::I8(offset as i8),
                     false,
                 ))
-
             }
         } else {
-
             Ok(self.value.clone())
         }
-
-
-
     }
 }
 
 impl CodeItemTrait for Instruction {
     fn get_size(&self) -> usize {
-        self.value.value().get_size() + 1 //opcode
+        let data_size;
+
+        if let AddressingMode::RelativeTarget = self.value.addr_mode() {
+            data_size = 1;
+        } else {
+            data_size = self.value.value().get_size();
+        }
+
+        data_size + 1 //opcode
     }
 
     fn process(&self, _: &mut AssemblerInterface) -> (bool, bool) {
