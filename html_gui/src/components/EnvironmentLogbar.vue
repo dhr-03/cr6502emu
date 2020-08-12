@@ -150,7 +150,7 @@
         flex-direction: column;
 
         user-select: none;
-        opacity: 60%;
+        opacity: 0.60;
 
         &:not(:only-child) {
             display: none;
