@@ -59,6 +59,7 @@
                         :title="item.title"
                 >
                     <slot>
+
                         <component
                                 v-for="(part, index) in item.parts"
                                 :is="part.isCode ? 'code' : 'span'"
@@ -66,8 +67,8 @@
 
                                 class="cr-alert-part"
                                 :class="{__code_reset: part.isCode}"
-                        >{{ part.content }}
-                        </component>
+                        >{{ part.content }}</component>
+
                     </slot>
                 </Alert>
             </div>
