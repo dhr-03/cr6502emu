@@ -358,7 +358,6 @@ pub fn rol(inter: &mut CPUInterface) {
     asl(inter);
 
     let target = inter.target_mut();
-    *target &= !0b1;
     *target |= old_carry;
 }
 
@@ -368,7 +367,6 @@ pub fn ror(inter: &mut CPUInterface) {
     lsr(inter);
 
     let target = inter.target_mut();
-    *target &= !(1 << 7);
     *target |= old_carry << 7;
 }
 
