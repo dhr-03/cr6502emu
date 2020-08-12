@@ -79,7 +79,7 @@ impl CodeItemTrait for MacroDefine {
             ok = true;
         }
 
-        (true, false)
+        (ok, false)
     }
 
     fn execute(&self, _: &mut AssemblerInterface) -> ParseResult<()> {
