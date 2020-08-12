@@ -44,7 +44,7 @@
         <div class="cr-logbar-content-container">
             <div class="cr-logbar-content __logbar-toggle" id="logbarContent" hidden>
                 <div class="cr-logbar-empty">
-                    <div style="font-size: 250%; margin-bottom: 0.2em">
+                    <div class="cr-logbar-empty-icon">
                         <font-awesome-icon icon="ghost"/>
                     </div>
                     <span>Wow, such empty</span>
@@ -155,6 +155,11 @@
         &:not(:only-child) {
             display: none;
         }
+    }
+
+    .cr-logbar-empty-icon {
+        font-size: 250%;
+        margin-bottom: 0.2em
     }
 
     .cr-logbar-content-container {
