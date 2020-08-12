@@ -141,12 +141,12 @@ export const EnvironmentStore = {
 
             let romIndex = 2; //TMP
             let ptr = sys.device_data_ptr_by_index(romIndex);
-            let size = context.state.devices[romIndex].size;
+            let {size, start} = context.state.devices[romIndex];
 
             let program = document.querySelector("#editor").innerText;
             let romData = new Uint8Array(sys.memory.buffer, ptr, size);
 
-            let success = asm.assemble(program, romData);
+            let success = asm.assemble(program, romData, start);
 
             context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);
