@@ -1,5 +1,3 @@
-use wasm_bindgen::prelude::*;
-
 mod utils;
 mod opcodes;
 mod lang;
