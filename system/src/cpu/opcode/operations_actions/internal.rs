@@ -273,21 +273,11 @@ pub fn sbc(inter: &mut CPUInterface) {
 fn __generic_cmp(inter: &mut CPUInterface, reg: u8) {
     let val = inter.mem.data();
 
-    if reg >= val {
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, reg >= val);
 
-    if reg == val {
-        set_flag(inter, FlagPositionOffset::Zero);
+    set_flag_bool(inter, FlagPositionOffset::Zero, reg == val);
 
-        clear_flag(inter, FlagPositionOffset::Negative);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Zero);
-
-        set_flag_is_negative(inter, reg);
-    }
+    set_flag_is_negative(inter, reg - val);
 }
 
 pub fn cmp(inter: &mut CPUInterface) {
@@ -306,13 +296,13 @@ pub fn cpy(inter: &mut CPUInterface) {
 
 /* #######################  Increments & Decrements  ####################### */
 pub fn inc(inter: &mut CPUInterface) {
-    inter.mem.set_data(
-        inter.mem.data() + 1
-    );
+    let new_value = alu_add__flag_zn(inter, inter.mem.data(), 1);
+
+    inter.mem.set_data(new_value);
 }
 
 pub fn inx(inter: &mut CPUInterface) {
-    inter.reg.x = alu_add__flag_zn(inter, inter.reg.x, 1)
+    inter.reg.x = alu_add__flag_zn(inter, inter.reg.x, 1);
 }
 
 pub fn iny(inter: &mut CPUInterface) {
@@ -320,9 +310,9 @@ pub fn iny(inter: &mut CPUInterface) {
 }
 
 pub fn dec(inter: &mut CPUInterface) {
-    inter.mem.set_data(
-        inter.mem.data() - 1
-    );
+    let new_value = alu_sub__flag_zn(inter, inter.mem.data(), 1);
+
+    inter.mem.set_data(new_value);
 }
 
 pub fn dex(inter: &mut CPUInterface) {
@@ -341,14 +331,11 @@ pub fn asl(inter: &mut CPUInterface) {
 
     *target <<= 1;
 
-    set_flag_is_zero(inter, inter.reg.a);
-    set_flag_is_negative(inter, inter.reg.a);
+    let target_val = *target; //copied as inter and target are both muts.
+    set_flag_is_zero(inter, target_val);
+    set_flag_is_negative(inter, target_val);
 
-    if (old & (1 << 7)) != 0 { //set to old bit
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, (old & (1 << 7)) != 0);
 }
 
 pub fn lsr(inter: &mut CPUInterface) {
@@ -358,14 +345,11 @@ pub fn lsr(inter: &mut CPUInterface) {
 
     *target >>= 1;
 
-    set_flag_is_zero(inter, inter.reg.a);
-    set_flag_is_negative(inter, inter.reg.a);
+    let target_val = *target;  //copied as inter and target are both muts.
+    set_flag_is_zero(inter, target_val);
+    set_flag_is_negative(inter, target_val);
 
-    if (old & 1) != 0 { //set to old bit
-        set_flag(inter, FlagPositionOffset::Carry);
-    } else {
-        clear_flag(inter, FlagPositionOffset::Carry);
-    }
+    set_flag_bool(inter, FlagPositionOffset::Carry, (old & 1) != 0);
 }
 
 pub fn rol(inter: &mut CPUInterface) {
@@ -374,7 +358,6 @@ pub fn rol(inter: &mut CPUInterface) {
     asl(inter);
 
     let target = inter.target_mut();
-    *target &= !0b1;
     *target |= old_carry;
 }
 
@@ -384,7 +367,6 @@ pub fn ror(inter: &mut CPUInterface) {
     lsr(inter);
 
     let target = inter.target_mut();
-    *target &= !(1 << 7);
     *target |= old_carry << 7;
 }
 

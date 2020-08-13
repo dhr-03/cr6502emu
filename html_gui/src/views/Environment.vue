@@ -1,6 +1,6 @@
 <template>
     <div
-        class="cr-container cr-initialize"
+        class="crg-container cr-initialize"
         v-if="isInitializing"
     >
         <font-awesome-icon class="uk-margin-small" icon="cog" spin size="4x"/>
@@ -8,7 +8,7 @@
     </div>
 
     <div
-        class="cr-container cr-initialize"
+        class="crg-container cr-initialize"
         v-else-if="!successfulInitialize"
     >
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
@@ -16,16 +16,7 @@
     </div>
 
     <div v-else>
-        <EnvironmentActionbar
-            @env_build="buildToRom"
-            @env_reset="resetSystem"
-
-            @env_toggle-run="toggleRun"
-            @env_toggle-debug="toggleDebug"
-
-            @env_step-short="systemTick"
-            @env_step-long="systemExecuteOperation"
-        />
+        <EnvironmentActionbar/>
 
         <div class="cr-environment uk-container uk-container-xlarge">
             <div class="uk-grid uk-grid-small">
@@ -80,18 +71,12 @@
         ]),
 
         methods: mapActions("env", [
-            "buildToRom",
-            "resetSystem",
-            "toggleRun",
-            "toggleDebug",
-            "systemTick",
-            "systemExecuteOperation"
+            "setup",
+            "initialize",
         ]),
 
         created() {
-            this.$store.dispatch("env/setup",
-                _ => this.$store.dispatch("env/initialize")
-            );
+            this.setup(_ => this.initialize());
         }
     }
 </script>
@@ -126,33 +111,4 @@
         margin-top: 3em;
     }
 
-
-    /* override default uikit styles */
-    .uk-notification {
-        width: fit-content;
-    }
-
-    .uk-notification-message {
-        background: #EEE;
-    }
-
-    .uk-notification a {
-        display: none !important;
-    }
-
-    /* custom animation */
-    @keyframes rotate-opacity {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            transform: rotate(360deg);
-            opacity: 1;
-        }
-    }
-
-    .cr-animation-rotate-opacity {
-        animation: rotate-opacity 0.5s ease;
-    }
 </style>

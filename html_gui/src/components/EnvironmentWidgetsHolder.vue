@@ -42,7 +42,7 @@
         justify-content: center;
         align-items: center;
 
-        opacity: 15%;
+        opacity: 0.15;
         font-size: 300%;
 
         &:not(:only-child) {

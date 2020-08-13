@@ -1,7 +1,7 @@
 use crate::assembler::{AssemblerInterface};
 use crate::parser::types::{ParseResult, ParseError, ValueMode};
 
-use super::common::{CodeItemTrait, to_boxed_result};
+use super::common::CodeItemTrait;
 
 use crate::js_logger::{err_code};
 use crate::lang::assembler as lang;
@@ -53,12 +53,6 @@ impl MacroDefine {
             }
         }
     }
-
-    pub fn from_str_boxed(line: &str) -> ParseResult<Box<dyn CodeItemTrait>> {
-        to_boxed_result(
-            Self::from_str(line)
-        )
-    }
 }
 
 impl CodeItemTrait for MacroDefine {
@@ -79,7 +73,7 @@ impl CodeItemTrait for MacroDefine {
             ok = true;
         }
 
-        (true, false)
+        (ok, false)
     }
 
     fn execute(&self, _: &mut AssemblerInterface) -> ParseResult<()> {

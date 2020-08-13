@@ -3,9 +3,7 @@
             class="cr-badge"
             :class="typeClass"
     >
-        <slot>
-            {{ cappedValue }}
-        </slot>
+        <slot>{{ cappedValue }}</slot>
     </div>
 </template>
 

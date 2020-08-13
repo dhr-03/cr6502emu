@@ -44,7 +44,7 @@
     }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
     @import "../assets/less/modifierStyles";
 
     .cr-alert {

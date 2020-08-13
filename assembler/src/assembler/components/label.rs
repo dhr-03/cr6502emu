@@ -49,7 +49,10 @@ impl CodeItemTrait for Label {
 
             ok = false;
         } else {
-            asm.insert_label(self.name.as_str(), asm.offset());
+            asm.insert_label(
+                self.name.as_str(),
+                asm.rom_start() + asm.write_ptr()
+            );
 
             ok = true;
         }

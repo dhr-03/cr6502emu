@@ -47,7 +47,7 @@
         background: #CCC;
     }
 
-    .cr-container {
+    .crg-container {
         .uk-container();
 
         background: darken(@oc-gray-7, 6%);
@@ -56,7 +56,7 @@
         padding: 1em;
     }
 
-    .cr-mg-top {
+    .crg-mg-top {
         margin-top: 2em;
     }
 </style>

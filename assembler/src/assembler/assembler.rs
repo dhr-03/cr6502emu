@@ -30,10 +30,11 @@ impl Assembler {
         }
     }
 
-    pub fn assemble(&mut self, lines: &str, rom: &mut [u8]) -> bool {
+    pub fn assemble(&mut self, lines: &str, rom: &mut [u8], rom_start: u16) -> bool {
         let mut interface = AssemblerInterface::new(
             rom,
             &mut self.identifiers,
+            rom_start,
         );
 
         //Stage 1: parse into structs
@@ -99,11 +100,11 @@ impl Assembler {
 
         Logger::set_current_line_str("EVAL");
 
-        if interface.offset() < 1 {
+        if interface.write_ptr() < 1 {
             if st2_ok {
                 err_msg(lang::ERR_EMPTY_INPUT);
             }
-        } else if interface.offset() > interface.rom_size() {
+        } else if interface.write_ptr() > interface.rom_size() {
             err_msg(lang::ERR_ROM_TOO_SMALL);
         } else if st2_ok {
             //Stage 4: Write
@@ -130,7 +131,7 @@ impl Assembler {
 
         if rsv_write_ok {
             info_code_i32(lang::INFO_ASM_SUCCESS_1,
-                          interface.offset() as i32,
+                          interface.write_ptr() as i32,
                           lang::INFO_ASM_SUCCESS_2);
 
             Self::clear_unused_rom(&mut interface);
@@ -148,7 +149,7 @@ impl Assembler {
     }
 
     fn clear_unused_rom(asm: &mut AssemblerInterface) {
-        for _ in asm.offset()..asm.rom_size() {
+        for _ in asm.write_ptr()..asm.rom_size() {
             asm.write(0xEA); //NOP
         }
     }

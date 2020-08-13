@@ -54,13 +54,12 @@ LDA #02
     }
 </script>
 
-<style scoped>
+<style lang="css" scoped>
     @import "../assets/vendor/prism/prism.css";
 
     #editor {
         box-sizing: border-box;
-        height: 100%;
-        min-height: 60vh;
+        height: 60vh;
 
         padding: 1em;
         margin: 0 !important;

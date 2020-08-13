@@ -76,49 +76,60 @@ export const EnvironmentStore = {
 
     actions: {
         setup(context, callback) {
-            asmLib.default(process.env.VUE_APP_ASM_WASM_PATH).then(
-                wasm => {
-                    let assembler = new asmLib.Assembler();
-                    assembler.memory = wasm.memory;
 
-                    asmLib.set_panic_hook();
+            function setupWasmAsm() {
+                return asmLib.default(process.env.VUE_APP_ASM_WASM_PATH).then(
+                    wasm => {
+                        let assembler = new asmLib.Assembler();
+                        assembler.memory = wasm.memory;
 
-                    context.commit("__setAsm", assembler);
+                        asmLib.set_panic_hook();
+
+                        context.commit("__setAsm", assembler);
+                    }
+                );
+            }
+
+            function setupWasmSys() {
+                return sysLib.default(process.env.VUE_APP_SYS_WASM_PATH).then(
+                    wasm => {
+                        let system = new sysLib.System();
+                        system.memory = wasm.memory;
+
+                        sysLib.set_panic_hook();
+
+                        context.commit("__setSys", system);
+                    }
+                );
+            }
+
+
+            function updateStatusIfSetupOk() {
+                context.commit("currentStatus", EnvironmentState.INITIALIZING);
+            }
+
+            function executeUserCallback() {
+                if (typeof callback === "function") {
+                    callback();
                 }
-            )
-                .then(
-                    _ => {
-                        return sysLib.default(process.env.VUE_APP_SYS_WASM_PATH).then(
-                            wasm => {
-                                let system = new sysLib.System();
-                                system.memory = wasm.memory;
+            }
 
-                                sysLib.set_panic_hook();
 
-                                context.commit("__setSys", system);
-                            }
-                        )
-                    })
+            function onSetupError(err) {
+                console.error("Failed to setup env: ", err);
 
-                .then(
-                    _ => context.commit("currentStatus", EnvironmentState.INITIALIZING)
-                )
+                context.commit("currentStatus", EnvironmentState.FAILED_TO_INIT);
+            }
 
-                .then(
-                    _ => {
-                        if (typeof callback === "function") {
-                            callback();
-                        }
-                    }
-                )
 
-                .catch(
-                    err => {
-                        console.error("Failed to setup env: ", err);
+            Promise.resolve(null)
+                .then(setupWasmAsm)
+                .then(setupWasmSys)
 
-                        context.commit("currentStatus", EnvironmentState.FAILED_TO_INIT);
-                    }
-                )
+                .then(updateStatusIfSetupOk)
+                .then(executeUserCallback)
+
+                .catch(onSetupError);
         },
 
         initialize(context) {
@@ -141,12 +152,12 @@ export const EnvironmentStore = {
 
             let romIndex = 2; //TMP
             let ptr = sys.device_data_ptr_by_index(romIndex);
-            let size = context.state.devices[romIndex].size;
+            let {size, start} = context.state.devices[romIndex];
 
             let program = document.querySelector("#editor").innerText;
             let romData = new Uint8Array(sys.memory.buffer, ptr, size);
 
-            let success = asm.assemble(program, romData);
+            let success = asm.assemble(program, romData, start);
 
             context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);

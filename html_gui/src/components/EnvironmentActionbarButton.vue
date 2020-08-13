@@ -1,10 +1,10 @@
 <template>
     <li
-            class="cr-actionbar-button cr-animate-click"
-            :class="{[colorClass]: true, 'cr-disabled': !buttonEnabled, 'cr-active': buttonActive}"
+        class="cr-actionbar-button cr-animate-click"
+        :class="{[colorClass]: true, 'cr-disabled': !buttonEnabled, 'cr-active': buttonActive}"
 
-            :title="explanation"
-            @click="clickHandler"
+        :title="explanation"
+        @click="clickHandler"
     >
         <font-awesome-icon :icon="iconName"/>
 

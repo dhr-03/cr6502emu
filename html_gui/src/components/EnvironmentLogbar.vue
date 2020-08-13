@@ -1,6 +1,6 @@
 <template>
     <div class="cr-logbar">
-        <div class="cr-log-bar-header">
+        <div class="cr-logbar-header">
 
             <div
                     class="cr-logbar-toggle"
@@ -44,7 +44,7 @@
         <div class="cr-logbar-content-container">
             <div class="cr-logbar-content __logbar-toggle" id="logbarContent" hidden>
                 <div class="cr-logbar-empty">
-                    <div style="font-size: 250%; margin-bottom: 0.2em">
+                    <div class="cr-logbar-empty-icon">
                         <font-awesome-icon icon="ghost"/>
                     </div>
                     <span>Wow, such empty</span>
@@ -59,6 +59,7 @@
                         :title="item.title"
                 >
                     <slot>
+
                         <component
                                 v-for="(part, index) in item.parts"
                                 :is="part.isCode ? 'code' : 'span'"
@@ -66,8 +67,8 @@
 
                                 class="cr-alert-part"
                                 :class="{__code_reset: part.isCode}"
-                        >{{ part.content }}
-                        </component>
+                        >{{ part.content }}</component>
+
                     </slot>
                 </Alert>
             </div>
@@ -134,6 +135,10 @@
         overflow-y: scroll;
     }
 
+    .cr-logbar-header {
+        user-select: none;
+    }
+
     .cr-logbar-toggle {
         display: inline-block;
     }
@@ -150,11 +155,16 @@
         flex-direction: column;
 
         user-select: none;
-        opacity: 60%;
+        opacity: 0.60;
 
         &:not(:only-child) {
             display: none;
         }
+    }
+
+    .cr-logbar-empty-icon {
+        font-size: 250%;
+        margin-bottom: 0.2em
     }
 
     .cr-logbar-content-container {

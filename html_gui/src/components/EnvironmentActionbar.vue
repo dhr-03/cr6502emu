@@ -122,32 +122,35 @@
         methods: {
             ...mapActions("env", [
                 "buildToRom",
+                "resetSystem",
                 "toggleRun",
                 "toggleDebug",
+                "systemTick",
+                "systemExecuteOperation"
             ]),
 
             onBuild() {
-                this.$emit("env_build");
+                this.buildToRom();
             },
 
             onReset() {
-                this.$emit("env_reset");
+                this.resetSystem();
             },
 
             onRunToggled() {
-                this.$emit("env_toggle-run");
+                this.toggleRun();
             },
 
             onDebugToggled() {
-                this.$emit("env_toggle-debug");
+                this.toggleDebug();
             },
 
             onStepShort() {
-                this.$emit("env_step-short");
+                this.systemTick();
             },
 
             onStepLong() {
-                this.$emit("env_step-long");
+                this.systemExecuteOperation();
             },
 
         },
