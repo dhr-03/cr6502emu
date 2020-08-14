@@ -133,4 +133,14 @@ impl System {
                 .and_then(|dev| dev.device_mut().update_widget())
         }
     }
+
+    pub fn device_widget_setup_by_index(&mut self, index: usize, data: Map) -> Option<Map> {
+        if index == 0 {
+            self.cpu.setup_widget(data)
+        } else {
+            self.mem.devices_mut()
+                .get_mut(index - 1)
+                .and_then(|dev| dev.device_mut().setup_widget(data))
+        }
+    }
 }

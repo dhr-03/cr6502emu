@@ -14,6 +14,13 @@ pub trait DeviceTrait {
     /// After executing this, the device should look brand new, without any data on it.
     fn reset_hard(&mut self);
 
+    /// Takes a JS Map and uses that data to setup the device and/or widget.
+    ///
+    /// After that, returns an new Map containing relevant information and an update package.
+    fn setup_widget(&mut self, data: Map) -> Option<Map> {
+        self.update_widget()
+    }
+
     /// Returns a JS Map containing the necessary data to update the device's widget if possible
     /// or a None (JS undefined).
     ///

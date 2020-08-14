@@ -221,19 +221,19 @@ export const EnvironmentStore = {
             let newCache = [];
 
             let index = 0;
-            let dev = sys.device_representation_by_index(0);
+            let device = sys.device_representation_by_index(0);
 
-            while (dev !== undefined) {
-                newCache.push(dev);
+            while (device !== undefined) {
+                newCache.push(device);
                 if (updateWidgets) {
                     // we need to update the devices widgets before they are committed (and thus rendered)
                     // as the widget data is an empty object on creation and trying to access it could lead to exceptions.
-                    context.dispatch("updateDeviceWidgetByIndex", [index, dev]);
+                    context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
                 }
 
                 index++;
 
-                dev = sys.device_representation_by_index(index);
+                device = sys.device_representation_by_index(index);
             }
 
             context.commit("__setDevices", newCache);
@@ -250,7 +250,7 @@ export const EnvironmentStore = {
 
                 let newDev = context.getters.__system.device_representation_by_index(newDevIndex);
 
-                context.dispatch("updateDeviceWidgetByIndex", [newDevIndex, newDev]);
+                context.dispatch("setupDeviceWidgetByIndexAndRepr", {device: newDev, index: newDevIndex});
 
                 context.state.devices.push(newDev);
             }
@@ -258,29 +258,42 @@ export const EnvironmentStore = {
             return success;
         },
 
-        updateDeviceWidgetByIndex(context, data) {
-            let dev;
-            let index;
 
-            if (typeof data === "object") {
-                index = data[0];
-                dev = data[1];
-            } else {
-                index = data;
-                dev = context.state.devices[index];
-            }
-
-            let handler = DeviceIdTools.getUpdater(dev.type);
-
-            let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+        __doDeviceWidgetUpdate(context, {index, device, pkg}) {
+            let handler = DeviceIdTools.getUpdater(device.type);
 
             let getMemFn = function () {
                 let ptr = context.getters.__system.device_data_ptr_by_index(index);
 
-                return new Uint8Array(context.getters.__system.memory.buffer, ptr, dev.size);
+                return new Uint8Array(context.getters.__system.memory.buffer, ptr, device.size);
             }
 
-            handler(dev.widget, updatePackage, getMemFn)
+            handler(device.widget, pkg, getMemFn)
+        },
+
+
+        updateDeviceWidgetByIndex(context, index) {
+            let device = context.state.devices[index];
+
+            context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
+        },
+
+        updateDeviceWidgetByIndexAndRepr(context, {index, device}) {
+            let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+
+            context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
+        },
+
+
+        setupDeviceWidgetByIndexAndRepr(context, {index, device, updateWidget = true}) {
+            let setupHandler = DeviceIdTools.getSetupFn(device.type);
+            let setupPackage = setupHandler(device);
+
+            let updatePackage = context.getters.__system.device_widget_setup_by_index(index, setupPackage);
+
+            if (updateWidget) {
+                context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
+            }
         },
 
         updateAllDevicesWidgets(context) {
