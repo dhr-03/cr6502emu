@@ -221,19 +221,19 @@ export const EnvironmentStore = {
             let newCache = [];
 
             let index = 0;
-            let dev = sys.device_representation_by_index(0);
+            let device = sys.device_representation_by_index(0);
 
-            while (dev !== undefined) {
-                newCache.push(dev);
+            while (device !== undefined) {
+                newCache.push(device);
                 if (updateWidgets) {
                     // we need to update the devices widgets before they are committed (and thus rendered)
                     // as the widget data is an empty object on creation and trying to access it could lead to exceptions.
-                    context.dispatch("updateDeviceWidgetByIndex", [index, dev]);
+                    context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
                 }
 
                 index++;
 
-                dev = sys.device_representation_by_index(index);
+                device = sys.device_representation_by_index(index);
             }
 
             context.commit("__setDevices", newCache);
@@ -271,22 +271,19 @@ export const EnvironmentStore = {
             handler(device.widget, pkg, getMemFn)
         },
 
-        updateDeviceWidgetByIndex(context, data) {
-            let dev;
-            let index;
 
-            if (typeof data === "object") {
-                index = data[0];
-                dev = data[1];
-            } else {
-                index = data;
-                dev = context.state.devices[index];
-            }
+        updateDeviceWidgetByIndex(context, index) {
+            let device = context.state.devices[index];
 
+            context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
+        },
+
+        updateDeviceWidgetByIndexAndRepr(context, {index, device}) {
             let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
-            context.dispatch("__doDeviceWidgetUpdate", {index, device: dev, pkg: updatePackage});
+            context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
         },
+
 
         setupDeviceWidgetByIndexAndRepr(context, {index, device, updateWidget = true}) {
             let setupHandler = DeviceIdTools.getSetupFn(device.type);
