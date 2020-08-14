@@ -250,12 +250,25 @@ export const EnvironmentStore = {
 
                 let newDev = context.getters.__system.device_representation_by_index(newDevIndex);
 
-                context.dispatch("updateDeviceWidgetByIndex", [newDevIndex, newDev]);
+                context.dispatch("setupDeviceWidgetByIndexAndRepr", {device: newDev, index: newDevIndex});
 
                 context.state.devices.push(newDev);
             }
 
             return success;
+        },
+
+
+        __doDeviceWidgetUpdate(context, {index, device, pkg}) {
+            let handler = DeviceIdTools.getUpdater(device.type);
+
+            let getMemFn = function () {
+                let ptr = context.getters.__system.device_data_ptr_by_index(index);
+
+                return new Uint8Array(context.getters.__system.memory.buffer, ptr, device.size);
+            }
+
+            handler(device.widget, pkg, getMemFn)
         },
 
         updateDeviceWidgetByIndex(context, data) {
@@ -270,17 +283,20 @@ export const EnvironmentStore = {
                 dev = context.state.devices[index];
             }
 
-            let handler = DeviceIdTools.getUpdater(dev.type);
-
             let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
-            let getMemFn = function () {
-                let ptr = context.getters.__system.device_data_ptr_by_index(index);
+            context.dispatch("__doDeviceWidgetUpdate", {index, device: dev, pkg: updatePackage});
+        },
 
-                return new Uint8Array(context.getters.__system.memory.buffer, ptr, dev.size);
+        setupDeviceWidgetByIndexAndRepr(context, {index, device, updateWidget = true}) {
+            let setupHandler = DeviceIdTools.getSetupFn(device.type);
+            let setupPackage = setupHandler(device);
+
+            let updatePackage = context.getters.__system.device_widget_setup_by_index(index, setupPackage);
+
+            if (updateWidget) {
+                context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
             }
-
-            handler(dev.widget, updatePackage, getMemFn)
         },
 
         updateAllDevicesWidgets(context) {
