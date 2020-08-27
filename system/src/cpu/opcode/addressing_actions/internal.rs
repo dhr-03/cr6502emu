@@ -154,20 +154,7 @@ fn rel_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Address
 }
 
 // ####### Absolute #######
-pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-
-    inter.reg.itr = inter.mem.data()
-}
-
-pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-}
-
-pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr_hi(inter.mem.data());
-    inter.mem.set_addr_lo(inter.reg.itr);
-
+fn __abs_common(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
     if op_mod.has_read() {
         inter.mem.read_at_addr();
     }
@@ -183,6 +170,23 @@ pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
     }
 }
 
+pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    inter.reg.itr = inter.mem.data()
+}
+
+pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr_hi(inter.mem.data());
+    inter.mem.set_addr_lo(inter.reg.itr);
+
+    __abs_common(inter, op_fn, op_mod);
+}
+
 fn abs_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 
@@ -192,6 +196,34 @@ fn abs_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressi
 fn abs_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     inter.mem.write_at_addr();
 }
+
+// ####### Absolute X #######
+pub use abs_1 as abx_1;
+
+pub use abs_2 as abx_2;
+
+pub fn abx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let addr_lo = inter.reg.itr;
+
+    if op_mod.is_write() || (std::u8::MAX - addr_lo) < inter.reg.x {
+        *inter.next_cycle = Some(abx_extra_1);
+    } else {
+        abx_extra_1(inter, op_fn, op_mod);
+    }
+}
+
+fn abx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let mut new_addr: u16;
+
+    new_addr = inter.reg.itr as u16;
+    new_addr |= (inter.mem.data() as u16) << 8;
+    new_addr += inter.reg.x as u16;
+
+    inter.mem.set_addr(new_addr);
+
+    __abs_common(inter, op_fn, op_mod);
+}
+
 
 // ####### ASB (ABS JUMP) #######
 pub fn asb_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {

@@ -40,8 +40,11 @@ pub const ABS: [AddressingFn; 3] = [
     abs_3,
 ];
 
-//TODO: implement, rmw
-pub const ABX: [AddressingFn; 0] = [];
+pub const ABX: [AddressingFn; 3] = [
+    abx_1,
+    abx_2,
+    abx_3,
+];
 
 //TODO: implement
 pub const ABY: [AddressingFn; 0] = [];

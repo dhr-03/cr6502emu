@@ -28,4 +28,12 @@ impl AddressingModifier {
             _ => false
         }
     }
+
+    pub fn is_write(&self) -> bool {
+        if let Self::Write = self {
+            true
+        } else {
+            false
+        }
+    }
 }
