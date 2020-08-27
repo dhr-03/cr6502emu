@@ -21,6 +21,9 @@ fn read_at_pc_inc(inter: &mut CPUInterface) {
 
 // ############### Functions ###############
 
+pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+}
+
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
@@ -41,13 +44,7 @@ pub fn a__(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingMo
 }
 
 // ####### Zero Page #######
-pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-}
-
-pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr(inter.mem.data() as u16);
-
+fn __zp_common(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
     if op_mod.is_read() {
         inter.mem.read_at_addr();
     }
@@ -63,6 +60,16 @@ pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingMo
     }
 }
 
+pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.data() as u16);
+
+    __zp_common(inter, op_fn, op_mod);
+}
+
 fn zp_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 
@@ -71,6 +78,21 @@ fn zp_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressin
 
 fn zp_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     inter.mem.write_at_addr();
+}
+
+// ####### Zero Page X #######
+pub use zp_1 as zpx_1;
+
+pub use waste_cycle as zpx_2;
+
+pub fn zpx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+
+    inter.mem.set_addr_lo(
+        inter.mem.data() + inter.reg.x //wrapping add
+    );
+
+    __zp_common(inter, op_fn, op_mod);
 }
 
 // ####### Relative #######

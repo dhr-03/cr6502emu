@@ -18,8 +18,11 @@ pub const ZP_: [AddressingFn; 2] = [
     zp_2,
 ];
 
-//TODO: implement, rmw
-pub const ZPX: [AddressingFn; 0] = [];
+pub const ZPX: [AddressingFn; 3] = [
+    zpx_1,
+    zpx_2,
+    zpx_3,
+];
 
 //TODO: implement
 pub const ZPY: [AddressingFn; 0] = [];
