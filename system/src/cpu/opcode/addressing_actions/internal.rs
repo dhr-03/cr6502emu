@@ -44,7 +44,7 @@ pub fn a__(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingMo
 
 // ####### Zero Page #######
 fn __zp_common(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    if op_mod.is_read() {
+    if op_mod.has_read() {
         inter.mem.read_at_addr();
     }
 
@@ -168,7 +168,7 @@ pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
     inter.mem.set_addr_hi(inter.mem.data());
     inter.mem.set_addr_lo(inter.reg.itr);
 
-    if op_mod.is_read() {
+    if op_mod.has_read() {
         inter.mem.read_at_addr();
     }
 

@@ -11,7 +11,7 @@ pub enum AddressingModifier {
 }
 
 impl AddressingModifier {
-    pub fn is_read(&self) -> bool {
+    pub fn has_read(&self) -> bool {
         match self {
             Self::Read => true,
             Self::RMW => true,
@@ -20,7 +20,7 @@ impl AddressingModifier {
         }
     }
 
-    pub fn is_write(&self) -> bool {
+    pub fn has_write(&self) -> bool {
         match self {
             Self::Write => true,
             Self::RMW => true,
