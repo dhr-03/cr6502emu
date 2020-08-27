@@ -20,6 +20,7 @@ impl AddressingModifier {
         }
     }
 
+    /*
     pub fn has_write(&self) -> bool {
         match self {
             Self::Write => true,
@@ -28,6 +29,7 @@ impl AddressingModifier {
             _ => false
         }
     }
+     */
 
     pub fn is_write(&self) -> bool {
         if let Self::Write = self {
