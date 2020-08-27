@@ -21,8 +21,7 @@ fn read_at_pc_inc(inter: &mut CPUInterface) {
 
 // ############### Functions ###############
 
-pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-}
+pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
 
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
@@ -94,6 +93,30 @@ pub fn zpx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
 
     __zp_common(inter, op_fn, op_mod);
 }
+
+// ####### Zero Page Y #######
+pub use zp_1 as zpy_1;
+
+pub use waste_cycle as zpy_2;
+
+pub fn zpy_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+
+    inter.mem.set_addr_lo(
+        inter.mem.data() + inter.reg.y //wrapping add
+    );
+
+    if let AddressingModifier::Read = op_mod {
+        inter.mem.read_at_addr();
+    }
+
+    op_fn(inter);
+
+    if let AddressingModifier::Write = op_mod {
+        inter.mem.write_at_addr();
+    }
+}
+
 
 // ####### Relative #######
 pub fn rel(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {

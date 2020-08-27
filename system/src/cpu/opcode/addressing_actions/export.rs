@@ -24,8 +24,11 @@ pub const ZPX: [AddressingFn; 3] = [
     zpx_3,
 ];
 
-//TODO: implement
-pub const ZPY: [AddressingFn; 0] = [];
+pub const ZPY: [AddressingFn; 3] = [
+    zpy_1,
+    zpy_2,
+    zpy_3,
+];
 
 pub const REL: [AddressingFn; 1] = [
     rel
