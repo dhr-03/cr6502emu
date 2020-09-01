@@ -7,13 +7,24 @@ use crate::cpu::CPUInterface;
 //pub fn {mode}_[1-9](...)
 
 // ############### Abstractions ###############
-#[inline]
+#[inline(always)]
 fn read_at_pc_inc(inter: &mut CPUInterface) {
     inter.mem.set_addr(inter.reg.pc);
     inter.mem.read_at_addr();
     inter.reg.pc += 1;
 }
 
+fn execute_with_read_or_write(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    if let AddressingModifier::Read = op_mod {
+        inter.mem.read_at_addr();
+    }
+
+    op_fn(inter);
+
+    if let AddressingModifier::Write = op_mod {
+        inter.mem.write_at_addr();
+    }
+}
 
 // A few functions do exactly the same thing, but with different names.
 // I'm doing this simplicity and to avoid bugs in the future,
@@ -106,15 +117,7 @@ pub fn zpy_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
         inter.mem.data() + inter.reg.y //wrapping add
     );
 
-    if let AddressingModifier::Read = op_mod {
-        inter.mem.read_at_addr();
-    }
-
-    op_fn(inter);
-
-    if let AddressingModifier::Write = op_mod {
-        inter.mem.write_at_addr();
-    }
+    execute_with_read_or_write(inter, op_fn, op_mod);
 }
 
 
@@ -199,7 +202,7 @@ fn abs_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Address
 
 // ####### Absolute X #######
 #[inline(always)]
-fn __abxy_calculate_addr(inter:  &mut CPUInterface, reg: u8) -> u16 {
+fn __abxy_calculate_addr(inter: &mut CPUInterface, reg: u8) -> u16 {
     let mut new_addr: u16;
 
     new_addr = inter.reg.itr as u16;
@@ -249,15 +252,7 @@ fn aby_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addressin
     let new_addr = __abxy_calculate_addr(inter, inter.reg.y);
     inter.mem.set_addr(new_addr);
 
-    if let AddressingModifier::Read = op_mod {
-        inter.mem.read_at_addr();
-    }
-
-    op_fn(inter);
-
-    if let AddressingModifier::Write = op_mod {
-        inter.mem.write_at_addr();
-    }
+    execute_with_read_or_write(inter, op_fn, op_mod);
 }
 
 // ####### IXD (ZP Indexed Indirect with X) #######
@@ -280,15 +275,7 @@ pub fn ixd_4(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
     inter.mem.set_addr(0);
     inter.mem.set_addr_lo(inter.mem.data());
 
-    if let AddressingModifier::Read = op_mod {
-        inter.mem.read_at_addr();
-    }
-
-    op_fn(inter);
-
-    if let AddressingModifier::Write = op_mod {
-        inter.mem.write_at_addr();
-    }
+    execute_with_read_or_write(inter, op_fn, op_mod);
 }
 
 // ####### IDX (ZP Indirect Indexed with Y) #######
@@ -322,15 +309,7 @@ pub fn idx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addre
     let new_addr = __abxy_calculate_addr(inter, inter.reg.y);
     inter.mem.set_addr(new_addr);
 
-    if let AddressingModifier::Read = op_mod {
-        inter.mem.read_at_addr();
-    }
-
-    op_fn(inter);
-
-    if let AddressingModifier::Write = op_mod {
-        inter.mem.write_at_addr();
-    }
+    execute_with_read_or_write(inter, op_fn, op_mod);
 }
 
 // ####### ASB (ABS JUMP) #######
