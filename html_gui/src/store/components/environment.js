@@ -140,6 +140,8 @@ export const EnvironmentStore = {
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, end: 0x1000});
             context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, end: 0x1000});
 
+            context.dispatch("addDeviceWithWidget", {type: DeviceId.PixelScreen, start: 0x2000, end: 0});
+
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
