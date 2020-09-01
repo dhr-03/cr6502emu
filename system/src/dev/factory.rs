@@ -33,6 +33,12 @@ impl DeviceFactory {
                         mem::Ram::with_size(size)
                     ))
                 }
+
+                DeviceId::PixelScreen => {
+                    Ok(Box::new(
+                        io::PixelScreen::new()
+                    ))
+                }
             }
         }
     }
