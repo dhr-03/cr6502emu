@@ -55,8 +55,12 @@ pub const ABY: [AddressingFn; 3] = [
 //TODO: implement
 pub const IND: [AddressingFn; 0] = [];
 
-//TODO: implement
-pub const IDX: [AddressingFn; 0] = [];
+pub const IDX: [AddressingFn; 4] = [
+    idx_1,
+    idx_2,
+    idx_3,
+    idx_4,
+];
 
 //TODO: implement
 pub const IXD: [AddressingFn; 0] = [];

@@ -260,6 +260,48 @@ fn aby_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addressin
     }
 }
 
+// ####### IDX (ZP Indexed Indirect Indexed with Y) #######
+pub fn idx_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn idx_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.data() as u16);
+
+    inter.reg.itr = inter.mem.read_at_addr();
+}
+
+pub fn idx_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.addr() + 1);
+
+    inter.mem.read_at_addr();
+}
+
+pub fn idx_4(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let addr_lo = inter.reg.itr;
+
+    if op_mod.is_write() || (std::u8::MAX - addr_lo) < inter.reg.y {
+        *inter.next_cycle = Some(idx_extra_1);
+    } else {
+        idx_extra_1(inter, op_fn, op_mod);
+    }
+}
+
+pub fn idx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let new_addr = __abxy_calculate_addr(inter, inter.reg.y);
+    inter.mem.set_addr(new_addr);
+
+    if let AddressingModifier::Read = op_mod {
+        inter.mem.read_at_addr();
+    }
+
+    op_fn(inter);
+
+    if let AddressingModifier::Write = op_mod {
+        inter.mem.write_at_addr();
+    }
+}
+
 // ####### ASB (ABS JUMP) #######
 pub fn asb_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
