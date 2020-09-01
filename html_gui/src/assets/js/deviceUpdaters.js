@@ -19,6 +19,12 @@ export const DeviceUpdaters = {
         }
     },
 
+    pixelScreenUpdater(widget, pkg) {
+        if (pkg && pkg.get("canvas")) {
+            widget.displayData.canvas = pkg.get("canvas");
+        }
+    },
+
     unimplemented() {
         console.warn("Unimplemented device widget updater.")
     }
