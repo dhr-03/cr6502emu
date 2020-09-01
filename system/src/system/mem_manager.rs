@@ -108,7 +108,7 @@ impl MemManager {
 
     /// Sets the data bus value
     pub fn set_data(&mut self, data: u8) {
-        *self.bus.data_mut_ref() = data;
+        self.bus.set_data(data);
     }
 
     /// Reads and returns the value in the address `self.addr()`
@@ -120,21 +120,11 @@ impl MemManager {
         if let Some((dev, offset)) = mapped {
             let val = dev.read_unchecked(offset);
 
-            *self.bus.data_mut_ref() = val;
+            self.bus.set_data(val);
+            self.bus.data()
         } else {
-            //TODO: temp
-            use wasm_bindgen::prelude::wasm_bindgen;
-            #[wasm_bindgen]
-            extern {
-                fn alert(msg: &str);
-            }
-
-            alert("unk addr: read");
-
-            *self.bus.data_mut_ref() = 0;
+            0
         }
-
-        self.bus.data()
     }
 
     /// Writes some value to the address in `self.addr()`
@@ -148,15 +138,6 @@ impl MemManager {
 
         if let Some((dev, offset)) = mapped {
             dev.write_unchecked(offset, current_data);
-        } else {
-            //TODO: temp
-            use wasm_bindgen::prelude::wasm_bindgen;
-            #[wasm_bindgen]
-            extern {
-                fn alert(msg: &str);
-            }
-
-            alert("unk addr: write");
         }
     }
 
@@ -167,7 +148,7 @@ impl MemManager {
 
     /// Sets the address pointer to some value
     pub fn set_addr(&mut self, addr: u16) {
-        *self.bus.addr_mut_ref() = addr;
+       self.bus.set_addr(addr);
     }
 
     /// Sets the low part of the current address pointer, keeping whatever is on the high part
@@ -184,7 +165,6 @@ impl MemManager {
 
     /// Resets the bus to 0
     pub fn reset_bus(&mut self) {
-        *self.bus.addr_mut_ref() = 0;
-        *self.bus.data_mut_ref() = 0;
+        self.bus.reset();
     }
 }

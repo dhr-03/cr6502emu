@@ -18,6 +18,13 @@ impl Bus {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.data = 0;
+        self.addr = 0;
+
+        self.rw = true;
+    }
+
     pub fn set_rw(&mut self, value: bool) {
         self.rw = value;
     }
@@ -26,8 +33,16 @@ impl Bus {
         self.data
     }
 
+    pub fn set_data(&mut self, data: u8) {
+        self.data = data;
+    }
+
     pub fn addr(&self) -> u16 {
         self.addr
+    }
+
+    pub fn set_addr(&mut self, addr: u16) {
+        self.addr = addr;
     }
 
     pub fn data_mut_ref(&mut self) -> &mut u8 {
