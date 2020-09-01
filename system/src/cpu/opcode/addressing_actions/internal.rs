@@ -7,19 +7,32 @@ use crate::cpu::CPUInterface;
 //pub fn {mode}_[1-9](...)
 
 // ############### Abstractions ###############
-#[inline]
+#[inline(always)]
 fn read_at_pc_inc(inter: &mut CPUInterface) {
     inter.mem.set_addr(inter.reg.pc);
     inter.mem.read_at_addr();
     inter.reg.pc += 1;
 }
 
+fn execute_with_read_or_write(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    if let AddressingModifier::Read = op_mod {
+        inter.mem.read_at_addr();
+    }
+
+    op_fn(inter);
+
+    if let AddressingModifier::Write = op_mod {
+        inter.mem.write_at_addr();
+    }
+}
 
 // A few functions do exactly the same thing, but with different names.
 // I'm doing this simplicity and to avoid bugs in the future,
 // surely the compiler will detect those and "unify" them.
 
 // ############### Functions ###############
+
+pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
 
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
@@ -41,14 +54,8 @@ pub fn a__(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingMo
 }
 
 // ####### Zero Page #######
-pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-}
-
-pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr(inter.mem.data() as u16);
-
-    if op_mod.is_read() {
+fn __zp_common(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    if op_mod.has_read() {
         inter.mem.read_at_addr();
     }
 
@@ -63,6 +70,16 @@ pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingMo
     }
 }
 
+pub fn zp_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn zp_2(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.data() as u16);
+
+    __zp_common(inter, op_fn, op_mod);
+}
+
 fn zp_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 
@@ -72,6 +89,37 @@ fn zp_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressin
 fn zp_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     inter.mem.write_at_addr();
 }
+
+// ####### Zero Page X #######
+pub use zp_1 as zpx_1;
+
+pub use waste_cycle as zpx_2;
+
+pub fn zpx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+
+    inter.mem.set_addr_lo(
+        inter.mem.data() + inter.reg.x //wrapping add
+    );
+
+    __zp_common(inter, op_fn, op_mod);
+}
+
+// ####### Zero Page Y #######
+pub use zp_1 as zpy_1;
+
+pub use waste_cycle as zpy_2;
+
+pub fn zpy_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+
+    inter.mem.set_addr_lo(
+        inter.mem.data() + inter.reg.y //wrapping add
+    );
+
+    execute_with_read_or_write(inter, op_fn, op_mod);
+}
+
 
 // ####### Relative #######
 pub fn rel(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
@@ -109,21 +157,8 @@ fn rel_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Address
 }
 
 // ####### Absolute #######
-pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-
-    inter.reg.itr = inter.mem.data()
-}
-
-pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
-    read_at_pc_inc(inter);
-}
-
-pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr_hi(inter.mem.data());
-    inter.mem.set_addr_lo(inter.reg.itr);
-
-    if op_mod.is_read() {
+fn __abs_common(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    if op_mod.has_read() {
         inter.mem.read_at_addr();
     }
 
@@ -138,6 +173,23 @@ pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingM
     }
 }
 
+pub fn abs_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+
+    inter.reg.itr = inter.mem.data()
+}
+
+pub fn abs_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn abs_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr_hi(inter.mem.data());
+    inter.mem.set_addr_lo(inter.reg.itr);
+
+    __abs_common(inter, op_fn, op_mod);
+}
+
 fn abs_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 
@@ -146,6 +198,118 @@ fn abs_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressi
 
 fn abs_extra_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     inter.mem.write_at_addr();
+}
+
+// ####### Absolute X #######
+#[inline(always)]
+fn __abxy_calculate_addr(inter: &mut CPUInterface, reg: u8) -> u16 {
+    let mut new_addr: u16;
+
+    new_addr = inter.reg.itr as u16;
+    new_addr |= (inter.mem.data() as u16) << 8;
+    new_addr += reg as u16;
+
+    new_addr
+}
+
+pub use abs_1 as abx_1;
+
+pub use abs_2 as abx_2;
+
+pub fn abx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let addr_lo = inter.reg.itr;
+
+    if op_mod.is_write() || (std::u8::MAX - addr_lo) < inter.reg.x {
+        *inter.next_cycle = Some(abx_extra_1);
+    } else {
+        abx_extra_1(inter, op_fn, op_mod);
+    }
+}
+
+fn abx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let new_addr = __abxy_calculate_addr(inter, inter.reg.x);
+    inter.mem.set_addr(new_addr);
+
+    __abs_common(inter, op_fn, op_mod);
+}
+
+// ####### Absolute Y #######
+pub use abs_1 as aby_1;
+
+pub use abs_2 as aby_2;
+
+pub fn aby_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let addr_lo = inter.reg.itr;
+
+    if op_mod.is_write() || (std::u8::MAX - addr_lo) < inter.reg.y {
+        *inter.next_cycle = Some(aby_extra_1);
+    } else {
+        aby_extra_1(inter, op_fn, op_mod);
+    }
+}
+
+fn aby_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let new_addr = __abxy_calculate_addr(inter, inter.reg.y);
+    inter.mem.set_addr(new_addr);
+
+    execute_with_read_or_write(inter, op_fn, op_mod);
+}
+
+// ####### IXD (ZP Indexed Indirect with X) #######
+pub fn ixd_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub use waste_cycle as ixd_2;
+
+pub fn ixd_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+    inter.mem.set_addr_lo(
+        inter.mem.data() + inter.reg.x //wrapping add
+    );
+
+    inter.mem.read_at_addr();
+}
+
+pub fn ixd_4(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    inter.mem.set_addr(0);
+    inter.mem.set_addr_lo(inter.mem.data());
+
+    execute_with_read_or_write(inter, op_fn, op_mod);
+}
+
+// ####### IDX (ZP Indirect Indexed with Y) #######
+pub fn idx_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    read_at_pc_inc(inter);
+}
+
+pub fn idx_2(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.data() as u16);
+
+    inter.reg.itr = inter.mem.read_at_addr();
+}
+
+pub fn idx_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.addr() + 1);
+
+    inter.mem.read_at_addr();
+}
+
+pub fn idx_4(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let addr_lo = inter.reg.itr;
+
+    if op_mod.is_write() || (std::u8::MAX - addr_lo) < inter.reg.y {
+        *inter.next_cycle = Some(idx_extra_1);
+    } else {
+        idx_extra_1(inter, op_fn, op_mod);
+    }
+}
+
+pub fn idx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
+    let new_addr = __abxy_calculate_addr(inter, inter.reg.y);
+    inter.mem.set_addr(new_addr);
+
+    execute_with_read_or_write(inter, op_fn, op_mod);
 }
 
 // ####### ASB (ABS JUMP) #######
