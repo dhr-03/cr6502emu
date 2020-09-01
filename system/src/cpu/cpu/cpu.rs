@@ -52,7 +52,7 @@ impl CPU {
     }
 
     pub fn operation_is_done(&self) -> bool {
-        return self.opcode.operation_is_done(&self.extra_cycle);
+        self.opcode.operation_is_done(&self.extra_cycle)
     }
 }
 
@@ -66,6 +66,8 @@ impl DeviceTrait for CPU {
         self.reg.reset();
         self.opcode.force_is_done();
         self.extra_cycle = None;
+
+        self.bus_value_widget_cache = (0, 0);
     }
 
     fn reset_hard(&mut self) {
