@@ -62,8 +62,12 @@ pub const IDX: [AddressingFn; 4] = [
     idx_4,
 ];
 
-//TODO: implement
-pub const IXD: [AddressingFn; 0] = [];
+pub const IXD: [AddressingFn; 4] = [
+    ixd_1,
+    ixd_2,
+    ixd_3,
+    ixd_4,
+];
 
 //TODO: implement
 pub const ASB: [AddressingFn; 0] = []; //absolute JSR
