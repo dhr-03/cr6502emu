@@ -22,6 +22,20 @@ impl DeviceFactory {
             match dev_type {
                 DeviceId::CPU => Err(()),
 
+
+                DeviceId::PixelScreen => {
+                    Ok(Box::new(
+                        io::PixelScreen::new()
+                    ))
+                }
+
+                DeviceId::AsciiIOBuffer => {
+                   Ok(Box::new(
+                       io::AsciiIOBuffer::new()
+                   ))
+                }
+
+
                 DeviceId::Rom => {
                     Ok(Box::new(
                         mem::Rom::with_size(size)
@@ -31,12 +45,6 @@ impl DeviceFactory {
                 DeviceId::Ram => {
                     Ok(Box::new(
                         mem::Ram::with_size(size)
-                    ))
-                }
-
-                DeviceId::PixelScreen => {
-                    Ok(Box::new(
-                        io::PixelScreen::new()
                     ))
                 }
             }

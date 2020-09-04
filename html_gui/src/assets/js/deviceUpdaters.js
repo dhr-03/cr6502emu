@@ -5,6 +5,12 @@ export const DeviceUpdaters = {
         Object.assign(widget.displayData, Object.fromEntries(pkg));
     },
 
+    copyAllIfNotNull(widget, pkg) {
+      if (pkg) {
+          DeviceUpdaters.copyAll(widget, pkg);
+      }
+    },
+
     async memMonitorUpdater(widget, pkg, memArrayBuilder) {
         if (pkg.get("update")) {
             if (widget.displayData.memArray === undefined) {

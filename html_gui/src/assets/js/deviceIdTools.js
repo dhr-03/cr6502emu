@@ -6,6 +6,7 @@ const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 import EnvironmentWidgetCpu from "../../components/EnvironmentWidgetCpu";
 import EnvironmentWidgetMemMonitor from "../../components/EnvironmentWidgetMemMonitor";
 import EnvironmentWidgetPixelScreen from "../../components/EnvironmentWidgetPixelScreen";
+import EnvironmentWidgetAsciiIOBuffer from "../../components/EnvironmentWidgetAsciiIOBuffer";
 
 const DEVICE_DATA = {
     [DeviceId.CPU]: {
@@ -16,6 +17,26 @@ const DEVICE_DATA = {
 
         defaultTitle: "CPU",
     },
+
+
+    [DeviceId.PixelScreen]: {
+        setupFn: DeviceSetupFns.getEmptyMap,
+        updater: DeviceUpdaters.pixelScreenUpdater,
+
+        component: EnvironmentWidgetPixelScreen,
+
+        defaultTitle: "Pixel Screen",
+    },
+
+    [DeviceId.AsciiIOBuffer]: {
+        setupFn: DeviceSetupFns.getEmptyMap,
+        updater: DeviceUpdaters.copyAllIfNotNull,
+
+        component: EnvironmentWidgetAsciiIOBuffer,
+
+        defaultTitle: "Ascii IO Buffer",
+    },
+
 
     [DeviceId.Rom]: {
         setupFn: DeviceSetupFns.getEmptyMap,
@@ -34,15 +55,6 @@ const DEVICE_DATA = {
 
         defaultTitle: "RAM",
     },
-
-    [DeviceId.PixelScreen]: {
-        setupFn: DeviceSetupFns.getEmptyMap,
-        updater: DeviceUpdaters.pixelScreenUpdater,
-
-        component:EnvironmentWidgetPixelScreen,
-
-        defaultTitle: "Pixel Screen",
-    }
 
 };
 
