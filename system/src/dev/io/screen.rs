@@ -43,8 +43,8 @@ impl PixelScreen {
             .dyn_into::<web_sys::HtmlCanvasElement>()
             .unwrap();
 
-        canvas.set_width(DEFAULT_WIDTH);
-        canvas.set_height(DEFAULT_HEIGHT);
+        canvas.set_width(DEFAULT_WIDTH as u32);
+        canvas.set_height(DEFAULT_HEIGHT as u32);
 
         let canvas_context = canvas
             .get_context("2d")
