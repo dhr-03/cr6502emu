@@ -1,5 +1,5 @@
 <template>
-    <div ref="canvasContainer"></div>
+    <div class="crl-widget" ref="canvasContainer"></div>
 </template>
 
 <script>
@@ -10,13 +10,13 @@
         mixins: [MixinEnvironmentWidget],
 
         mounted() {
-          this.$refs.canvasContainer.appendChild(this.widget.displayData.canvas);
+            this.$refs.canvasContainer.appendChild(this.widget.displayData.canvas);
         }
     }
 </script>
 
 <style lang="less">
-    canvas {
+    .crl-widget canvas {
         padding: 0.5em;
         width: 21em;
         height: 12.5em;
