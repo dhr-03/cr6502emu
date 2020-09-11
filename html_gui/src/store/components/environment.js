@@ -36,6 +36,8 @@ export const EnvironmentStore = {
             system: null,
         },
 
+        meta: {},
+        settings: {},
         devices: [],
 
         messages: [],
