@@ -115,10 +115,10 @@ impl Parser {
             }),
 
             ["(", _, _, "", "X", ")"] =>
-                __indexed_zp_or_err(AddressingMode::IndexedIndirect, value, true),
+                __indexed_zp_or_err(AddressingMode::IndexedIndirect, value, is_zp),
 
             ["(", _, _, ")", "Y", ""] =>
-                __indexed_zp_or_err(AddressingMode::IndirectIndexed, value, true),
+                __indexed_zp_or_err(AddressingMode::IndirectIndexed, value, is_zp),
 
             ["(", _, _, ")", "", ""] => {
                 let val = value.into_abs()
