@@ -1,7 +1,7 @@
 import {DeviceWidget} from "./deviceWidget";
 
 export class DeviceRepresentation {
-    constructor(type, start, end, uid) {
+    constructor(type, start, end, uid, hasFixedSize) {
         // The device type. (wasmSys.DeviceId)
         this._type = type;
 
@@ -17,6 +17,9 @@ export class DeviceRepresentation {
 
         // The Widget.
         this._widget = new DeviceWidget();
+
+        // Some devices have a fixed size, others let the user set it.
+        this._hasFixedSize = hasFixedSize;
     }
 
     get type() {
