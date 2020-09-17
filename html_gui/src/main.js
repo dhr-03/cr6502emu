@@ -10,6 +10,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 
 // commented == imported more than once
 import {
+    //Home
+    faArrowCircleRight, faPlusSquare,
+
     //About
     faCode,
 
@@ -38,6 +41,7 @@ import {
     from "@fortawesome/free-solid-svg-icons"
 
 library.add(
+    faArrowCircleRight,faPlusSquare,
     faCode,
     faExternalLinkSquareAlt,
     faInfoCircle, faExclamationTriangle, faTimesCircle,
