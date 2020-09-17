@@ -1,16 +1,13 @@
 <template>
     <div>
         <pre
-                id="editor"
-                class="language-asm6502"
-                data-linenumber="1"
-                spellcheck="false"
+            id="editor"
+            class="language-asm6502"
+            data-linenumber="1"
+            spellcheck="false"
 
-                :contenteditable="editable"
-        >
-LDA #65
-LDA #02
-        </pre>
+            :contenteditable="editable"
+        >{{ initialCode }}</pre>
     </div>
 </template>
 
@@ -35,6 +32,11 @@ LDA #02
             editable: {
                 type: Boolean,
                 default: true
+            },
+
+            initialCode: {
+                type: String,
+                default: "",
             }
         },
 

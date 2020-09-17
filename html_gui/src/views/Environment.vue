@@ -22,7 +22,9 @@
             <div class="uk-grid uk-grid-small">
                 <div class="uk-width-expand">
 
-                    <EnvironmentEditor/>
+                    <EnvironmentEditor
+                        :initial-code="editorInitialCode"
+                    />
 
                 </div>
 
@@ -67,7 +69,8 @@
             "isInitializing",
             "successfulInitialize",
             "isExecuting",
-            "deviceList"
+            "deviceList",
+            "editorInitialCode",
         ]),
 
         methods: mapActions("env", [

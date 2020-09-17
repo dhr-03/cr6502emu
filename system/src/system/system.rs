@@ -109,7 +109,7 @@ impl System {
     pub fn device_representation_by_index(&self, index: usize) -> Option<DeviceRepresentation> {
         if index == 0 {
             Some(
-                DeviceRepresentation::new(DeviceId::CPU, 0, 0, 0)
+                DeviceRepresentation::new(DeviceId::CPU, 0, 0, 0, true)
             )
         } else {
             self.mem.devices()

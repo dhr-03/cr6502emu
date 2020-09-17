@@ -16,12 +16,13 @@ impl DeviceFactory {
     /// ## Err type
     /// In the future, `E` might contain some kind of error, but for now, the only error is an invalid size.
     pub fn with_size(dev_type: DeviceId, size: u16) -> Result<BoxedDev, ()> {
-        if size == 0 && !Self::dev_has_fixed_size(&dev_type) {
+        let has_fixed_sz = dev_type.has_fixed_size();
+
+        if (size == 0 && !has_fixed_sz) || (size != 0 && has_fixed_sz) {
             Err(())
         } else {
             match dev_type {
                 DeviceId::CPU => Err(()),
-
 
                 DeviceId::PixelScreen => {
                     Ok(Box::new(
@@ -30,11 +31,10 @@ impl DeviceFactory {
                 }
 
                 DeviceId::AsciiIOBuffer => {
-                   Ok(Box::new(
-                       io::AsciiIOBuffer::new()
-                   ))
+                    Ok(Box::new(
+                        io::AsciiIOBuffer::new()
+                    ))
                 }
-
 
                 DeviceId::Rom => {
                     Ok(Box::new(
@@ -49,9 +49,5 @@ impl DeviceFactory {
                 }
             }
         }
-    }
-
-    fn dev_has_fixed_size(dev_id: &DeviceId) -> bool {
-        dev_id.fixed_size_of().is_some()
     }
 }

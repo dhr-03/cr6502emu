@@ -7,7 +7,7 @@ extern {
     pub type DeviceRepresentation;
 
     #[wasm_bindgen(constructor)]
-    pub fn new(id: DeviceId, start: u16, end: u16, uid: u16) -> DeviceRepresentation;
+    pub fn new(id: DeviceId, start: u16, end: u16, uid: u16, has_fixed_size: bool) -> DeviceRepresentation;
 }
 
 impl DeviceRepresentation {
@@ -18,7 +18,9 @@ impl DeviceRepresentation {
             holder.range().start,
             holder.range().end,
 
-            holder.uid()
+            holder.uid(),
+
+            holder.device().device_id().has_fixed_size(),
         )
     }
 }
