@@ -1,4 +1,5 @@
 import {DeviceWidget} from "./deviceWidget";
+import Tools from "./tools";
 
 export class DeviceRepresentation {
     constructor(type, start, end, uid, hasFixedSize) {
@@ -47,5 +48,17 @@ export class DeviceRepresentation {
 
     get widget() {
         return this._widget;
+    }
+
+    getExportRepresentation() {
+        return {
+            type: this._type,
+            uid: this._uid,
+
+            start: this._start,
+            size: this._hasFixedSize ? 0 : this.size,
+
+            config: Tools.deepClone(this._widget.config),
+        }
     }
 }

@@ -1,4 +1,6 @@
 import {DeviceIdTools} from "../../assets/js/deviceIdTools";
+import {DeviceWidget} from "../../assets/js/deviceWidget";
+import Tools from "../../assets/js/tools";
 
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
 const sysLib = require(process.env.VUE_APP_SYS_JS_PATH);
@@ -15,33 +17,41 @@ export const EnvironmentState = {
     DEBUGGING: 21,
 }
 
+// Im not sure how is done in js, but as this is not an {} object, i think that screaming snake case is the correct one.
+const DEFAULT_EDITOR_CODE = `\
+LDX #65
+LDY #02
+`;
+
+const EnvironmentInitialState = {
+    lock: {
+        build: false,
+        reset: false,
+        execute: false,
+        config: false,
+    },
+
+    status: {
+        buildSuccessful: false,
+        currentAction: EnvironmentState.SETTING_UP,
+    },
+
+    wasm: {
+        assembler: null,
+        system: null,
+    },
+
+    meta: {},
+    settings: {},
+    devices: [],
+
+    messages: [],
+};
+
 export const EnvironmentStore = {
     namespaced: true,
 
-    state: {
-        lock: {
-            build: false,
-            reset: false,
-            execute: false,
-            config: false,
-        },
-
-        status: {
-            buildSuccessful: false,
-            currentAction: EnvironmentState.SETTING_UP,
-        },
-
-        wasm: {
-            assembler: null,
-            system: null,
-        },
-
-        meta: {},
-        settings: {},
-        devices: [],
-
-        messages: [],
-    },
+    state: Tools.deepClone(EnvironmentInitialState),
 
     mutations: {
         __setAsm(state, obj) {
@@ -74,6 +84,12 @@ export const EnvironmentStore = {
         resetMessages(state) {
             state.messages = [];
         },
+
+
+        setEditorInitialCode(state, code) {
+            state.meta.code = code;
+        }
+
     },
 
     actions: {
@@ -124,7 +140,7 @@ export const EnvironmentStore = {
             }
 
 
-            Promise.resolve(null)
+            return Promise.resolve(null)
                 .then(setupWasmAsm)
                 .then(setupWasmSys)
 
@@ -147,6 +163,81 @@ export const EnvironmentStore = {
             context.dispatch("addDeviceWithWidget", {type: DeviceId.PixelScreen, start: 0x3000, size: 0});
 
             context.commit("currentStatus", EnvironmentState.IDLE);
+
+            console.log(this)
+        },
+
+
+        async resetToCleanState(context) {
+            let clonedInitialState = JSON.parse(JSON.stringify(EnvironmentInitialState));
+            Object.assign(context.state, clonedInitialState);
+
+            context.commit("currentStatus", EnvironmentState.INITIALIZING);
+
+            // We could also reset the system manually removing all devices etc instead of recreating the wasm instance.
+            // This way is quite inefficient, but we can be sure that everything will be clean and working,
+            // (specially if rust panicked)
+            await context.dispatch("setup");
+
+            // sync rust devices such as the cpu.
+            await context.dispatch("purgeAndReloadDeviceCache");
+
+            context.commit("currentStatus", EnvironmentState.IDLE);
+        },
+
+
+        exportProjectToObject(context) {
+            let exportObj = {};
+
+            //Clone removing all the reactivity crap.
+            exportObj.meta = Object.assign({}, context.state.meta);
+            exportObj.settings = Object.assign({}, context.state.settings);
+
+            exportObj.meta.code = document.querySelector("#editor").innerText;
+
+            exportObj.devices = [];
+
+            let ctxDevices = context.getters.deviceList;
+            ctxDevices = ctxDevices.slice(1, ctxDevices.length); //skip CPU
+
+            for (let device of ctxDevices) {
+                exportObj.devices.push(
+                    device.getExportRepresentation()
+                );
+            }
+
+            return exportObj;
+        },
+
+        async importProjectFromObject(context, obj, reset = false) {
+            //TODO: validate obj
+            try {
+
+                if (reset) {
+                    await context.dispatch("resetToCleanState");
+                }
+
+                context.commit("currentStatus", EnvironmentState.INITIALIZING);
+
+
+                context.state.meta = obj.meta;
+                context.state.settings = obj.settings;
+
+                await Promise.all(obj.devices.map(dev => {
+                        context.dispatch("addDeviceWithWidget", {
+                            ...dev,
+                            widget: new DeviceWidget(dev.config)
+                        });
+                    })
+                );
+
+                context.commit("currentStatus", EnvironmentState.IDLE);
+
+            } catch (e) {
+                console.error("Failed to import project: ", e);
+
+                context.commit("currentStatus", EnvironmentState.FAILED_TO_INIT);
+            }
         },
 
 
@@ -381,7 +472,11 @@ export const EnvironmentStore = {
 
         deviceList(state) {
             return state.devices;
-        }
+        },
 
+
+        editorInitialCode(state) {
+            return state.meta.code != null ? state.meta.code : DEFAULT_EDITOR_CODE;
+        }
     }
 }
