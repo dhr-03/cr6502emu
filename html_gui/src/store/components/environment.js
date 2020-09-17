@@ -163,8 +163,6 @@ export const EnvironmentStore = {
             context.dispatch("addDeviceWithWidget", {type: DeviceId.PixelScreen, start: 0x3000, size: 0});
 
             context.commit("currentStatus", EnvironmentState.IDLE);
-
-            console.log(this)
         },
 
 
