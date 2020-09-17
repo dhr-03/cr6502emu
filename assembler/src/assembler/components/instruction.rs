@@ -42,7 +42,7 @@ impl Instruction {
             let target = self.value.resolve(asm)
                 .ok_or(ParseError::UnknownIdentifier)? as i32;
 
-            let offset = target - (position - 1);
+            let offset = target - (asm.rom_start() as i32 + position + 1);
 
             if offset > 127 {
                 err_msg(lang_macro::ERR_TARGET_TOO_FAR);

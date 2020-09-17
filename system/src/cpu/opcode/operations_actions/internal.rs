@@ -65,14 +65,10 @@ fn set_flag_is_negative(inter: &mut CPUInterface, value: u8) {
     inter.reg.p |= (value & (1 << 7))
 }
 
-fn set_flag_is_carry(inter: &mut CPUInterface, val: i16) {
-    let is_carry = (val > std::i8::MAX as i16) || (val < std::i8::MIN as i16);
-
-    set_flag_bool(inter, FlagPositionOffset::Carry, is_carry);
-}
-
-fn set_flag_is_overflow(inter: &mut CPUInterface, val_1: u8, val_2: u8) {
-    let is_overflow = val_1 & (1 << 7) != val_2 & (1 << 7);
+#[inline]
+fn set_flag_is_overflow(inter: &mut CPUInterface, val_1: u16, val_2: u16, result: u16) {
+    //https://stackoverflow.com/a/16861251
+    let is_overflow = (!(val_1 ^ val_2)) & (val_1 ^ result) & 0x80 != 0;
 
     set_flag_bool(inter, FlagPositionOffset::Overflow, is_overflow);
 }
@@ -133,7 +129,6 @@ pub fn sta(inter: &mut CPUInterface) {
 pub fn sty(inter: &mut CPUInterface) {
     inter.mem.set_data(inter.reg.y);
 }
-
 
 pub fn stx(inter: &mut CPUInterface) {
     inter.mem.set_data(inter.reg.x);
@@ -235,12 +230,12 @@ pub fn bit(inter: &mut CPUInterface) {
 
 /* #######################  Arithmetic  ####################### */
 pub fn adc(inter: &mut CPUInterface) {
-    let val_1 = inter.reg.a;
-    let val_2 = inter.mem.data();
+    let val_1 = inter.reg.a as u16;
+    let val_2 = inter.mem.data() as u16;
 
-    let carry = (inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1;
+    let carry = ((inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1) as u16;
 
-    let result: i16 = (val_1 + val_2 + carry) as i16;
+    let result = val_1 + val_2 + carry;
 
     inter.reg.alu = result as u8;
     inter.reg.a = inter.reg.alu;
@@ -248,17 +243,17 @@ pub fn adc(inter: &mut CPUInterface) {
     set_flag_is_zero(inter, inter.reg.alu);
     set_flag_is_negative(inter, inter.reg.alu);
 
-    set_flag_is_carry(inter, result);
-    set_flag_is_overflow(inter, val_1, val_2);
+    set_flag_bool(inter, FlagPositionOffset::Carry, (result & 0xFF00) != 0);
+    set_flag_is_overflow(inter, val_1, val_2, result);
 }
 
 pub fn sbc(inter: &mut CPUInterface) {
-    let val_1 = inter.reg.a;
-    let val_2 = inter.mem.data();
+    let val_1 = inter.reg.a as u16;
+    let val_2 = inter.mem.data() as u16;
 
-    let carry = (inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1;
+    let carry = ((inter.reg.p >> (FlagPositionOffset::Carry as u8)) & 0b1) as u16;
 
-    let result: i16 = (val_1 - val_2 - (1 - carry)) as i16;
+    let result = val_1 - val_2 - (1 - carry);
 
     inter.reg.alu = result as u8;
     inter.reg.a = inter.reg.alu;
@@ -266,8 +261,8 @@ pub fn sbc(inter: &mut CPUInterface) {
     set_flag_is_zero(inter, inter.reg.alu);
     set_flag_is_negative(inter, inter.reg.alu);
 
-    set_flag_is_carry(inter, result);
-    set_flag_is_overflow(inter, val_1, val_2);
+    set_flag_bool(inter, FlagPositionOffset::Carry, (result & 0xFF00) == 0);
+    set_flag_is_overflow(inter, val_1, val_2, result);
 }
 
 fn __generic_cmp(inter: &mut CPUInterface, reg: u8) {
@@ -461,7 +456,7 @@ pub fn sec(inter: &mut CPUInterface) {
     set_flag(inter, FlagPositionOffset::Carry);
 }
 
-pub fn sed(inter: &mut CPUInterface) {
+pub fn sed(_inter: &mut CPUInterface) {
     on_unimplemented_feature("Decimal Mode");
 }
 
@@ -473,7 +468,7 @@ pub fn sei(inter: &mut CPUInterface) {
 //TODO: impl
 pub fn brk(inter: &mut CPUInterface) {}
 
-pub fn nop(inter: &mut CPUInterface) {
+pub fn nop(_inter: &mut CPUInterface) {
     //do_nothing();
 }
 

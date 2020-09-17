@@ -14,14 +14,6 @@ pub trait AddressableDeviceTrait: DeviceTrait {
     /// The offset has already been validated by `system::MemManager`.
     #[allow(unused_variables)]
     fn write_unchecked(&mut self, offset: u16, value: u8) {
-        //TODO: temp
-        use wasm_bindgen::prelude::wasm_bindgen;
-        #[wasm_bindgen]
-        extern {
-            fn alert(msg: &str);
-        }
-
-        alert("non writable");
     }
 
     /// # Returns
