@@ -1,3 +1,5 @@
+const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
+
 const LS_KEY = "cr_projects";
 const DEBOUNCE_DURATION = 5 * 1000;
 
@@ -88,7 +90,48 @@ export const ProjectManagerStore = {
 
                 settings: {},
 
-                devices: [],
+                devices: [
+                    {
+                        type: DeviceId.Ram,
+                        uid: 1000,
+
+                        start: 0,
+                        size: 0x1000,
+
+                        config: {},
+                    },
+
+                    {
+                        type: DeviceId.Rom,
+                        uid: 1001,
+
+                        start: 0x1000,
+                        size: 0x1000,
+
+                        config: {},
+                    },
+
+                    {
+                        type: DeviceId.AsciiIOBuffer,
+                        uid: 2002,
+
+                        start: 0x2000,
+                        size: 0,
+
+                        config: {},
+                    },
+
+                    {
+                        type: DeviceId.PixelScreen,
+                        uid: 0,
+
+                        start: 0x3000,
+                        size: 0,
+
+                        config: {},
+                    },
+
+                ],
             };
 
             context.commit("addProjectFromObject", newPrj);
