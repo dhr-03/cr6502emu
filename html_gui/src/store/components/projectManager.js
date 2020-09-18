@@ -29,6 +29,8 @@ export const ProjectManagerStore = {
         },
 
         updateProject(state, prj) {
+            prj.meta.lastMod = Date.now();
+
             state.projectsCache = state.projectsCache.filter(p => p.meta.pid !== prj.meta.pid);
 
             state.projectsCache.push(prj);
