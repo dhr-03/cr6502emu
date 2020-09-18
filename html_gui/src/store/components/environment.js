@@ -150,21 +150,6 @@ export const EnvironmentStore = {
                 .catch(onSetupError);
         },
 
-        initialize(context) {
-            const DeviceId = sysLib.DeviceId;
-
-            context.dispatch("purgeAndReloadDeviceCache");
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, size: 0x1000});
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, size: 0x1000});
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.AsciiIOBuffer, start: 0x2000, size: 0});
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.PixelScreen, start: 0x3000, size: 0});
-
-            context.commit("currentStatus", EnvironmentState.IDLE);
-        },
-
 
         async resetToCleanState(context) {
             let clonedInitialState = JSON.parse(JSON.stringify(EnvironmentInitialState));
@@ -184,7 +169,7 @@ export const EnvironmentStore = {
         },
 
 
-        exportProjectToObject(context) {
+        async exportProjectToObject(context) {
             let exportObj = {};
 
             //Clone removing all the reactivity crap.
@@ -207,10 +192,9 @@ export const EnvironmentStore = {
             return exportObj;
         },
 
-        async importProjectFromObject(context, obj, reset = false) {
+        async importProjectFromObject(context, {prj, reset = false}) {
             //TODO: validate obj
             try {
-
                 if (reset) {
                     await context.dispatch("resetToCleanState");
                 }
@@ -218,10 +202,10 @@ export const EnvironmentStore = {
                 context.commit("currentStatus", EnvironmentState.INITIALIZING);
 
 
-                context.state.meta = obj.meta;
-                context.state.settings = obj.settings;
+                context.state.meta = prj.meta;
+                context.state.settings = prj.settings;
 
-                await Promise.all(obj.devices.map(dev => {
+                await Promise.all(prj.devices.map(dev => {
                         context.dispatch("addDeviceWithWidget", {
                             ...dev,
                             widget: new DeviceWidget(dev.config)
@@ -475,6 +459,10 @@ export const EnvironmentStore = {
 
         editorInitialCode(state) {
             return state.meta.code != null ? state.meta.code : DEFAULT_EDITOR_CODE;
+        },
+
+        currentProjectId(state) {
+            return state.meta.pid;
         }
     }
 }

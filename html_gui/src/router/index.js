@@ -26,6 +26,7 @@ const routes = [
 
     {
         path: "*",
+        name: "404",
         component: ErrorNotFound,
     }
 ];

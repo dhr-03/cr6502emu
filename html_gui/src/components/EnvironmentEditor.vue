@@ -1,14 +1,14 @@
 <template>
-    <div>
-        <pre
-            id="editor"
-            class="language-asm6502"
-            data-linenumber="1"
-            spellcheck="false"
+    <pre
+        id="editor"
+        class="language-asm6502"
+        data-linenumber="1"
+        spellcheck="false"
 
-            :contenteditable="editable"
-        >{{ initialCode }}</pre>
-    </div>
+        @keyup="keyUpCallback"
+
+        :contenteditable="editable"
+    >{{ initialCode }}</pre>
 </template>
 
 <script>
@@ -37,6 +37,12 @@
             initialCode: {
                 type: String,
                 default: "",
+            },
+
+            keyUpCallback: {
+                type: Function,
+                default: _ => {
+                },
             }
         },
 
