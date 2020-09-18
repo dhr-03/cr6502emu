@@ -29,7 +29,7 @@ export const ProjectManagerStore = {
         },
 
         updateProject(state, prj) {
-            state.projectsCache = state.projectsCache.filter(prj => prj.meta.pid !== prj.meta.pid);
+            state.projectsCache = state.projectsCache.filter(p => p.meta.pid !== prj.meta.pid);
 
             state.projectsCache.push(prj);
         }
@@ -114,7 +114,7 @@ export const ProjectManagerStore = {
                 clearTimeout(context.state.timeoutSaveToLS);
 
                 context.commit("saveCacheToLS");
-                
+
                 context.state.timeoutSavePrj = null;
                 context.state.timeoutSaveToLS = null;
             }
