@@ -97,6 +97,28 @@ export const ProjectManagerStore = {
 
             return newPrj.meta.pid;
         },
+
+        async beforeShutdown(context) {
+            if (context.state.timeoutSavePrj) {
+                clearTimeout(context.state.timeoutSavePrj);
+
+                // There is a small possibility that this timeout belongs to some other project.
+                let currentProject = await context.dispatch("env/exportProjectToObject", null, {root: true});
+                if (currentProject != null) {
+                    context.commit("updateProject", currentProject);
+                }
+            }
+
+            // If we just saved a project we also need to save to LS
+            if (context.state.timeoutSaveToLS || context.state.timeoutSavePrj) {
+                clearTimeout(context.state.timeoutSaveToLS);
+
+                context.commit("saveCacheToLS");
+                
+                context.state.timeoutSavePrj = null;
+                context.state.timeoutSaveToLS = null;
+            }
+        }
     },
 
     getters: {
@@ -106,6 +128,10 @@ export const ProjectManagerStore = {
 
         getProjectById(_state, getters) {
             return id => getters.getAllProjects.find(prj => prj.meta.pid === id);
+        },
+
+        isSafeToShutdown(state) {
+            return state.timeoutSavePrj == null && state.timeoutSaveToLS == null;
         }
     },
 }

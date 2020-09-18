@@ -41,7 +41,7 @@ import {
     from "@fortawesome/free-solid-svg-icons"
 
 library.add(
-    faArrowCircleRight,faPlusSquare,
+    faArrowCircleRight, faPlusSquare,
     faCode,
     faExternalLinkSquareAlt,
     faInfoCircle, faExclamationTriangle, faTimesCircle,
@@ -62,5 +62,13 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount("#app");
+
+window.onbeforeunload = function (e) {
+    if (!store.getters["prj/isSafeToShutdown"]) {
+        store.dispatch("prj/beforeShutdown")
+
+        return "";
+    }
+}
 
 store.commit("prj/reloadFromLS");
