@@ -29,7 +29,7 @@ export const ProjectManagerStore = {
         },
 
         updateProject(state, prj) {
-            state.projectsCache = state.projectsCache.filter(prj => prj.meta.pid !== prj.meta.id);
+            state.projectsCache = state.projectsCache.filter(prj => prj.meta.pid !== prj.meta.pid);
 
             state.projectsCache.push(prj);
         }
@@ -39,24 +39,35 @@ export const ProjectManagerStore = {
         debouncedSaveCacheToLS(context) {
             clearTimeout(context.state.timeoutSaveToLS);
 
-            context.state.timeoutSaveToLS = setTimeout(_ =>
-                    context.commit("saveCacheToLS")
+            context.state.timeoutSaveToLS = setTimeout(_ => {
+                    context.commit("saveCacheToLS");
+
+                    context.state.timeoutSaveToLS = null;
+                }
                 , DEBOUNCE_DURATION
             );
         },
 
-
-        debouncedSaveProjectFromGetter(context, getterFn, autoSync = true) {
-            clearTimeout(context.state.timeoutSavePrj);
-
-            context.state.timeoutSavePrj = setTimeout(_ =>
-                    context.commit("updateProject", getterFn())
-                , DEBOUNCE_DURATION
-            );
+        saveProjectFromObject(context, prj, autoSync = true) {
+            context.commit("updateProject", prj);
 
             if (autoSync) {
                 context.dispatch("debouncedSaveCacheToLS");
             }
+        },
+
+        debouncedSaveProjectFromPromise(context, promise, autoSync = true) {
+            clearTimeout(context.state.timeoutSavePrj);
+
+            context.state.timeoutSavePrj = setTimeout(_ => {
+                    promise.then(prj => {
+                        context.dispatch("saveProjectFromObject", prj, autoSync)
+                    });
+
+                    context.state.timeoutSavePrj = null;
+                }
+                , DEBOUNCE_DURATION
+            );
         },
 
         createNewProject(context, autoSync = true) {
@@ -75,7 +86,7 @@ export const ProjectManagerStore = {
 
                 settings: {},
 
-                devices: {},
+                devices: [],
             };
 
             context.commit("addProjectFromObject", newPrj);
@@ -94,7 +105,7 @@ export const ProjectManagerStore = {
         },
 
         getProjectById(_state, getters) {
-            return id => getters.getAllProjects.find(prj => prj.meta.id === id);
+            return id => getters.getAllProjects.find(prj => prj.meta.pid === id);
         }
     },
 }
