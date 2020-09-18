@@ -105,9 +105,9 @@ export const ProjectManagerStore = {
                 clearTimeout(context.state.timeoutSavePrj);
 
                 // There is a small possibility that this timeout belongs to some other project.
-                let currentProject = await context.dispatch("env/exportProjectToObject", null, {root: true});
-                if (currentProject != null) {
-                    context.commit("updateProject", currentProject);
+                let currentPrj = await context.dispatch("env/exportProjectToObject", null, {root: true});
+                if (currentPrj.meta.pid) {
+                    context.commit("updateProject", currentPrj);
                 }
             }
 
