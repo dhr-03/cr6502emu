@@ -74,7 +74,8 @@
 
         methods: {
             ...mapActions("prj", [
-                "createNewProject"
+                "createNewProject",
+                "debouncedSaveCacheToLS",
             ]),
 
             getTimeAgo(date) {
@@ -83,6 +84,8 @@
 
             async addProjectAndGo() {
                 let newPrjId = await this.createNewProject();
+
+                this.debouncedSaveCacheToLS();
 
                 await this.$router.push({
                     name: 'Project',
