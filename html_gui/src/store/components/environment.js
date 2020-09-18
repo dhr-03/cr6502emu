@@ -150,22 +150,6 @@ export const EnvironmentStore = {
                 .catch(onSetupError);
         },
 
-        initialize(context) {
-            /*
-            const DeviceId = sysLib.DeviceId;
-
-            context.dispatch("purgeAndReloadDeviceCache");
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Ram, start: 0, size: 0x1000});
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.Rom, start: 0x1000, size: 0x1000});
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.AsciiIOBuffer, start: 0x2000, size: 0});
-
-            context.dispatch("addDeviceWithWidget", {type: DeviceId.PixelScreen, start: 0x3000, size: 0});
-*/
-            context.commit("currentStatus", EnvironmentState.IDLE);
-        },
-
 
         async resetToCleanState(context) {
             let clonedInitialState = JSON.parse(JSON.stringify(EnvironmentInitialState));

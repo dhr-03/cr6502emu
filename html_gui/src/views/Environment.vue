@@ -86,7 +86,6 @@
         methods: {
             ...mapActions("env", [
                 "setup",
-                "initialize",
 
                 "exportProjectToObject",
                 "importProjectFromObject",
