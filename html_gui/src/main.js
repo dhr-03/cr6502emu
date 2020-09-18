@@ -22,6 +22,9 @@ import {
     //ErrorNotFound
     faExternalLinkSquareAlt,
 
+    //Modal
+    faTimes,
+
     //EnvironmentWidget
     faBars,
 
@@ -45,6 +48,7 @@ library.add(
     faCode,
     faExternalLinkSquareAlt,
     faInfoCircle, faExclamationTriangle, faTimesCircle,
+    faTimes,
     faBars,
     faPlus,
     faCog, faTimesCircle,
