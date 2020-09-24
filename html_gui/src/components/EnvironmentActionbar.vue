@@ -116,7 +116,7 @@
 
                         <template v-slot:footer>
                             <button
-                                @click="scheduleProjectSave"
+                                @click="scheduleCurrentProjectSave"
 
                                 class="uk-button uk-button-primary"
                                 uk-toggle="#settings-menu"
@@ -172,20 +172,11 @@
                 "toggleDebug",
                 "systemTick",
                 "systemExecuteOperation",
-
-                "exportProjectToObject",
             ]),
 
             ...mapActions("prj", [
-                "debouncedSaveProjectFromPromise",
+                "scheduleCurrentProjectSave",
             ]),
-
-            scheduleProjectSave() {
-                //TODO: move method + duplicated to prj store
-                this.debouncedSaveProjectFromPromise(
-                    this.exportProjectToObject()
-                );
-            },
 
             onBuild() {
                 this.buildToRom();

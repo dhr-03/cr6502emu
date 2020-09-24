@@ -13,6 +13,9 @@
     >
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
         <span>Failed to initialize Environment</span>
+
+        <br>
+        <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessage }}</code>
     </div>
 
     <div v-else>
@@ -25,7 +28,7 @@
                     <EnvironmentEditor
                         :initial-code="editorInitialCode"
 
-                        :key-up-callback="scheduleProjectSave"
+                        :key-up-callback="scheduleCurrentProjectSave"
                     />
 
                 </div>
@@ -81,63 +84,34 @@
             "isExecuting",
             "deviceList",
             "editorInitialCode",
+            "initErrorMessage",
         ]),
 
         methods: {
-            ...mapActions("env", [
-                "setup",
-
-                "exportProjectToObject",
-                "importProjectFromObject",
-            ]),
-
             ...mapGetters("env", [
                 "currentProjectId",
             ]),
 
-
             ...mapActions("prj", [
-                "saveProjectFromObject",
-                "debouncedSaveProjectFromPromise",
+                "loadProjectFromId",
+                "saveCurrentProject",
+                "scheduleCurrentProjectSave",
             ]),
-
-            ...mapGetters("prj", [
-                "getProjectById"
-            ]),
-
-            async importProject(prjId) {
-                let newProject = this.getProjectById()(prjId);
-
-                if (newProject != null) {
-                    await this.importProjectFromObject({prj: newProject, reset: true});
-
-                } else {
-                    await this.$router.push({
-                        name: "404"
-                    });
-                }
-            },
-
-            scheduleProjectSave() {
-                this.debouncedSaveProjectFromPromise(this.exportProjectToObject());
-            }
         },
 
         async beforeRouteEnter(to, from, next) {
             next(vm => {
-                vm.importProject(to.params.pid)
+                vm.loadProjectFromId(to.params.pid)
             });
         },
 
-        async beforeRouteUpdate(to, from, next) {
-            await this.importProject(to.params.pid);
+        async beforeRouteUpdate(to) {
+            await this.loadProjectFromId(to.params.pid);
         },
 
         async beforeRouteLeave(to, from, next) {
             if (this.currentProjectId()) {
-                let currentProjectData = await this.exportProjectToObject();
-
-                this.saveProjectFromObject(currentProjectData);
+                await this.saveCurrentProject();
             }
 
             next();
