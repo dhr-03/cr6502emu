@@ -451,9 +451,20 @@ export const EnvironmentStore = {
             return !(state.lock.config || getters.isExecuting);
         },
 
+        projectMeta(state) {
+            return state.meta;
+        },
+
+        projectSettings(state) {
+            return state.settings;
+        },
 
         deviceList(state) {
             return state.devices;
+        },
+
+        deviceListWithoutCpu(_state, getters) {
+            return getters.deviceList.slice(1);
         },
 
 
