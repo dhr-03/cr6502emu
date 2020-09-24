@@ -3,18 +3,29 @@ const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 const Ajv = require("ajv");
 import {ProjectSchema} from "../../assets/schema/project";
 
+import router from "../../router";
+
 const LS_KEY = "cr_projects";
 const DEBOUNCE_DURATION = 5 * 1000;
+
+function createAjvInstance() {
+    let instance = new Ajv({
+        useDefaults: true,
+        removeAdditional: true,
+
+    });
+
+    return {
+        __ajvInstance: instance,
+        __schemaValidator: instance.compile(ProjectSchema),
+    }
+}
 
 export const ProjectManagerStore = {
     namespaced: true,
 
     state: {
-        __schemaValidator: new Ajv({
-            useDefaults: true,
-            removeAdditional: true,
-
-        }).compile(ProjectSchema),
+        ...createAjvInstance(),
 
         projectsCache: [],
 
@@ -83,6 +94,14 @@ export const ProjectManagerStore = {
             );
         },
 
+
+        scheduleCurrentProjectSave(context) {
+            context.dispatch("debouncedSaveProjectFromPromise",
+                context.dispatch("env/saveProjectState", null, {root: true})
+            );
+        },
+
+
         createNewProject(context, autoSync = true) {
             let newPrj = {
                 meta: {
@@ -148,15 +167,56 @@ export const ProjectManagerStore = {
             return newPrj.meta.pid;
         },
 
+        async loadProjectFromId(context, id) {
+            context.commit("env/setStatusInitializing", null, {root: true});
+
+            let prj = context.getters.getProjectById(id);
+
+            if (prj != null) {
+                let schemaIsValid = context.state.__schemaValidator(prj);
+
+                if (schemaIsValid) {
+                    //save current
+
+                    await context.dispatch("env/resetToCleanState", null, {root: true});
+
+                    await context.dispatch("env/loadProjectUnchecked", prj, {root: true});
+
+                    context.commit("env/setStatusIdle", null, {root: true});
+
+                } else {
+                    let schemaErr = context.state.__ajvInstance.errorsText(
+                        context.state.__schemaValidator.errors
+                    );
+
+                    let userMessage = "Failed to load project: Invalid schema.\n" + schemaErr;
+
+                    console.error(userMessage, context.state.__schemaValidator.errors);
+
+                    context.commit("env/setInitErrorMessage", userMessage, {root: true});
+                    context.commit("env/setStatusInitFailed", null, {root: true});
+                }
+
+            } else {
+                await router.push({
+                    name: "404"
+                });
+            }
+        },
+
+        async saveCurrentProject(context) {
+            let currentPrj = await context.dispatch("env/saveProjectState", null, {root: true});
+            if (currentPrj.meta.pid) {
+                context.commit("updateProject", currentPrj);
+            }
+        },
+
         async beforeShutdown(context) {
             if (context.state.timeoutSavePrj) {
                 clearTimeout(context.state.timeoutSavePrj);
 
                 // There is a small possibility that this timeout belongs to some other project.
-                let currentPrj = await context.dispatch("env/exportProjectToObject", null, {root: true});
-                if (currentPrj.meta.pid) {
-                    context.commit("updateProject", currentPrj);
-                }
+                await context.dispatch("saveCurrentProject");
             }
 
             // If we just saved a project we also need to save to LS

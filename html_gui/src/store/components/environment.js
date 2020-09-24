@@ -41,6 +41,8 @@ const EnvironmentInitialState = {
         system: null,
     },
 
+    errorMessage: null,
+
     meta: {},
     settings: {},
     devices: [],
@@ -88,6 +90,24 @@ export const EnvironmentStore = {
 
         setEditorInitialCode(state, code) {
             state.meta.code = code;
+        },
+
+
+        setStatusInitializing(state) {
+            state.status.currentAction = EnvironmentState.INITIALIZING;
+        },
+
+        setStatusIdle(state) {
+            state.status.currentAction = EnvironmentState.IDLE;
+        },
+
+        setStatusInitFailed(state) {
+            state.status.currentAction = EnvironmentState.FAILED_TO_INIT;
+        },
+
+
+        setInitErrorMessage(state, msg) {
+            state.errorMessage = msg;
         }
 
     },
@@ -151,7 +171,7 @@ export const EnvironmentStore = {
         },
 
 
-        async resetToCleanState(context) {
+        async resetToCleanState(context, setToIdle = true) {
             let clonedInitialState = JSON.parse(JSON.stringify(EnvironmentInitialState));
             Object.assign(context.state, clonedInitialState);
 
@@ -165,11 +185,13 @@ export const EnvironmentStore = {
             // sync rust devices such as the cpu.
             await context.dispatch("purgeAndReloadDeviceCache");
 
-            context.commit("currentStatus", EnvironmentState.IDLE);
+            if (setToIdle) {
+                context.commit("currentStatus", EnvironmentState.IDLE);
+            }
         },
 
 
-        async exportProjectToObject(context) {
+        async saveProjectState(context) {
             let exportObj = {};
 
             //Clone removing all the reactivity crap.
@@ -192,34 +214,21 @@ export const EnvironmentStore = {
             return exportObj;
         },
 
-        async importProjectFromObject(context, {prj, reset = false}) {
-            //TODO: validate obj
-            try {
-                if (reset) {
-                    await context.dispatch("resetToCleanState");
-                }
+        async loadProjectUnchecked(context, prj) {
+            context.commit("currentStatus", EnvironmentState.INITIALIZING);
 
-                context.commit("currentStatus", EnvironmentState.INITIALIZING);
+            context.state.meta = prj.meta;
+            context.state.settings = prj.settings;
 
+            await Promise.all(prj.devices.map(dev => {
+                    context.dispatch("addDeviceWithWidget", {
+                        ...dev,
+                        widget: new DeviceWidget(dev.config)
+                    });
+                })
+            );
 
-                context.state.meta = prj.meta;
-                context.state.settings = prj.settings;
-
-                await Promise.all(prj.devices.map(dev => {
-                        context.dispatch("addDeviceWithWidget", {
-                            ...dev,
-                            widget: new DeviceWidget(dev.config)
-                        });
-                    })
-                );
-
-                context.commit("currentStatus", EnvironmentState.IDLE);
-
-            } catch (e) {
-                console.error("Failed to import project: ", e);
-
-                context.commit("currentStatus", EnvironmentState.FAILED_TO_INIT);
-            }
+            context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
 
@@ -463,6 +472,10 @@ export const EnvironmentStore = {
 
         currentProjectId(state) {
             return state.meta.pid;
+        },
+
+        initErrorMessage(state) {
+            return state.errorMessage;
         }
     }
 }
