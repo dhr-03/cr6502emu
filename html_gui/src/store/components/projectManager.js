@@ -1,5 +1,8 @@
 const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
+const Ajv = require("ajv");
+import {ProjectSchema} from "../../assets/schema/project";
+
 const LS_KEY = "cr_projects";
 const DEBOUNCE_DURATION = 5 * 1000;
 
@@ -7,6 +10,12 @@ export const ProjectManagerStore = {
     namespaced: true,
 
     state: {
+        __schemaValidator: new Ajv({
+            useDefaults: true,
+            removeAdditional: true,
+
+        }).compile(ProjectSchema),
+
         projectsCache: [],
 
         timeoutSaveToLS: null,
@@ -77,18 +86,12 @@ export const ProjectManagerStore = {
         createNewProject(context, autoSync = true) {
             let newPrj = {
                 meta: {
-                    name: "Unnamed Project",
-                    code: null, //use environment default
-
-
                     created: Date.now(),
                     lastMod: Date.now(),
 
                     // https://stackoverflow.com/a/8084248
                     pid: Math.random().toString(36).substring(7),
                 },
-
-                settings: {},
 
                 devices: [
                     {
@@ -123,7 +126,7 @@ export const ProjectManagerStore = {
 
                     {
                         type: DeviceId.PixelScreen,
-                        uid: 0,
+                        uid: 2003,
 
                         start: 0x3000,
                         size: 0,
@@ -133,6 +136,8 @@ export const ProjectManagerStore = {
 
                 ],
             };
+
+            context.state.__schemaValidator(newPrj);
 
             context.commit("addProjectFromObject", newPrj);
 
