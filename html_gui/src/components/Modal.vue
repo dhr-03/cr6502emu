@@ -2,11 +2,14 @@
     <div>
         <div
             :id="domId"
-            :class="computedClassObj"
+            :class="{'uk-modal-container': this.container}"
 
             :uk-modal="ukModalSettings"
         >
-            <div class="uk-modal-dialog uk-overflow-auto">
+            <div
+                :class="{'uk-margin-auto-vertical': this.center, [this.contentClass]: this.contentClass}"
+                class="uk-modal-dialog uk-overflow-auto"
+            >
                 <font-awesome-icon
                     v-if="showCloseButton"
                     :class="closeButtonClass"
@@ -14,7 +17,6 @@
                     style="font-size: 2em"
                     icon="times"
                 />
-
 
                 <div
                     v-if="showHeader"
@@ -61,6 +63,16 @@
         name: "Modal",
 
         props: {
+            domId: {
+                type: String,
+                default: _ => Date.now().toString(24),
+            },
+
+            contentClass: {
+                type: String,
+                required: false,
+            },
+
             closeButtonType: {
                 type: String,
                 default: "none",
@@ -105,23 +117,9 @@
 
         },
 
-        data: function () {
-            return {
-                showModal: this.startOpen,
-                domId: Date.now().toString(24),
-            }
-        },
-
         computed: {
             ukModalSettings() {
                 return `esc-close: ${this.escClose}; bg-close: ${this.bgClose};`;
-            },
-
-            computedClassObj() {
-                return {
-                    "uk-margin-auto-vertical": this.center,
-                    "uk-modal-container": this.container,
-                }
             },
 
 
@@ -140,7 +138,3 @@
         }
     }
 </script>
-
-<style lang="less" scoped>
-
-</style>
