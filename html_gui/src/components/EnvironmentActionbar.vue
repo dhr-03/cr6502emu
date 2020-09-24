@@ -1,7 +1,7 @@
 <template>
     <nav
-            class="cr-actionbar uk-navbar uk-navbar-container uk-navbar-transparent"
-            uk-sticky
+        class="crl-actionbar uk-navbar uk-navbar-container uk-navbar-transparent"
+        uk-sticky
     >
 
         <div class="uk-grid uk-grid-large uk-width-expand">
@@ -10,21 +10,21 @@
                 <ul class="uk-navbar-nav">
 
                     <EnvironmentActionbarButton
-                            icon="hammer"
-                            explanation="Build"
+                        icon="hammer"
+                        explanation="Build"
 
-                            :enabled="ableToBuild"
-                            :on-click="onBuild"
+                        :enabled="ableToBuild"
+                        :on-click="onBuild"
                     />
 
                     <EnvironmentActionbarSeparator/>
 
                     <EnvironmentActionbarButton
-                            icon="sync-alt"
-                            explanation="Reset"
+                        icon="sync-alt"
+                        explanation="Reset"
 
-                            :enabled="ableToReset"
-                            :on-click="onReset"
+                        :enabled="ableToReset"
+                        :on-click="onReset"
                     />
 
                 </ul>
@@ -33,45 +33,45 @@
             <div class="uk-width-expand uk-flex uk-flex-center">
                 <ul class="uk-navbar-nav">
                     <EnvironmentActionbarButton
-                            icon="play"
-                            icon-active="stop"
-                            color-name-active="red"
-                            explanation="Run"
+                        icon="play"
+                        icon-active="stop"
+                        color-name-active="red"
+                        explanation="Run"
 
-                            :enabled="ableToRun"
-                            :active="isRunning"
-                            :on-click="onRunToggled"
+                        :enabled="ableToRun"
+                        :active="isRunning"
+                        :on-click="onRunToggled"
                     />
 
                     <EnvironmentActionbarSeparator/>
 
                     <EnvironmentActionbarButton
-                            icon="bug"
-                            icon-active="stop"
-                            color-name-active="red"
-                            explanation="Debug"
+                        icon="bug"
+                        icon-active="stop"
+                        color-name-active="red"
+                        explanation="Debug"
 
-                            :enabled="ableToDebug"
-                            :active="isDebugging"
-                            :on-click="onDebugToggled"
+                        :enabled="ableToDebug"
+                        :active="isDebugging"
+                        :on-click="onDebugToggled"
                     />
 
                     <EnvironmentActionbarButton
-                            icon="chevron-right"
-                            explanation="Execute Cycle"
-                            color-name="yellow"
+                        icon="chevron-right"
+                        explanation="Execute Cycle"
+                        color-name="yellow"
 
-                            :enabled="ableToStep"
-                            :on-click="onStepShort"
+                        :enabled="ableToStep"
+                        :on-click="onStepShort"
                     />
 
                     <EnvironmentActionbarButton
-                            icon="chevron-right"
-                            explanation="Execute Instruction"
-                            color-name="yellow"
+                        icon="chevron-right"
+                        explanation="Execute Instruction"
+                        color-name="yellow"
 
-                            :enabled="ableToStep"
-                            :on-click="onStepLong"
+                        :enabled="ableToStep"
+                        :on-click="onStepLong"
                     >
                         <font-awesome-icon icon="chevron-right"/>
                     </EnvironmentActionbarButton>
@@ -81,15 +81,51 @@
 
             <div class="uk-width-auto">
                 <ul class="uk-navbar-nav uk-text-left">
-                    <EnvironmentActionbarButton
-                            icon="cog"
-                            explanation="Settings"
-                            color-name="gray"
 
-                            :enabled="ableToConfig"
+                    <Modal
+                        :esc-close="false"
+                        :bg-close="false"
+
+                        :show-header="false"
+                        :show-footer="true"
+
+                        :container="true"
+                        :center="true"
+
+                        close-button-type="none"
+
+                        dom-id="settings-menu"
+
+                        content-class="crl-settings-menu"
                     >
-                        <b> Settings</b>
-                    </EnvironmentActionbarButton>
+                        <template v-slot:toggle>
+                            <EnvironmentActionbarButton
+                                icon="cog"
+                                explanation="Settings"
+                                color-name="gray"
+
+                                :enabled="ableToConfig"
+                            >
+                                <b> Settings</b>
+                            </EnvironmentActionbarButton>
+                        </template>
+
+                        <template v-slot:body>
+                            <EnvironmentSettings class="crl-settings-container"/>
+                        </template>
+
+                        <template v-slot:footer>
+                            <button
+                                @click="scheduleProjectSave"
+
+                                class="uk-button uk-button-primary"
+                                uk-toggle="#settings-menu"
+                            >
+                                Save
+                            </button>
+                        </template>
+
+                    </Modal>
                 </ul>
             </div>
 
@@ -101,10 +137,19 @@
     import EnvironmentActionbarButton from "./EnvironmentActionbarButton"
     import EnvironmentActionbarSeparator from "./EnvironmentActionbarSeparator"
     import {mapGetters, mapActions} from "vuex"
+    import Modal from "./Modal";
+    import Environment from "../views/Environment";
+    import EnvironmentSettings from "./EnvironmentSettings";
 
     export default {
         name: "EnvironmentActionbar",
-        components: {EnvironmentActionbarSeparator, EnvironmentActionbarButton},
+        components: {
+            EnvironmentSettings,
+            Environment,
+            Modal,
+            EnvironmentActionbarSeparator,
+            EnvironmentActionbarButton
+        },
 
         computed: mapGetters("env", [
             "isRunning",
@@ -126,8 +171,21 @@
                 "toggleRun",
                 "toggleDebug",
                 "systemTick",
-                "systemExecuteOperation"
+                "systemExecuteOperation",
+
+                "exportProjectToObject",
             ]),
+
+            ...mapActions("prj", [
+                "debouncedSaveProjectFromPromise",
+            ]),
+
+            scheduleProjectSave() {
+                //TODO: move method + duplicated to prj store
+                this.debouncedSaveProjectFromPromise(
+                    this.exportProjectToObject()
+                );
+            },
 
             onBuild() {
                 this.buildToRom();
@@ -160,12 +218,32 @@
 <style lang="less" scoped>
     @import "../../node_modules/open-color/open-color";
 
-    .cr-actionbar {
+    .crl-actionbar {
         background: @oc-gray-9;
 
         padding-left: 3em;
         padding-right: 3em;
 
         margin-bottom: 2em;
+    }
+
+</style>
+
+<style lang="less">
+    @import "../../node_modules/open-color/open-color";
+
+    .crl-settings-menu {
+        background: @oc-gray-9;
+        color: #fff;
+
+        .uk-modal-body {
+            height: 100vh; //let uikit cap it to the max value
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .uk-modal-footer {
+            background: lighten(@oc-gray-9, 5%);
+        }
     }
 </style>
