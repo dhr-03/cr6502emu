@@ -16,7 +16,7 @@
 
         </div>
 
-        <div class="crl-setting-container uk-width-expand">
+        <div class="crl-setting-container crl-inherit-mh crl-scrollable uk-width-expand">
             <h3>{{ activeComponent }}</h3>
             <hr>
 
@@ -69,7 +69,7 @@
     }
 
     .crl-setting-container {
-        margin: 1em;
+        padding: 1em;
     }
 
 </style>
