@@ -185,10 +185,7 @@ export const ProjectManagerStore = {
                     context.commit("env/setStatusIdle", null, {root: true});
 
                 } else {
-                    let schemaErr = context.state.__ajvInstance.errorsText(
-                        context.state.__schemaValidator.errors
-                    );
-
+                    let schemaErr = context.getters.schemaValidationErrMsg();
                     let userMessage = "Failed to load project: Invalid schema.\n" + schemaErr;
 
                     console.error(userMessage, context.state.__schemaValidator.errors);
@@ -209,6 +206,37 @@ export const ProjectManagerStore = {
             if (currentPrj.meta.pid) {
                 context.commit("updateProject", currentPrj);
             }
+        },
+
+        tryToImportProject(context, prj) {
+            let isValid = context.state.__schemaValidator(prj);
+
+            if (!isValid) {
+                console.error("Failed to import project: Validation failed:",
+                    context.getters.schemaValidationErrMsg(),
+                    context.state.__schemaValidator.errors
+                );
+
+                return {
+                    ok: false,
+                    err: "validate",
+                }
+            }
+
+            if (context.getters.getProjectById(prj.meta.pid) != null) {
+                return {
+                    ok: false,
+                    err: "exists",
+                }
+            }
+
+            context.commit("addProjectFromObject", prj);
+            context.dispatch("debouncedSaveCacheToLS");
+
+            return {
+                ok: true,
+            }
+
         },
 
         async beforeShutdown(context) {
@@ -242,6 +270,12 @@ export const ProjectManagerStore = {
 
         isSafeToShutdown(state) {
             return state.timeoutSavePrj == null && state.timeoutSaveToLS == null;
+        },
+
+        schemaValidationErrMsg(state) {
+            return _ => state.__ajvInstance.errorsText(
+                state.__schemaValidator.errors
+            );
         }
-    },
+    }
 }

@@ -44,7 +44,7 @@
 
         <div class="uk-text-center">
             <a
-                @click="addProjectAndGo"
+                @change="addProjectAndGo"
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
@@ -55,10 +55,10 @@
             <Modal
                 :show-footer="false"
 
+                dom-id="importProjectModal"
                 close-button-type="default"
 
                 content-class="crl-dark-modal"
-
                 class="crl-project-import"
             >
 
@@ -75,7 +75,7 @@
                 </template>
 
                 <template v-slot:body>
-                    <EnvironmentImportProject/>
+                    <EnvironmentImportProject :callback="closeImportModal"/>
                 </template>
 
             </Modal>
@@ -91,6 +91,8 @@
     import {mapGetters, mapActions} from "vuex";
     import Modal from "../components/Modal";
     import EnvironmentImportProject from "../components/EnvironmentImportProject";
+
+    import UIkit from "uikit";
 
     export default {
         name: "Home",
@@ -126,6 +128,10 @@
                         pid: newPrjId
                     }
                 });
+            },
+
+            closeImportModal() {
+                UIkit.modal("#importProjectModal").hide();
             }
         }
     }
