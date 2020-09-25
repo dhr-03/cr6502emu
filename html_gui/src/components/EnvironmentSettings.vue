@@ -11,13 +11,13 @@
 
                 @click="updateActiveComponent(component)"
             >
-                {{component}}
+                {{ getNiceNameForComponent(component) }}
             </div>
 
         </div>
 
         <div class="crl-setting-container crl-inherit-mh crl-scrollable uk-width-expand">
-            <h3>{{ activeComponent }}</h3>
+            <h3>{{ activeComponentNiceName }}</h3>
             <hr>
 
             <component :is="activeComponent"/>
@@ -38,12 +38,22 @@
         },
 
         methods: {
-          updateActiveComponent(to) {
-              if (this.activeComponent !== to) {
-                  this.activeComponent = to;
-              }
-          }
+            updateActiveComponent(to) {
+                if (this.activeComponent !== to) {
+                    this.activeComponent = to;
+                }
+            },
+
+            getNiceNameForComponent(name) {
+                return this.$options.components[name].niceName;
+            }
         },
+
+        computed: {
+            activeComponentNiceName() {
+                return this.getNiceNameForComponent(this.activeComponent);
+            }
+        }
     }
 </script>
 
