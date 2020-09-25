@@ -34,7 +34,8 @@
 
         data() {
             return {
-                watchedValue: this.value
+                watchedValue: this.value,
+                watchedBase: this.base,
             };
         },
 
@@ -44,7 +45,7 @@
                     .toString(this.base)
                     .length;
 
-                return this.watchedValue.toString(this.base).padStart(strMaxLength, "0");
+                return this.watchedValue.toString(this.watchedBase).padStart(strMaxLength, "0");
             },
         },
 
@@ -55,9 +56,13 @@
         },
 
         watch: {
-            value(val) {
-                this.watchedValue = val;
-            }
+            value(newVal) {
+                this.watchedValue = newVal;
+            },
+
+            base(newVal) {
+                this.watchedBase = newVal;
+            },
         }
     }
 </script>
