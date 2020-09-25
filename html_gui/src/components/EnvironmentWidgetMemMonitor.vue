@@ -1,12 +1,14 @@
 <template>
     <div class="crl-mem-monitor">
         <div
+            class="uk-grid uk-grid-collapse"
+
             v-for="([address, row], indexRow) in iterableRows"
             :key="indexRow"
         >
 
             <EnvironmentNumberContainer
-                class="crl-address"
+                class="crl-address uk-width-auto"
 
                 :value="address"
 
@@ -14,15 +16,17 @@
                 :base="preferredNumericBase"
             />
 
-            <div class="crl-value-row">
-                <EnvironmentNumberContainer
-                    v-for="(cell, indexCell) in row"
-                    :key="indexCell"
+            <div class="crl-value-row uk-width-expand uk-flex uk-flex-between">
 
-                    :value="cell"
+                    <EnvironmentNumberContainer
+                        v-for="(cell, indexCell) in row"
+                        :key="indexCell"
 
-                    :base="preferredNumericBase"
-                />
+                        :value="cell"
+
+                        :base="preferredNumericBase"
+                    />
+
             </div>
         </div>
     </div>
@@ -44,7 +48,7 @@
             },
 
             valuesPerRow() {
-              return this.preferredNumericBase === 16 ? 8 : 5;
+                return this.preferredNumericBase === 16 ? 8 : 5;
             },
 
             rowCount() {
@@ -91,15 +95,15 @@
     }
 
     .crl-address {
+        margin-right: 0.5em;
+
         color: #999;
 
         font-weight: bold;
     }
 
     .crl-value-row {
-        display: inline-block;
-
-        padding-left: .5em;
+        padding-left: 0.5em;
         border-left: 1px solid #999;
 
         color: #fff;
