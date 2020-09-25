@@ -40,6 +40,9 @@ import {
     //EnvironmentLogBar
     /*faChevronRight,*/ faGhost, faChevronDown,
 
+    //EnvironmentSettingPrjFile
+    faTrashAlt, faDownload,
+
 }
     from "@fortawesome/free-solid-svg-icons"
 
@@ -54,6 +57,7 @@ library.add(
     faCog, faTimesCircle,
     faHammer, faSyncAlt, faPlay, faStop, faBug, faChevronRight, faCog,
     faChevronRight, faGhost, faChevronDown,
+    faTrashAlt, faDownload,
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
