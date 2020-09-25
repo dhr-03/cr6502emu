@@ -26,14 +26,18 @@
 </template>
 
 <script>
+    import EnvironmentSettingPrjMeta from "./EnvironmentSettingPrjMeta";
+
     export default {
         name: "EnvironmentSettings",
-        components: {},
+        components: {EnvironmentSettingPrjMeta},
 
         data() {
             return {
-                settingsComponents: [],
-                activeComponent: "",
+                settingsComponents: [
+                    "EnvironmentSettingPrjMeta",
+                ],
+                activeComponent: "EnvironmentSettingPrjMeta",
             }
         },
 
