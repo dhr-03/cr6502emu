@@ -11,7 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 // commented == imported more than once
 import {
     //Home
-    faArrowCircleRight, faPlusSquare,
+    faArrowCircleRight, faPlusSquare, faUpload,
 
     //About
     faCode,
@@ -44,7 +44,7 @@ import {
     from "@fortawesome/free-solid-svg-icons"
 
 library.add(
-    faArrowCircleRight, faPlusSquare,
+    faArrowCircleRight, faPlusSquare, faUpload,
     faCode,
     faExternalLinkSquareAlt,
     faInfoCircle, faExclamationTriangle, faTimesCircle,
