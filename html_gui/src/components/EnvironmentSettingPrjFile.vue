@@ -3,7 +3,11 @@
 
         <div class="uk-margin">
             <label class="uk-form-label">Download Project</label>
-            <button class="crl-button cr-info uk-button">
+            <button
+                @click="downloadProject"
+
+                class="crl-button cr-info uk-button"
+            >
                 <font-awesome-icon icon="download"/>
                 Download project
             </button>
@@ -19,6 +23,8 @@
             </button>
         </div>
 
+        <a style="display: none" ref="downloadTrick"></a>
+
     </form>
 </template>
 
@@ -27,12 +33,27 @@
 
     export default {
         name: "EnvironmentSettingPrjFile",
-
         niceName: "File",
-
         mixins: [MixinSettingsPage],
 
-        computed: {}
+        methods: {
+            downloadProject() {
+                let projectData = JSON.stringify(
+                    this.$store.dispatch("env/saveProjectState")
+                );
+
+                let dwnNode = this.$refs.downloadTrick;
+
+                dwnNode.href = `data:application/octet-stream;,${projectData}`;
+                dwnNode.download = `${this.projectMeta.name}.cremu`;
+
+                dwnNode.click();
+
+                dwnNode.href = "";
+                dwnNode.download = "";
+
+            }
+        }
     }
 </script>
 
