@@ -29,6 +29,10 @@
 
             </div>
         </div>
+
+        <p class="uk-text-center uk-text-bold uk-text-primary">
+            -- Capped by Settings --
+        </p>
     </div>
 </template>
 
@@ -57,10 +61,18 @@
                 );
             },
 
+            maxRows() {
+                return this.$store.getters["env/projectSettings"].memoryMonitorMaxRows;
+            },
+
             cappedRowCount() {
                 return Math.min(
-                    this.rowCount, 50
-                )
+                    this.rowCount, this.maxRows
+                );
+            },
+
+            displayedRowsAreCapped() {
+              return this.rowCount > this.cappedRowCount;
             },
 
             iterableRows() {
@@ -90,6 +102,9 @@
     .crl-mem-monitor {
         background: @oc-gray-7;
         padding: 0.5em;
+
+        //TODO: temp fix
+        min-height: 15.5em;
 
         font-size: 78%;
     }
