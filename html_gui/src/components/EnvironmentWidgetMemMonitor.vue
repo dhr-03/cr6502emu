@@ -30,7 +30,11 @@
             </div>
         </div>
 
-        <p class="uk-text-center uk-text-bold uk-text-primary">
+        <p
+            v-if="displayedRowsAreCapped"
+
+            class="uk-text-center uk-text-bold uk-text-primary"
+        >
             -- Capped by Settings --
         </p>
     </div>
