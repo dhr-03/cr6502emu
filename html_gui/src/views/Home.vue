@@ -44,23 +44,59 @@
 
         <div class="uk-text-center">
             <a
-                @click="addProjectAndGo"
+                @change="addProjectAndGo"
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
                 New Project
             </a>
+
+
+            <Modal
+                :show-footer="false"
+
+                dom-id="importProjectModal"
+                close-button-type="default"
+
+                content-class="crl-dark-modal"
+                class="crl-project-import"
+            >
+
+                <template v-slot:toggle>
+                    <span class="crl-project-import-button">
+                        <font-awesome-icon icon="upload"/>
+                        Import Project
+                    </span>
+                </template>
+
+
+                <template v-slot:header>
+                    <h3 class="uk-light">Upload project</h3>
+                </template>
+
+                <template v-slot:body>
+                    <EnvironmentImportProject :callback="closeImportModal"/>
+                </template>
+
+            </Modal>
+
         </div>
+
+
     </div>
 </template>
 
 <script>
     import Tools from "../assets/js/tools";
     import {mapGetters, mapActions} from "vuex";
+    import Modal from "../components/Modal";
+    import EnvironmentImportProject from "../components/EnvironmentImportProject";
+
+    import UIkit from "uikit";
 
     export default {
         name: "Home",
-
+        components: {EnvironmentImportProject, Modal},
         computed: {
             ...mapGetters("prj", {
                     "projectsList": "getAllProjects"
@@ -92,6 +128,10 @@
                         pid: newPrjId
                     }
                 });
+            },
+
+            closeImportModal() {
+                UIkit.modal("#importProjectModal").hide();
             }
         }
     }
@@ -127,4 +167,18 @@
     .crl-project-add {
         color: @oc-yellow-5;
     }
+
+    .crl-project-import {
+        display: inline-block;
+    }
+
+    .crl-project-import-button {
+        margin-left: 3em;
+
+        color: @oc-yellow-5;
+    }
+</style>
+
+<style lang="less">
+    @import "../assets/less/darkModal";
 </style>
