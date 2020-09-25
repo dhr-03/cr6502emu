@@ -11,7 +11,7 @@
                 :value="address"
 
                 :length-in-bytes="2"
-                :base="16"
+                :base="preferredNumericBase"
             />
 
             <div class="crl-value-row">
@@ -21,7 +21,7 @@
 
                     :value="cell"
 
-                    :base="16"
+                    :base="preferredNumericBase"
                 />
             </div>
         </div>
@@ -31,20 +31,25 @@
 <script>
     import MixinEnvironmentWidget from "./MixinEnvironmentWidget";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
+    import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
 
     export default {
         name: "EnvironmentWidgetMemMonitor",
+        mixins: [MixinEnvironmentWidget, MixinPreferredNumericBase],
         components: {EnvironmentNumberContainer},
-        mixins: [MixinEnvironmentWidget],
 
         computed: {
             deviceSize() {
                 return this.widget.displayData.memArray.length;
             },
 
+            valuesPerRow() {
+              return this.preferredNumericBase === 16 ? 8 : 5;
+            },
+
             rowCount() {
                 return Math.ceil(
-                    this.deviceSize / 8
+                    this.deviceSize / this.valuesPerRow
                 );
             },
 
@@ -55,11 +60,12 @@
             },
 
             iterableRows() {
+                let perRow = this.valuesPerRow;
                 let rows = []
 
                 for (let i = 0; i < this.cappedRowCount; i++) {
-                    let sliceStart = i * 8;
-                    let sliceEnd = Math.min(sliceStart + 8, this.deviceSize - 1);
+                    let sliceStart = i * perRow;
+                    let sliceEnd = Math.min(sliceStart + perRow, this.deviceSize - 1);
 
                     rows.push([
                             this.device.start + sliceStart,
