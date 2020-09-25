@@ -50,9 +50,18 @@ export const ProjectSchema = {
 
             default: {},
 
-            properties: {},
+            properties: {
+                preferredNumericBase: {
+                  type: "integer",
+                  enum: [10, 16],
 
-            required: [],
+                  default: 16,
+                },
+            },
+
+            required: [
+                "preferredNumericBase",
+            ],
         },
 
         devices: {
