@@ -4,6 +4,8 @@
     export default {
         name: "MixinSettingsPage",
 
+        niceName: "Setting",
+
         computed: mapGetters("env", [
             "projectMeta",
             "projectSettings",
