@@ -106,6 +106,10 @@ export const EnvironmentStore = {
 
         setInitErrorMessage(state, msg) {
             state.errorMessage = msg;
+        },
+
+        removeDeviceFromCacheByIndex(state, index) {
+            state.devices.splice(index, 1);
         }
 
     },
@@ -366,7 +370,19 @@ export const EnvironmentStore = {
             for (let i = 0; i < context.state.devices.length; i++) {
                 context.dispatch("updateDeviceWidgetByIndex", i);
             }
-        }
+        },
+
+        removeDeviceById(context, id) {
+            let index = context.getters.deviceList.findIndex(dev => dev.uid === id);
+
+            if (index != null) {
+                let success = context.getters.__system.remove_device_by_index(index);
+
+                if (success) {
+                    context.commit("removeDeviceFromCacheByIndex", index);
+                }
+            }
+        },
 
     },
 
