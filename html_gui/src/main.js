@@ -43,6 +43,9 @@ import {
     //EnvironmentSettingPrjFile
     faTrashAlt, faDownload,
 
+    //EnvironmentSettingPrjDevices
+    /*faTrashAlt,*/
+
 }
     from "@fortawesome/free-solid-svg-icons"
 
