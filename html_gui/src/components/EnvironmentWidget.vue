@@ -27,8 +27,7 @@
 </template>
 
 <script>
-    import {DeviceIdTools} from "../assets/js/deviceIdTools"
-    import {DeviceRepresentation} from "../assets/js/deviceRepresentation";
+    import {DeviceRepresentation} from "../assets/js/deviceRepresentation/deviceRepresentation";
 
     export default {
         name: "EnvironmentWidget",
@@ -42,14 +41,13 @@
 
         data() {
             return {
-                bodyElement: DeviceIdTools.getWidgetComponent(this.device.type)
+                bodyElement: this.device.widgetComponent
             };
         },
 
         computed: {
             title() {
-                return this.device.widget.config.title ||
-                    DeviceIdTools.getWidgetDefaultTitle(this.device.type);
+                return this.device.widget.config.title || this.device.niceName;
             },
         }
     }

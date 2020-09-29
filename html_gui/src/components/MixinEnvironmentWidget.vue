@@ -1,5 +1,5 @@
 <script>
-    import {DeviceRepresentation} from "../assets/js/deviceRepresentation";
+    import {DeviceRepresentation} from "../assets/js/deviceRepresentation/deviceRepresentation";
 
     export default {
         name: "MixinEnvironmentWidget",
