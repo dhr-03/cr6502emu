@@ -1,8 +1,8 @@
-import {DeviceWidget} from "./deviceWidget";
-import Tools from "./tools";
+import {DeviceWidget} from "../deviceWidget";
+import Tools from "../tools";
 
 export class DeviceRepresentation {
-    constructor(type, start, end, uid, hasFixedSize) {
+    constructor(type, start, end, uid, hasFixedSize, needsExplicitUpdates) {
         // The device type. (wasmSys.DeviceId)
         this._type = type;
 
@@ -21,6 +21,9 @@ export class DeviceRepresentation {
 
         // Some devices have a fixed size, others let the user set it.
         this._hasFixedSize = hasFixedSize;
+
+        // Some devices need to exchange data with wasm to update, while others do it automatically.
+        this._needsExplicitUpdates = needsExplicitUpdates;
     }
 
     get type() {
@@ -48,6 +51,41 @@ export class DeviceRepresentation {
 
     get widget() {
         return this._widget;
+    }
+
+    get hasFixedSize() {
+        return this._hasFixedSize;
+    }
+
+    get needsExplicitUpdates() {
+        return this._needsExplicitUpdates;
+    }
+
+
+    getWasmSetupPkg() {
+        return new Map();
+    }
+
+    setupWidget(pkg, memArrayBuilder) {
+        console.warn("Unimplemented setup");
+    }
+
+    updateWidget(pkg) {
+        console.warn("Unimplemented updater");
+    }
+
+
+    get widgetComponent() {
+        return null;
+    }
+
+    get niceName() {
+        return null;
+    }
+
+
+    setWidgetConfig(newConfig) {
+        this._widget._config = newConfig;
     }
 
     getExportRepresentation() {

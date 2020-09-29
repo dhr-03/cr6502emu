@@ -1,6 +1,6 @@
 export class DeviceWidget {
-    constructor(config) {
-        this._config = config != null ? config : {};
+    constructor() {
+        this._config = {};
         this._displayData = {};
     }
 

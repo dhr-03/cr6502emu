@@ -32,5 +32,13 @@ export default {
             return Math.floor(interval) + " minutes";
         }
         return Math.floor(seconds) + " seconds";
+    },
+
+    getRandomUID() {
+        const MAX_VALUE = (2 ** 16) - 1; // unsigned int 16
+
+        return Math.floor(
+            Math.random() * MAX_VALUE
+        );
     }
 }
