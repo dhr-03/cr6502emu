@@ -28,17 +28,20 @@
 <script>
     import EnvironmentSettingPrjMeta from "./EnvironmentSettingPrjMeta";
     import EnvironmentSettingPrjFile from "./EnvironmentSettingPrjFile";
+    import EnvironmentSettingEnvInterface from "./EnvironmentSettingEnvInterface";
 
     export default {
         name: "EnvironmentSettings",
-        components: {EnvironmentSettingPrjMeta, EnvironmentSettingPrjFile},
+        components: {EnvironmentSettingPrjMeta, EnvironmentSettingPrjFile, EnvironmentSettingEnvInterface},
 
         data() {
             return {
                 settingsComponents: [
                     "EnvironmentSettingPrjMeta",
+                    "EnvironmentSettingEnvInterface",
                     "EnvironmentSettingPrjFile",
                 ],
+                
                 activeComponent: "EnvironmentSettingPrjMeta",
             }
         },

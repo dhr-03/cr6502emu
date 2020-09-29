@@ -50,9 +50,26 @@ export const ProjectSchema = {
 
             default: {},
 
-            properties: {},
+            properties: {
+                preferredNumericBase: {
+                    type: "integer",
+                    enum: [10, 16],
 
-            required: [],
+                    default: 16,
+                },
+
+                memoryMonitorMaxRows: {
+                    type: "integer",
+                    minimum: 1,
+                    maximum: 500,
+
+                    default: 50,
+                }
+            },
+
+            required: [
+                "preferredNumericBase",
+            ],
         },
 
         devices: {

@@ -34,17 +34,18 @@
 
         data() {
             return {
-                watchedValue: this.value
+                watchedValue: this.value,
+                watchedBase: this.base,
             };
         },
 
         computed: {
             formattedValue() {
                 let strMaxLength = (2 ** (this.lengthInBytes * 8) - 1)
-                    .toString(this.base)
+                    .toString(this.watchedBase)
                     .length;
 
-                return this.watchedValue.toString(this.base).padStart(strMaxLength, "0");
+                return this.watchedValue.toString(this.watchedBase).padStart(strMaxLength, "0");
             },
         },
 
@@ -55,9 +56,13 @@
         },
 
         watch: {
-            value(val) {
-                this.watchedValue = val;
-            }
+            value(newVal) {
+                this.watchedValue = newVal;
+            },
+
+            base(newVal) {
+                this.watchedBase = newVal;
+            },
         }
     }
 </script>

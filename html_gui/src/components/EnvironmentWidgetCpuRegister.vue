@@ -6,6 +6,8 @@
             <EnvironmentNumberContainer
                 :value="watchedValue"
                 :length-in-bytes="lengthInBytes"
+
+                :base="preferredNumericBase"
             />
         </slot>
     </div>
@@ -13,10 +15,13 @@
 
 <script>
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
+    import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
 
     export default {
         name: "EnvironmentWidgetCpuRegister",
+        mixins: [MixinPreferredNumericBase],
         components: {EnvironmentNumberContainer},
+
         props: {
             name: {
                 type: String,
