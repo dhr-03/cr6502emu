@@ -4,11 +4,33 @@ const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
 export class RepresentedAsciiBuffer extends DeviceRepresentation {
     constructor(start, end, uid) {
-        super(DeviceId.AsciiIOBuffer, start, end, uid, true, false);
+        super(start, end, uid, true, false);
 
         this.widget.displayData.in = null;
         this.widget.displayData.out = null;
     }
+
+
+    static get type() {
+        return DeviceId.AsciiIOBuffer;
+    }
+
+    static get widgetComponent() {
+        return EnvironmentWidgetAsciiIOBuffer;
+    }
+
+    static get niceName() {
+        return "Ascii IO Buffer";
+    }
+
+    static get hasFixedSize() {
+        return true;
+    }
+
+    static get needsExplicitUpdates() {
+        return false;
+    }
+
 
     setupWidget(pkg) {
         this.widget.displayData.in = pkg.get("in");
@@ -17,13 +39,5 @@ export class RepresentedAsciiBuffer extends DeviceRepresentation {
 
     updateWidget(pkg) {
         //doNothing();
-    }
-
-    get widgetComponent() {
-        return EnvironmentWidgetAsciiIOBuffer;
-    }
-
-    get niceName() {
-        return "Ascii IO Buffer";
     }
 }

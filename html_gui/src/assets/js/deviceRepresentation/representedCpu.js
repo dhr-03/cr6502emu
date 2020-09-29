@@ -4,7 +4,7 @@ const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
 export class RepresentedCpu extends DeviceRepresentation {
     constructor(start, end, uid) {
-        super(DeviceId.CPU, start, end, uid, true, true);
+        super(start, end, uid);
 
         this.widget.displayData.a = null;
         this.widget.displayData.x = null;
@@ -19,6 +19,28 @@ export class RepresentedCpu extends DeviceRepresentation {
         this.widget.displayData.busData = null;
     }
 
+
+    static get type() {
+        return DeviceId.CPU;
+    }
+
+    static get widgetComponent() {
+        return EnvironmentWidgetCpu;
+    }
+
+    static get niceName() {
+        return "CPU";
+    }
+
+    static get hasFixedSize() {
+        return true;
+    }
+
+    static get needsExplicitUpdates() {
+        return true;
+    }
+
+
     setupWidget(pkg) {
         this.updateWidget(pkg);
     }
@@ -26,13 +48,5 @@ export class RepresentedCpu extends DeviceRepresentation {
     updateWidget(pkg) {
         // Vue doesnt support Maps for reactivity.
         Object.assign(this.widget.displayData, Object.fromEntries(pkg))
-    }
-
-    get widgetComponent() {
-        return EnvironmentWidgetCpu;
-    }
-
-    get niceName() {
-        return "CPU";
     }
 }
