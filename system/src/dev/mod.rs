@@ -16,7 +16,7 @@ pub use traits::{DeviceTrait, AddressableDeviceTrait};
 pub use holder::DeviceHolder;
 
 pub use id::DeviceId;
-pub use js_representation::DeviceRepresentation;
+pub use js_representation::{DeviceRepresentation, DeviceRepresentationFactory};
 pub use factory::DeviceFactory;
 
 pub type BoxedDev = Box<dyn AddressableDeviceTrait>;

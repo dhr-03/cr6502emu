@@ -4,7 +4,7 @@ use js_sys::Map;
 use super::MemManager;
 
 use crate::cpu::CPU;
-use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation, DeviceTrait};
+use crate::dev::{DeviceId, DeviceFactory, DeviceRepresentation, DeviceRepresentationFactory, DeviceTrait};
 
 #[wasm_bindgen]
 pub struct System {
@@ -109,12 +109,12 @@ impl System {
     pub fn device_representation_by_index(&self, index: usize) -> Option<DeviceRepresentation> {
         if index == 0 {
             Some(
-                DeviceRepresentation::new(DeviceId::CPU, 0, 0, 0, true)
+                DeviceRepresentationFactory::new(DeviceId::CPU, 0, 0, 0)
             )
         } else {
             self.mem.devices()
                 .get(index - 1)
-                .map(|dev| DeviceRepresentation::from_dev_holder(dev))
+                .map(|dev| DeviceRepresentationFactory::from_dev_holder(dev))
         }
     }
 
