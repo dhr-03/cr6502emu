@@ -42,7 +42,7 @@
         computed: {
             formattedValue() {
                 let strMaxLength = (2 ** (this.lengthInBytes * 8) - 1)
-                    .toString(this.base)
+                    .toString(this.watchedBase)
                     .length;
 
                 return this.watchedValue.toString(this.watchedBase).padStart(strMaxLength, "0");
