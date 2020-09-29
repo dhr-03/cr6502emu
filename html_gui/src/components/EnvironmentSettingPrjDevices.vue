@@ -1,7 +1,7 @@
 <template>
     <form class="uk-form-stacked">
 
-        <table class="uk-table uk-table-divider uk-table-hover uk-light">
+        <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-light">
             <thead>
             <tr>
                 <th>UID</th>
@@ -11,7 +11,9 @@
                 <th>End</th>
                 <th>Size</th>
 
-                <th>Actions</th>
+                <th></th>
+
+                <th class="uk-table-shrink">Actions</th>
             </tr>
             </thead>
 
@@ -22,12 +24,12 @@
                 :key="index"
             >
 
-                <td>{{device.uid}}</td>
-                <td>{{device.type}}</td>
+                <td>{{ device.uid }}</td>
+                <td>{{ device.niceName }}</td>
 
                 <td>
                     <EnvironmentNumberContainer
-                        :base="projectSettings.preferredNumericBase"
+                        :base="preferredNumericBase"
 
                         :value="device.start"
                         :length-in-bytes="2"
@@ -36,7 +38,7 @@
 
                 <td>
                     <EnvironmentNumberContainer
-                        :base="projectSettings.preferredNumericBase"
+                        :base="preferredNumericBase"
 
                         :value="device.end"
                         :length-in-bytes="2"
@@ -45,15 +47,23 @@
 
                 <td>
                     <EnvironmentNumberContainer
-                        :base="projectSettings.preferredNumericBase"
+                        :base="preferredNumericBase"
 
                         :value="device.size"
                         :length-in-bytes="2"
                     />
                 </td>
 
-                <td>
+                <td></td>
 
+                <td class="uk-text-center">
+                    <button
+                        @click="removeDeviceById(device.uid)"
+
+                        class="cr-err uk-button uk-padding-small"
+                    >
+                        <font-awesome-icon icon="trash-alt"/>
+                    </button>
                 </td>
             </tr>
 
@@ -62,50 +72,44 @@
 
                 class="uk-text-center"
             >
-                <td colspan="6">No devices found.</td>
+                <td colspan="7">No devices found.</td>
             </tr>
 
             </tbody>
         </table>
 
-        <hr>
-
-        <div class="uk-margin">
-            <label class="uk-form-label">Project creation date</label>
-            <input
-                :value="prjNiceCreationDate"
-
-                class="uk-input"
-                type="text"
-                disabled
-            >
-        </div>
-
     </form>
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
 
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
+    import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
 
 
     export default {
         name: "EnvironmentSettingPrjDevices",
+        mixins: [MixinSettingsPage, MixinPreferredNumericBase],
         components: {EnvironmentNumberContainer},
-        niceName: "Devices",
 
-        mixins: [MixinSettingsPage],
+        niceName: "Devices",
 
         computed: {
             ...mapGetters("env", [
                 "deviceListWithoutCpu"
-            ])
-        }
+            ]),
+        },
+
+        methods: {
+            ...mapActions("env", [
+                "removeDeviceById"
+            ]),
+        },
     }
 </script>
 
 <style lang="less" scoped>
-
+    @import "../assets/less/modifierStyles";
 </style>
