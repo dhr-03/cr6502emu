@@ -1,5 +1,3 @@
-import {DeviceIdTools} from "../../assets/js/deviceIdTools";
-import {DeviceWidget} from "../../assets/js/deviceWidget";
 import Tools from "../../assets/js/tools";
 
 const asmLib = require(process.env.VUE_APP_ASM_JS_PATH);
@@ -221,10 +219,7 @@ export const EnvironmentStore = {
             context.state.settings = prj.settings;
 
             await Promise.all(prj.devices.map(dev => {
-                    context.dispatch("addDeviceWithWidget", {
-                        ...dev,
-                        widget: new DeviceWidget(dev.config)
-                    });
+                    context.dispatch("addDeviceWithWidget", dev);
                 })
             );
 
@@ -304,23 +299,18 @@ export const EnvironmentStore = {
         },
 
 
-        purgeAndReloadDeviceCache(context, updateWidgets = true) {
+        purgeAndReloadDeviceCache(context) {
             let sys = context.getters.__system;
             let newCache = [];
 
             let index = 0;
-            let device = sys.device_representation_by_index(0);
+            let device = sys.device_representation_by_index(index);
 
             while (device !== undefined) {
                 newCache.push(device);
-                if (updateWidgets) {
-                    // we need to update the devices widgets before they are committed (and thus rendered)
-                    // as the widget data is an empty object on creation and trying to access it could lead to exceptions.
-                    context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
-                }
+                context.dispatch("setupDeviceWidgetByIndexAndRepr", {index, device});
 
                 index++;
-
                 device = sys.device_representation_by_index(index);
             }
 
@@ -328,8 +318,8 @@ export const EnvironmentStore = {
         },
 
 
-        addDeviceWithWidget(context, {type, start, size, uid}) {
-            let actualUid = uid || DeviceIdTools.getRandomUID();
+        addDeviceWithWidget(context, {type, start, size, uid, config}) {
+            let actualUid = uid || Tools.getRandomUID();
 
             let success = context.getters.__system.add_device_with_uid(type, start, size, actualUid);
 
@@ -338,49 +328,37 @@ export const EnvironmentStore = {
 
                 let newDev = context.getters.__system.device_representation_by_index(newDevIndex);
 
-                context.dispatch("setupDeviceWidgetByIndexAndRepr", {device: newDev, index: newDevIndex});
+                if (config != null) {
+                    newDev.setWidgetConfig(config);
+                }
 
+                context.dispatch("setupDeviceWidgetByIndexAndRepr", {device: newDev, index: newDevIndex});
                 context.state.devices.push(newDev);
             }
 
             return success;
         },
 
-
-        __doDeviceWidgetUpdate(context, {index, device, pkg}) {
-            let handler = DeviceIdTools.getUpdater(device.type);
+        setupDeviceWidgetByIndexAndRepr(context, {index, device}) {
+            let wasmSetupPackage = device.getWasmSetupPkg();
+            let widgetSetupPackage = context.getters.__system.device_widget_setup_by_index(index, wasmSetupPackage);
 
             let getMemFn = function () {
                 let ptr = context.getters.__system.device_data_ptr_by_index(index);
 
                 return new Uint8Array(context.getters.__system.memory.buffer, ptr, device.size);
-            }
+            };
 
-            handler(device.widget, pkg, getMemFn)
+            device.setupWidget(widgetSetupPackage, getMemFn);
         },
-
 
         updateDeviceWidgetByIndex(context, index) {
             let device = context.state.devices[index];
 
-            context.dispatch("updateDeviceWidgetByIndexAndRepr", {index, device});
-        },
+            if (device.needsExplicitUpdates) {
+                let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
-        updateDeviceWidgetByIndexAndRepr(context, {index, device}) {
-            let updatePackage = context.getters.__system.device_widget_update_by_index(index);
-
-            context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
-        },
-
-
-        setupDeviceWidgetByIndexAndRepr(context, {index, device, updateWidget = true}) {
-            let setupHandler = DeviceIdTools.getSetupFn(device.type);
-            let setupPackage = setupHandler(device);
-
-            let updatePackage = context.getters.__system.device_widget_setup_by_index(index, setupPackage);
-
-            if (updateWidget) {
-                context.dispatch("__doDeviceWidgetUpdate", {index, device, pkg: updatePackage});
+                device.updateWidget(updatePackage);
             }
         },
 
