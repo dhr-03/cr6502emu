@@ -14,6 +14,17 @@
             >
         </div>
 
+        <div class="uk-margin">
+            <label class="uk-form-label">Project Id</label>
+            <input
+                :value="projectMeta.pid"
+
+                class="uk-input"
+                type="text"
+                disabled
+            >
+        </div>
+
         <hr>
 
         <div class="uk-margin">
