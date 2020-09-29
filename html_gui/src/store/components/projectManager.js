@@ -56,6 +56,10 @@ export const ProjectManagerStore = {
             state.projectsCache = state.projectsCache.filter(p => p.meta.pid !== prj.meta.pid);
 
             state.projectsCache.push(prj);
+        },
+
+        deleteProjectById(state, pid) {
+            state.projectsCache = state.projectsCache.filter(prj => prj.meta.pid !== pid);
         }
     },
 
@@ -256,6 +260,17 @@ export const ProjectManagerStore = {
                 context.state.timeoutSavePrj = null;
                 context.state.timeoutSaveToLS = null;
             }
+        },
+
+        completelyDeleteProjectById(context, pid) {
+            context.commit("deleteProjectById", pid);
+
+            if (context.state.timeoutSavePrj) {
+                clearTimeout(context.state.timeoutSavePrj);
+                context.state.timeoutSavePrj = null;
+            }
+
+            context.dispatch("debouncedSaveCacheToLS");
         }
     },
 

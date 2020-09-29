@@ -115,11 +115,16 @@
                 default: false,
             },
 
+            allowStack: {
+                type: Boolean,
+                default: false,
+            },
+
         },
 
         computed: {
             ukModalSettings() {
-                return `esc-close: ${this.escClose}; bg-close: ${this.bgClose};`;
+                return `esc-close: ${this.escClose}; bg-close: ${this.bgClose};stack: ${this.allowStack}`;
             },
 
 
