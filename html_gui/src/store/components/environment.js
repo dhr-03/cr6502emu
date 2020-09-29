@@ -359,7 +359,7 @@ export const EnvironmentStore = {
         updateDeviceWidgetByIndex(context, index) {
             let device = context.state.devices[index];
 
-            if (device.needsExplicitUpdates) {
+            if (device.constructor.needsExplicitUpdates) {
                 let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
                 device.updateWidget(updatePackage);
