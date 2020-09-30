@@ -65,6 +65,13 @@ export class DeviceRepresentation {
         return this._widget;
     }
 
+    getRepresentationString(numericBase=10) {
+        let addrStart = this.start.toString(numericBase);
+        let addrEnd = this.end.toString(numericBase);
+
+        return `${this.constructor.niceName} - Id: ${this.uid} - Range: [${addrStart} - ${addrEnd}]`;
+    }
+
 
     getWasmSetupPkg() {
         return new Map();

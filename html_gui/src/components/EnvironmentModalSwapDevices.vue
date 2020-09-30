@@ -39,12 +39,12 @@
                         <option value="null" class="uk-hidden">Select one</option>
 
                         <option
-                            v-for="({dev, devName}, index) in devicesWithNames"
+                            v-for="(devNames, index) in devicesReprString"
                             :key="index"
 
                             :value="index"
                         >
-                            {{ devName }}
+                            {{ devNames }}
                         </option>
                     </select>
                 </div>
@@ -59,12 +59,12 @@
                         <option value="null" class="uk-hidden">Select one</option>
 
                         <option
-                            v-for="({dev, devName}, index) in devicesWithNames"
+                            v-for="(devNames, index) in devicesReprString"
                             :key="index"
 
                             :value="index"
                         >
-                            {{ devName }}
+                            {{ devNames }}
                         </option>
                     </select>
                 </div>
@@ -114,18 +114,8 @@
                 "deviceListWithoutCpu"
             ]),
 
-            devicesWithNames() {
-                return this.deviceListWithoutCpu.map(dev => {
-                    let addrStart = dev.start.toString(this.preferredNumericBase);
-                    let addrEnd = dev.end.toString(this.preferredNumericBase);
-
-                    let devName = `${dev.constructor.niceName} - Id: ${dev.uid} - Range: [${addrStart} - ${addrEnd}]`;
-
-                    return {
-                        dev,
-                        devName
-                    };
-                });
+            devicesReprString() {
+                return this.deviceListWithoutCpu.map(dev => dev.getRepresentationString());
             },
 
             allowSubmit() {
