@@ -116,6 +116,10 @@ export const ProjectManagerStore = {
                     pid: Math.random().toString(36).substring(7),
                 },
 
+                settings: {
+                  targetProgramRomId: 1001,
+                },
+
                 devices: [
                     {
                         type: DeviceId.Ram,
