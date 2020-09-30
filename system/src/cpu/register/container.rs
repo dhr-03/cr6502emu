@@ -77,7 +77,7 @@ impl RegisterContainer {
 
         self.p = 0;
 
-        self.pc = 0x1000; //TODO: TEMP ------------------
+        self.pc = 0;
         self.s = 0;
 
         self.itr = 0;

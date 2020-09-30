@@ -12,6 +12,7 @@ use js_sys::Map;
 
 pub struct CPU {
     reg: RegisterContainer,
+    initial_pc: u16,
 
     opcode: CPUOperationManager,
 
@@ -25,6 +26,7 @@ impl CPU {
     pub fn new() -> Self {
         CPU {
             reg: RegisterContainer::new(),
+            initial_pc: 0,
 
             opcode: CPUOperationManager::new(),
 
@@ -54,6 +56,10 @@ impl CPU {
     pub fn operation_is_done(&self) -> bool {
         self.opcode.operation_is_done(&self.extra_cycle)
     }
+
+    pub fn set_initial_pc(&mut self, value: u16) {
+        self.initial_pc = value;
+    }
 }
 
 impl DeviceTrait for CPU {
@@ -68,6 +74,9 @@ impl DeviceTrait for CPU {
         self.extra_cycle = None;
 
         self.bus_value_widget_cache = (0, 0);
+
+
+        self.reg.pc = self.initial_pc;
     }
 
     fn reset_hard(&mut self) {

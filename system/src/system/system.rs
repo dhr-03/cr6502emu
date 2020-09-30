@@ -88,6 +88,9 @@ impl System {
         }
     }
 
+    pub fn set_initial_pc(&mut self, value: u16) {
+        self.cpu.set_initial_pc(value);
+    }
 
     //
     // Notes about devices index:
