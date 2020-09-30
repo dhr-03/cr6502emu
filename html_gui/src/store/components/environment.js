@@ -109,6 +109,10 @@ export const EnvironmentStore = {
         },
 
         removeDeviceFromCacheByIndex(state, index) {
+            if (state.devices[index].uid === state.settings.targetProgramRomId) {
+                state.settings.targetProgramRomId = null;
+            }
+
             state.devices.splice(index, 1);
         },
 
@@ -122,7 +126,15 @@ export const EnvironmentStore = {
 
             //we need to force an update.
             devices.__ob__.dep.notify();
-        }
+        },
+
+
+        setTargetProgramRomId(state, id) {
+            state.settings.targetProgramRomId = id;
+
+            //force the user to reassemble.
+            state.status.buildSuccessful = false;
+        },
 
     },
 
@@ -249,7 +261,7 @@ export const EnvironmentStore = {
             const asm = context.getters.__assembler;
             const sys = context.getters.__system;
 
-            let romIndex = 2; //TMP
+            let romIndex = context.getters.targetProgramRomIndex;
             let ptr = sys.device_data_ptr_by_index(romIndex);
             let {size, start} = context.state.devices[romIndex];
 
@@ -456,7 +468,7 @@ export const EnvironmentStore = {
 
 
         ableToBuild(state, getters) {
-            return !(state.lock.build || getters.isExecuting);
+            return !(state.lock.build || getters.isExecuting) && getters.targetProgramRomIndex != null;
         },
 
         ableToReset(state, getters) {
@@ -506,6 +518,16 @@ export const EnvironmentStore = {
 
         initErrorMessage(state) {
             return state.errorMessage;
+        },
+
+
+        targetProgramRomId(state) {
+            return state.settings.targetProgramRomId;
+        },
+
+        targetProgramRomIndex(_state, getters) {
+            return getters.deviceList.findIndex(dev => dev.uid === getters.targetProgramRomId);
         }
+
     }
 }
