@@ -25,7 +25,7 @@
             >
 
                 <td>{{ device.uid }}</td>
-                <td>{{ device.niceName }}</td>
+                <td>{{ device.constructor.niceName }}</td>
 
                 <td>
                     <EnvironmentNumberContainer
@@ -78,6 +78,12 @@
             </tbody>
         </table>
 
+        <div class="uk-flex uk-flex-around">
+            <EnvironmentModalAddDevice/>
+        </div>
+
+        <hr>
+
     </form>
 </template>
 
@@ -87,12 +93,14 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
+    import Modal from "./Modal";
+    import EnvironmentModalAddDevice from "./EnvironmentModalAddDevice";
 
 
     export default {
         name: "EnvironmentSettingPrjDevices",
         mixins: [MixinSettingsPage, MixinPreferredNumericBase],
-        components: {EnvironmentNumberContainer},
+        components: {EnvironmentModalAddDevice, Modal, EnvironmentNumberContainer},
 
         niceName: "Devices",
 
@@ -110,6 +118,6 @@
     }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
     @import "../assets/less/modifierStyles";
 </style>
