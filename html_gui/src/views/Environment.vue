@@ -41,8 +41,8 @@
             <EnvironmentWidgetsHolder class="cr-devholder-pool">
 
                 <EnvironmentWidget
-                    v-for="(device, index) in deviceList"
-                    :key="index"
+                    v-for="device in deviceList"
+                    :key="device.uid"
 
                     :device="device"
 
