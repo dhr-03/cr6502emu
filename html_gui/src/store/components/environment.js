@@ -127,15 +127,6 @@ export const EnvironmentStore = {
             //we need to force an update.
             devices.__ob__.dep.notify();
         },
-
-
-        setTargetProgramRomId(state, id) {
-            state.settings.targetProgramRomId = id;
-
-            //force the user to reassemble.
-            state.status.buildSuccessful = false;
-        },
-
     },
 
     actions: {
@@ -251,6 +242,8 @@ export const EnvironmentStore = {
                 })
             );
 
+            await context.dispatch("updateWasmRomAddress");
+
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
@@ -272,6 +265,23 @@ export const EnvironmentStore = {
 
             context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);
+        },
+
+        updateProgramRomId(context, id) {
+            context.state.settings.targetProgramRomId = id;
+
+            //force the user to reassemble.
+            context.state.status.buildSuccessful = false;
+
+            context.dispatch("updateWasmRomAddress");
+        },
+
+        updateWasmRomAddress(context) {
+            let romIndex = context.getters.targetProgramRomIndex;
+
+            let initialAddress = romIndex != null ? context.getters.deviceList[romIndex].start : 0;
+
+            context.getters.__system.set_initial_pc(initialAddress);
         },
 
         resetSystem(context) {

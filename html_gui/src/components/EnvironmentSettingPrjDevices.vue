@@ -145,7 +145,7 @@
                 },
 
                 set(id) {
-                    this.setTargetProgramRomId(id)
+                    this.updateProgramRomId(id)
                 }
             }
         },
@@ -153,10 +153,7 @@
         methods: {
             ...mapActions("env", [
                 "removeDeviceById",
-            ]),
-
-            ...mapMutations("env", [
-                "setTargetProgramRomId",
+                "updateProgramRomId",
             ]),
         },
     }
