@@ -110,6 +110,18 @@ export const EnvironmentStore = {
 
         removeDeviceFromCacheByIndex(state, index) {
             state.devices.splice(index, 1);
+        },
+
+        swapDevicesIndex(state, [a, b]) {
+            let devices = state.devices;
+
+            let tmp = devices[a];
+
+            devices[a] = devices[b];
+            devices[b] = tmp;
+
+            //we need to force an update.
+            devices.__ob__.dep.notify();
         }
 
     },
@@ -381,6 +393,19 @@ export const EnvironmentStore = {
                 if (success) {
                     context.commit("removeDeviceFromCacheByIndex", index);
                 }
+            }
+        },
+
+        swapDevicesByIndex(context, [a, b]) {
+            let success = context.getters.__system.swap_devices_by_index(a, b);
+
+            if (success) {
+                context.commit("swapDevicesIndex", [a, b]);
+
+                return true;
+            } else {
+
+                return false;
             }
         },
 
