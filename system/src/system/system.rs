@@ -103,6 +103,19 @@ impl System {
         self.mem.remove_device_by(index - 1)
     }
 
+    pub fn swap_devices_by_index(&mut self, index_a: usize, index_b: usize) -> bool {
+        let a_is_valid = index_a > 0 && index_a <= self.mem.devices().len();
+        let b_is_valid = index_b > 0 && index_b <= self.mem.devices().len();
+
+        if a_is_valid && b_is_valid {
+            self.mem.devices_mut().swap(index_a - 1, index_b - 1);
+
+            true
+        } else {
+            false
+        }
+    }
+
     // we cant (yet?) send a Vec/n size array (at least not without using serde and its huge dependencies),
     // maybe we could change this in the future.
     /// Returns a representation of device [Index], if it exists, or a None/null.
