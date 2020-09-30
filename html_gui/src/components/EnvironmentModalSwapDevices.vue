@@ -115,7 +115,7 @@
             ]),
 
             devicesReprString() {
-                return this.deviceListWithoutCpu.map(dev => dev.getRepresentationString());
+                return this.deviceListWithoutCpu.map(dev => dev.getRepresentationString(this.preferredNumericBase));
             },
 
             allowSubmit() {

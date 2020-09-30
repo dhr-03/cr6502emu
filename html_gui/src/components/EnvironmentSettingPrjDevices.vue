@@ -102,7 +102,7 @@
 
                     :value="rom.uid"
                 >
-                    {{ rom.getRepresentationString() }}
+                    {{ rom.getRepresentationString(preferredNumericBase) }}
                 </option>
             </select>
         </div>
