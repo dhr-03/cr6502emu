@@ -22,6 +22,15 @@
         <EnvironmentActionbar/>
 
         <div class="cr-environment uk-container uk-container-xlarge">
+
+            <Alert
+                v-if="targetProgramRomIndex == null"
+
+                type="warn"
+            >
+                No <strong>Rom</strong> Selected
+            </Alert>
+
             <div class="uk-grid uk-grid-small">
                 <div class="uk-width-expand">
 
@@ -62,6 +71,7 @@
     import EnvironmentActionbar from "../components/EnvironmentActionbar"
     import EnvironmentLogbar from "../components/EnvironmentLogbar"
     import {mapGetters, mapActions} from "vuex"
+    import Alert from "../components/Alert";
 
     export default {
         name: "Environment",
@@ -74,6 +84,7 @@
         },
 
         components: {
+            Alert,
             EnvironmentLogbar,
             EnvironmentActionbar, EnvironmentWidget, EnvironmentWidgetsHolder, EnvironmentEditor
         },
@@ -85,6 +96,7 @@
             "deviceList",
             "editorInitialCode",
             "initErrorMessage",
+            "targetProgramRomIndex",
         ]),
 
         methods: {

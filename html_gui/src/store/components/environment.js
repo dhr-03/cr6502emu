@@ -536,8 +536,9 @@ export const EnvironmentStore = {
         },
 
         targetProgramRomIndex(_state, getters) {
-            return getters.deviceList.findIndex(dev => dev.uid === getters.targetProgramRomId);
-        }
+            let index = getters.deviceList.findIndex(dev => dev.uid === getters.targetProgramRomId);
 
+            return index >= 0 ? index : null;
+        },
     }
 }
