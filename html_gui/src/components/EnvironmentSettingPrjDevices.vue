@@ -86,11 +86,34 @@
 
         <hr>
 
+        <div class="uk-margin">
+            <label class="uk-form-label">Build Rom</label>
+            <select
+                v-model="selectedRomId"
+
+                class="uk-select"
+            >
+                <option class="uk-hidden" value="null">
+                    {{ romList.length ? "Select One" : "None found" }}
+                </option>
+
+                <option
+                    v-for="rom in romList"
+
+                    :value="rom.uid"
+                >
+                    {{ rom.getRepresentationString() }}
+                </option>
+            </select>
+        </div>
+
     </form>
 </template>
 
 <script>
-    import {mapActions, mapGetters} from "vuex";
+    import {mapActions, mapGetters, mapMutations} from "vuex";
+
+    const DeviceId = require(process.env.VUE_APP_SYS_JS_PATH).DeviceId;
 
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
@@ -108,13 +131,32 @@
 
         computed: {
             ...mapGetters("env", [
-                "deviceListWithoutCpu"
+                "deviceListWithoutCpu",
+                "targetProgramRomId",
             ]),
+
+            romList() {
+                return this.deviceListWithoutCpu.filter(dev => dev.constructor.type === DeviceId.Rom);
+            },
+
+            selectedRomId: {
+                get() {
+                    return this.targetProgramRomId;
+                },
+
+                set(id) {
+                    this.setTargetProgramRomId(id)
+                }
+            }
         },
 
         methods: {
             ...mapActions("env", [
-                "removeDeviceById"
+                "removeDeviceById",
+            ]),
+
+            ...mapMutations("env", [
+                "setTargetProgramRomId",
             ]),
         },
     }
