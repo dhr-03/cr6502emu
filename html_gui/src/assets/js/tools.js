@@ -1,4 +1,6 @@
 export default {
+    U16MaxValue: (2 ** 16) - 1, // unsigned int 16
+
     deepClone(source) {
         //apparently this is how you do  deep clone in js in a few lines according to the MDN.
         return JSON.parse(JSON.stringify(source));
@@ -35,10 +37,8 @@ export default {
     },
 
     getRandomUID() {
-        const MAX_VALUE = (2 ** 16) - 1; // unsigned int 16
-
         return Math.floor(
-            Math.random() * MAX_VALUE
+            Math.random() * this.U16MaxValue
         );
     }
 }
