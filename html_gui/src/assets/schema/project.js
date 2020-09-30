@@ -1,6 +1,6 @@
 import {DeviceId} from "../wasm/system";
 
-const U16_MAX = (2 ** 16) - 1; // unsigned int 16
+import Tools from "../js/tools";
 
 export const ProjectSchema = {
     type: "object",
@@ -64,11 +64,21 @@ export const ProjectSchema = {
                     maximum: 500,
 
                     default: 50,
-                }
+                },
+
+                targetProgramRomId: {
+                    type: ["integer", "null"],
+                    minimum: 0,
+                    maximum: Tools.U16MaxValue,
+
+                    default: null,
+                },
             },
 
             required: [
                 "preferredNumericBase",
+                "memoryMonitorMaxRows",
+                "targetProgramRomId",
             ],
         },
 
@@ -91,20 +101,20 @@ export const ProjectSchema = {
                     uid: {
                         type: "integer",
                         minimum: 0,
-                        maximum: U16_MAX,
+                        maximum: Tools.U16MaxValue,
                     },
 
 
                     start: {
                         type: "integer",
                         minimum: 0,
-                        maximum: U16_MAX,
+                        maximum: Tools.U16MaxValue,
                     },
 
                     size: {
                         type: "integer",
                         minimum: 0,
-                        maximum: U16_MAX,
+                        maximum: Tools.U16MaxValue,
                     },
 
                     config: {

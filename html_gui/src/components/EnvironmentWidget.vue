@@ -41,13 +41,13 @@
 
         data() {
             return {
-                bodyElement: this.device.widgetComponent
+                bodyElement: this.device.constructor.widgetComponent
             };
         },
 
         computed: {
             title() {
-                return this.device.widget.config.title || this.device.niceName;
+                return this.device.widget.config.title || this.device.constructor.niceName;
             },
         }
     }

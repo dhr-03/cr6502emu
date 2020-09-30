@@ -2,10 +2,7 @@ import {DeviceWidget} from "../deviceWidget";
 import Tools from "../tools";
 
 export class DeviceRepresentation {
-    constructor(type, start, end, uid, hasFixedSize, needsExplicitUpdates) {
-        // The device type. (wasmSys.DeviceId)
-        this._type = type;
-
+    constructor(start, end, uid) {
         // The range used in the address bus by the device.
         //
         // ## WARNING: ##
@@ -19,15 +16,30 @@ export class DeviceRepresentation {
         // The Widget.
         this._widget = new DeviceWidget();
 
-        // Some devices have a fixed size, others let the user set it.
-        this._hasFixedSize = hasFixedSize;
-
-        // Some devices need to exchange data with wasm to update, while others do it automatically.
-        this._needsExplicitUpdates = needsExplicitUpdates;
     }
 
-    get type() {
-        return this._type;
+
+    // The device type. (wasmSys.DeviceId)
+    static get type() {
+        return null;
+    }
+
+    static get widgetComponent() {
+        return null;
+    }
+
+    static get niceName() {
+        return null;
+    }
+
+    // Some devices have a fixed size, others let the user set it.
+    static get hasFixedSize() {
+        return null;
+    }
+
+    // Some devices need to exchange data with wasm to update, while others do it automatically.
+    static get needsExplicitUpdates() {
+        return null;
     }
 
 
@@ -53,12 +65,11 @@ export class DeviceRepresentation {
         return this._widget;
     }
 
-    get hasFixedSize() {
-        return this._hasFixedSize;
-    }
+    getRepresentationString(numericBase=10) {
+        let addrStart = this.start.toString(numericBase);
+        let addrEnd = this.end.toString(numericBase);
 
-    get needsExplicitUpdates() {
-        return this._needsExplicitUpdates;
+        return `${this.constructor.niceName} - Id: ${this.uid} - Range: [${addrStart} - ${addrEnd}]`;
     }
 
 
@@ -75,26 +86,17 @@ export class DeviceRepresentation {
     }
 
 
-    get widgetComponent() {
-        return null;
-    }
-
-    get niceName() {
-        return null;
-    }
-
-
     setWidgetConfig(newConfig) {
         this._widget._config = newConfig;
     }
 
     getExportRepresentation() {
         return {
-            type: this._type,
+            type: this.constructor.type,
             uid: this._uid,
 
             start: this._start,
-            size: this._hasFixedSize ? 0 : this.size,
+            size: this.constructor.hasFixedSize ? 0 : this.size,
 
             config: Tools.deepClone(this._widget.config),
         }

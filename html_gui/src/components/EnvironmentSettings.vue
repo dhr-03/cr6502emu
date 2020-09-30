@@ -29,19 +29,26 @@
     import EnvironmentSettingPrjMeta from "./EnvironmentSettingPrjMeta";
     import EnvironmentSettingPrjFile from "./EnvironmentSettingPrjFile";
     import EnvironmentSettingEnvInterface from "./EnvironmentSettingEnvInterface";
+    import EnvironmentSettingPrjDevices from "./EnvironmentSettingPrjDevices";
 
     export default {
         name: "EnvironmentSettings",
-        components: {EnvironmentSettingPrjMeta, EnvironmentSettingPrjFile, EnvironmentSettingEnvInterface},
+        components: {
+            EnvironmentSettingPrjMeta,
+            EnvironmentSettingPrjFile,
+            EnvironmentSettingEnvInterface,
+            EnvironmentSettingPrjDevices,
+        },
 
         data() {
             return {
                 settingsComponents: [
                     "EnvironmentSettingPrjMeta",
-                    "EnvironmentSettingEnvInterface",
                     "EnvironmentSettingPrjFile",
+                    "EnvironmentSettingEnvInterface",
+                    "EnvironmentSettingPrjDevices",
                 ],
-                
+
                 activeComponent: "EnvironmentSettingPrjMeta",
             }
         },

@@ -106,8 +106,27 @@ export const EnvironmentStore = {
 
         setInitErrorMessage(state, msg) {
             state.errorMessage = msg;
-        }
+        },
 
+        removeDeviceFromCacheByIndex(state, index) {
+            if (state.devices[index].uid === state.settings.targetProgramRomId) {
+                state.settings.targetProgramRomId = null;
+            }
+
+            state.devices.splice(index, 1);
+        },
+
+        swapDevicesIndex(state, [a, b]) {
+            let devices = state.devices;
+
+            let tmp = devices[a];
+
+            devices[a] = devices[b];
+            devices[b] = tmp;
+
+            //we need to force an update.
+            devices.__ob__.dep.notify();
+        },
     },
 
     actions: {
@@ -223,6 +242,8 @@ export const EnvironmentStore = {
                 })
             );
 
+            await context.dispatch("updateWasmRomAddress");
+
             context.commit("currentStatus", EnvironmentState.IDLE);
         },
 
@@ -233,7 +254,7 @@ export const EnvironmentStore = {
             const asm = context.getters.__assembler;
             const sys = context.getters.__system;
 
-            let romIndex = 2; //TMP
+            let romIndex = context.getters.targetProgramRomIndex;
             let ptr = sys.device_data_ptr_by_index(romIndex);
             let {size, start} = context.state.devices[romIndex];
 
@@ -244,6 +265,23 @@ export const EnvironmentStore = {
 
             context.dispatch("updateAllDevicesWidgets");
             context.commit("buildStatus", success);
+        },
+
+        updateProgramRomId(context, id) {
+            context.state.settings.targetProgramRomId = id;
+
+            //force the user to reassemble.
+            context.state.status.buildSuccessful = false;
+
+            context.dispatch("updateWasmRomAddress");
+        },
+
+        updateWasmRomAddress(context) {
+            let romIndex = context.getters.targetProgramRomIndex;
+
+            let initialAddress = romIndex != null ? context.getters.deviceList[romIndex].start : 0;
+
+            context.getters.__system.set_initial_pc(initialAddress);
         },
 
         resetSystem(context) {
@@ -355,7 +393,7 @@ export const EnvironmentStore = {
         updateDeviceWidgetByIndex(context, index) {
             let device = context.state.devices[index];
 
-            if (device.needsExplicitUpdates) {
+            if (device.constructor.needsExplicitUpdates) {
                 let updatePackage = context.getters.__system.device_widget_update_by_index(index);
 
                 device.updateWidget(updatePackage);
@@ -366,7 +404,32 @@ export const EnvironmentStore = {
             for (let i = 0; i < context.state.devices.length; i++) {
                 context.dispatch("updateDeviceWidgetByIndex", i);
             }
-        }
+        },
+
+        removeDeviceById(context, id) {
+            let index = context.getters.deviceList.findIndex(dev => dev.uid === id);
+
+            if (index != null) {
+                let success = context.getters.__system.remove_device_by_index(index);
+
+                if (success) {
+                    context.commit("removeDeviceFromCacheByIndex", index);
+                }
+            }
+        },
+
+        swapDevicesByIndex(context, [a, b]) {
+            let success = context.getters.__system.swap_devices_by_index(a, b);
+
+            if (success) {
+                context.commit("swapDevicesIndex", [a, b]);
+
+                return true;
+            } else {
+
+                return false;
+            }
+        },
 
     },
 
@@ -415,7 +478,7 @@ export const EnvironmentStore = {
 
 
         ableToBuild(state, getters) {
-            return !(state.lock.build || getters.isExecuting);
+            return !(state.lock.build || getters.isExecuting) && getters.targetProgramRomIndex != null;
         },
 
         ableToReset(state, getters) {
@@ -465,6 +528,16 @@ export const EnvironmentStore = {
 
         initErrorMessage(state) {
             return state.errorMessage;
+        },
+
+
+        targetProgramRomId(state) {
+            return state.settings.targetProgramRomId;
+        },
+
+        targetProgramRomIndex(_state, getters) {
+            return getters.deviceList.findIndex(dev => dev.uid === getters.targetProgramRomId);
         }
+
     }
 }
