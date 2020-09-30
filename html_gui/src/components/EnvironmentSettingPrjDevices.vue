@@ -80,6 +80,8 @@
 
         <div class="uk-flex uk-flex-around">
             <EnvironmentModalAddDevice/>
+
+            <EnvironmentModalSwapDevices/>
         </div>
 
         <hr>
@@ -93,14 +95,14 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
-    import Modal from "./Modal";
     import EnvironmentModalAddDevice from "./EnvironmentModalAddDevice";
+    import EnvironmentModalSwapDevices from "./EnvironmentModalSwapDevices";
 
 
     export default {
         name: "EnvironmentSettingPrjDevices",
         mixins: [MixinSettingsPage, MixinPreferredNumericBase],
-        components: {EnvironmentModalAddDevice, Modal, EnvironmentNumberContainer},
+        components: {EnvironmentModalSwapDevices, EnvironmentModalAddDevice, EnvironmentNumberContainer},
 
         niceName: "Devices",
 
