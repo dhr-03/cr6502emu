@@ -3,8 +3,6 @@
         <div
             :id="domId"
             :class="{'uk-modal-container': this.container}"
-
-            :uk-modal="ukModalSettings"
         >
             <div
                 :class="{'uk-margin-auto-vertical': this.center, [this.contentClass]: this.contentClass}"
@@ -45,9 +43,7 @@
         </div>
 
         <a
-            :href="toggleAction"
-
-            uk-toggle
+            @click="toggleModal"
         >
             <slot
                 name="toggle"
@@ -59,6 +55,8 @@
 </template>
 
 <script>
+    import UIkit from "uikit";
+
     export default {
         name: "Modal",
 
@@ -122,12 +120,13 @@
 
         },
 
+        data() {
+            return {
+                ukModal: null,
+            };
+        },
+
         computed: {
-            ukModalSettings() {
-                return `esc-close: ${this.escClose}; bg-close: ${this.bgClose};stack: ${this.allowStack}`;
-            },
-
-
             toggleAction() {
                 return `#${this.domId}`;
             },
@@ -140,7 +139,38 @@
             closeButtonClass() {
                 return `uk-modal-close-${this.closeButtonType}`;
             }
-        }
+        },
+
+        methods: {
+            toggleModal() {
+                this.ukModal.toggle();
+            },
+
+            showModal() {
+                this.ukModal.show();
+            },
+
+            hideModal() {
+                this.ukModal.hide();
+
+            },
+        },
+
+        mounted() {
+            // lets make sure that everything is mounted.
+            this.$nextTick(_ => {
+                this.ukModal = UIkit.modal(`#${this.domId}`, {
+                    escClose: this.escClose,
+                    bgClose: this.bgClose,
+
+                    stack: this.allowStack,
+                });
+            });
+        },
+
+        beforeDestroy() {
+            this.ukModal.$destroy(true);
+        },
     }
 </script>
 
