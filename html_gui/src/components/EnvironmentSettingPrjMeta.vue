@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <div class="uk-margin">
             <label class="uk-form-label">Project Name</label>
@@ -49,7 +49,7 @@
             >
         </div>
 
-    </form>
+    </div>
 </template>
 
 <script>

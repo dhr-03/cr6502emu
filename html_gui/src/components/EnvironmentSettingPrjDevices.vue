@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-light">
             <thead>
@@ -107,7 +107,7 @@
             </select>
         </div>
 
-    </form>
+    </div>
 </template>
 
 <script>

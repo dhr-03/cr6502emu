@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <div class="uk-margin">
             <label class="uk-form-label">Download Project</label>
@@ -69,7 +69,7 @@
 
         <a style="display: none" ref="downloadTrick"></a>
 
-    </form>
+    </div>
 </template>
 
 <script>
