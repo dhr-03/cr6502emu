@@ -6,6 +6,8 @@
         spellcheck="false"
 
         :contenteditable="editable"
+
+        ref="editor"
     >{{ initialCode }}</pre>
 </template>
 
@@ -39,7 +41,7 @@
         },
 
         mounted: function () {
-            let editor = document.querySelector("#editor");
+            let editor = this.$refs.editor;
 
             editor = bililiteRange.fancyText(editor, Prism.highlightElement);
 
