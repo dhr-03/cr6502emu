@@ -90,9 +90,8 @@ export const ProjectManagerStore = {
             context.state.timeoutSavePrj = setTimeout(_ => {
                     promise.then(prj => {
                         context.dispatch("saveProjectFromObject", prj, autoSync)
+                            .then(_ => context.state.timeoutSavePrj = null);
                     });
-
-                    context.state.timeoutSavePrj = null;
                 }
                 , DEBOUNCE_DURATION
             );
