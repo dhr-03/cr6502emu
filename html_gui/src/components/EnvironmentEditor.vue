@@ -5,8 +5,6 @@
         data-linenumber="1"
         spellcheck="false"
 
-        @keyup="keyUpCallback"
-
         :contenteditable="editable"
     >{{ initialCode }}</pre>
 </template>
@@ -38,12 +36,6 @@
                 type: String,
                 default: "",
             },
-
-            keyUpCallback: {
-                type: Function,
-                default: _ => {
-                },
-            }
         },
 
         mounted: function () {

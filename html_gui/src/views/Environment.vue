@@ -32,14 +32,14 @@
             </Alert>
 
             <div class="uk-grid uk-grid-small">
-                <div class="uk-width-expand">
+                <div
+                    @keyup="scheduleCurrentProjectSave"
 
+                    class="uk-width-expand"
+                >
                     <EnvironmentEditor
                         :initial-code="editorInitialCode"
-
-                        :key-up-callback="scheduleCurrentProjectSave"
                     />
-
                 </div>
 
                 <div class="uk-width-auto">
