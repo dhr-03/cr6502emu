@@ -44,7 +44,7 @@
 
         <div class="uk-text-center">
             <a
-                @change="addProjectAndGo"
+                @click="addProjectAndGo"
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
