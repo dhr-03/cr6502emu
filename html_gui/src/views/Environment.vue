@@ -70,7 +70,7 @@
     import EnvironmentWidget from "../components/EnvironmentWidget"
     import EnvironmentActionbar from "../components/EnvironmentActionbar"
     import EnvironmentLogbar from "../components/EnvironmentLogbar"
-    import {mapGetters, mapActions} from "vuex"
+    import {mapGetters, mapActions, mapMutations} from "vuex"
     import Alert from "../components/Alert";
 
     export default {
@@ -111,7 +111,18 @@
                 "loadProjectFromId",
                 "saveCurrentProject",
                 "scheduleCurrentProjectSave",
+                "debouncedSaveCacheToLS",
             ]),
+
+            ...mapMutations("prj", [
+               "clearScheduledProjectSave",
+            ]),
+
+            ...mapMutations("env", [
+               "setStatusInitializing",
+            ]),
+
+
         },
 
         async beforeRouteEnter(to, from, next) {
@@ -127,6 +138,10 @@
         async beforeRouteLeave(to, from, next) {
             if (this.currentProjectId != null && this.successfulInitialize) {
                 await this.saveCurrentProject();
+                await this.debouncedSaveCacheToLS();
+
+                this.clearScheduledProjectSave();
+                this.setStatusInitializing();
             }
 
             next();
