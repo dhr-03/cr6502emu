@@ -166,7 +166,7 @@
         },
 
         beforeDestroy() {
-            this.ukModal.$destroy(true);
+            this.hideModal();
         },
     }
 </script>

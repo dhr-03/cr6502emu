@@ -60,6 +60,14 @@ export const ProjectManagerStore = {
 
         deleteProjectById(state, pid) {
             state.projectsCache = state.projectsCache.filter(prj => prj.meta.pid !== pid);
+        },
+
+        clearScheduledProjectSave(state) {
+            if (state.timeoutSavePrj != null) {
+                clearTimeout(state.timeoutSavePrj);
+
+                state.timeoutSavePrj = null;
+            }
         }
     },
 
@@ -209,7 +217,7 @@ export const ProjectManagerStore = {
 
         async saveCurrentProject(context) {
             let currentPrj = await context.dispatch("env/saveProjectState", null, {root: true});
-            if (currentPrj.meta.pid) {
+            if (currentPrj.meta.pid && context.rootGetters["env/successfulInitialize"]) {
                 context.commit("updateProject", currentPrj);
             }
         },

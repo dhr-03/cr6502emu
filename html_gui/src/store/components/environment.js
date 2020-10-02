@@ -477,8 +477,13 @@ export const EnvironmentStore = {
         },
 
 
+        romIsPresent(_state, getters) {
+            return getters.targetProgramRomIndex != null;
+        },
+
+
         ableToBuild(state, getters) {
-            return !(state.lock.build || getters.isExecuting) && getters.targetProgramRomIndex != null;
+            return !(state.lock.build || getters.isExecuting) && getters.romIsPresent;
         },
 
         ableToReset(state, getters) {
@@ -486,11 +491,11 @@ export const EnvironmentStore = {
         },
 
         ableToRun(state, getters) {
-            return !(state.lock.execute || getters.isDebugging) && getters.isBuilt;
+            return !(state.lock.execute || getters.isDebugging) && getters.isBuilt && getters.romIsPresent;
         },
 
         ableToDebug(state, getters) {
-            return !(state.lock.execute || getters.isRunning) && getters.isBuilt;
+            return !(state.lock.execute || getters.isRunning) && getters.isBuilt && getters.romIsPresent;
         },
 
         ableToStep(state, getters) {
