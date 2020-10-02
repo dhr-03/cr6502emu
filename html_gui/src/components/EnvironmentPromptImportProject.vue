@@ -2,7 +2,7 @@
     <Modal
         :show-footer="false"
 
-        dom-id="importProjectModal"
+        dom-id="importProjectPrompt"
 
         class="crl-project-import"
 

@@ -94,9 +94,11 @@
 
                         close-button-type="none"
 
-                        dom-id="settings-menu"
+                        dom-id="settingsMenu"
 
                         content-class="crl-settings-menu"
+
+                        ref="modal"
                     >
                         <template v-slot:toggle>
                             <EnvironmentActionbarButton
@@ -116,10 +118,9 @@
 
                         <template v-slot:footer>
                             <button
-                                @click="scheduleCurrentProjectSave"
+                                @click="saveChanges"
 
                                 class="uk-button uk-button-primary"
-                                uk-toggle="#settings-menu"
                             >
                                 Save
                             </button>
@@ -201,6 +202,12 @@
             onStepLong() {
                 this.systemExecuteOperation();
             },
+
+            saveChanges() {
+                this.$refs.modal.hideModal();
+
+                this.scheduleCurrentProjectSave();
+            }
 
         },
     }

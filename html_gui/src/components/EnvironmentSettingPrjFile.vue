@@ -21,7 +21,7 @@
             <Modal
                 :allow-stack="true"
 
-                dom-id="confirm-delete"
+                dom-id="confirmDeleteProject"
 
                 ref="modal"
             >
