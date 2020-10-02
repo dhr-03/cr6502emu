@@ -160,6 +160,7 @@
     }
 
     .cr-devholder-main {
+        max-width: calc(15.5em * 3);
         height: 100%;
     }
 
