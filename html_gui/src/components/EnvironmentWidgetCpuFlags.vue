@@ -33,10 +33,10 @@
                 }
 
                 return {
-                    n: getFlag(this.value >> 7, "n"),
-                    o: getFlag(this.value >> 6, "o"),
-                    z: getFlag(this.value >> 1, "z"),
-                    c: getFlag(this.value >> 0, "c"),
+                    n: getFlag((this.value >> 7) & 0b1, "n"),
+                    o: getFlag((this.value >> 6) & 0b1, "o"),
+                    z: getFlag((this.value >> 1) & 0b1, "z"),
+                    c: getFlag((this.value >> 0) & 0b1, "c"),
                 };
             }
         },
