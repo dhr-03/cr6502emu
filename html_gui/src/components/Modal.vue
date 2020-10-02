@@ -3,6 +3,8 @@
         <div
             :id="domId"
             :class="{'uk-modal-container': this.container}"
+
+            ref="container"
         >
             <div
                 :class="{'uk-margin-auto-vertical': this.center, [this.contentClass]: this.contentClass}"
@@ -127,11 +129,6 @@
         },
 
         computed: {
-            toggleAction() {
-                return `#${this.domId}`;
-            },
-
-
             showCloseButton() {
                 return this.closeButtonType !== "none";
             },
@@ -159,7 +156,7 @@
         mounted() {
             // lets make sure that everything is mounted.
             this.$nextTick(_ => {
-                this.ukModal = UIkit.modal(`#${this.domId}`, {
+                this.ukModal = UIkit.modal(this.$refs.container, {
                     escClose: this.escClose,
                     bgClose: this.bgClose,
 
