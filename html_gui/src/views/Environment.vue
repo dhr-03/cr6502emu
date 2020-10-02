@@ -15,7 +15,7 @@
         <span>Failed to initialize Environment</span>
 
         <br>
-        <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessage }}</code>
+        <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessageOrDefault }}</code>
     </div>
 
     <div v-else>
@@ -89,15 +89,21 @@
             EnvironmentActionbar, EnvironmentWidget, EnvironmentWidgetsHolder, EnvironmentEditor
         },
 
-        computed: mapGetters("env", [
-            "isInitializing",
-            "successfulInitialize",
-            "isExecuting",
-            "deviceList",
-            "editorInitialCode",
-            "initErrorMessage",
-            "targetProgramRomIndex",
-        ]),
+        computed: {
+            ...mapGetters("env", [
+                "isInitializing",
+                "successfulInitialize",
+                "isExecuting",
+                "deviceList",
+                "editorInitialCode",
+                "initErrorMessage",
+                "targetProgramRomIndex",
+            ]),
+
+            initErrorMessageOrDefault() {
+              return this.initErrorMessage || "Unknown Error";
+            },
+        },
 
         methods: {
             ...mapGetters("env", [
