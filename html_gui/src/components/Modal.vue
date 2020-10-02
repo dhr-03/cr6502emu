@@ -75,7 +75,7 @@
 
             closeButtonType: {
                 type: String,
-                default: "none",
+                default: "default",
 
                 validator: val => ["default", "outside", "none"].indexOf(val) !== -1,
             },

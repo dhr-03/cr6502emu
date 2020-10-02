@@ -3,7 +3,6 @@
         :show-footer="false"
 
         dom-id="importProjectModal"
-        close-button-type="default"
 
         class="crl-project-import"
     >
