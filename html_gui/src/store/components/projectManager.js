@@ -193,8 +193,7 @@ export const ProjectManagerStore = {
                     context.commit("env/setStatusIdle", null, {root: true});
 
                 } else {
-                    let schemaErr = context.getters.schemaValidationErrMsg();
-                    let userMessage = "Failed to load project: Invalid schema.\n" + schemaErr;
+                    let userMessage = "Failed to load project: Invalid schema.";
 
                     console.error(userMessage, context.state.__schemaValidator.errors);
 
