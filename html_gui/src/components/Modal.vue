@@ -8,7 +8,7 @@
         >
             <div
                 :class="{'uk-margin-auto-vertical': this.center, [this.contentClass]: this.contentClass}"
-                class="uk-modal-dialog uk-overflow-auto"
+                class="crl-dark-modal uk-modal-dialog uk-overflow-auto"
             >
                 <font-awesome-icon
                     v-if="showCloseButton"
@@ -143,3 +143,16 @@
         }
     }
 </script>
+
+<style lang="less" scoped>
+    @import "../../node_modules/open-color/open-color";
+
+    .crl-dark-modal {
+        background: @oc-gray-9;
+        color: #fff;
+
+        .uk-modal-header, .uk-modal-footer {
+            background: lighten(@oc-gray-9, 5%);
+        }
+    }
+</style>

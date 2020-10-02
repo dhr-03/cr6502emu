@@ -222,11 +222,8 @@
 
 <style lang="less">
     @import "../../node_modules/open-color/open-color";
-    @import "../assets/less/darkModal";
 
     .crl-settings-menu {
-        .crl-dark-modal();
-
         .uk-modal-body {
             height: 100vh; //let uikit cap it to the max value
             overflow: hidden;

@@ -2,7 +2,6 @@
     <Modal
         :allow-stack="true"
 
-        content-class="crl-dark-modal"
         dom-id="addDevicePrompt"
     >
         <template v-slot:toggle>
@@ -226,5 +225,4 @@
 
 <style lang="less" scoped>
     @import "../assets/less/modifierStyles";
-    @import "../assets/less/darkModal";
 </style>

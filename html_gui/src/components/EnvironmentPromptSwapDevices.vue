@@ -2,7 +2,6 @@
     <Modal
         :allow-stack="true"
 
-        content-class="crl-dark-modal"
         dom-id="swapDevicesPrompt"
     >
 
@@ -140,7 +139,3 @@
         },
     }
 </script>
-
-<style lang="less" scoped>
-    @import "../assets/less/darkModal";
-</style>

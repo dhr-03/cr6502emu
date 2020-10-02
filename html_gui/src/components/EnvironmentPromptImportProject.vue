@@ -5,7 +5,6 @@
         dom-id="importProjectModal"
         close-button-type="default"
 
-        content-class="crl-dark-modal"
         class="crl-project-import"
     >
 
@@ -131,6 +130,3 @@
     }
 </script>
 
-<style lang="less">
-    @import "../assets/less/darkModal";
-</style>

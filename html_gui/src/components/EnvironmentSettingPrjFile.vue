@@ -22,7 +22,6 @@
                 :allow-stack="true"
 
                 dom-id="confirm-delete"
-                content-class="crl-dark-modal"
             >
 
                 <template v-slot:toggle>
@@ -125,7 +124,6 @@
 
 <style lang="less" scoped>
     @import "../assets/less/modifierStyles";
-    @import "../assets/less/darkModal";
 
     .crl-button {
         width: 15em; //same width for all
