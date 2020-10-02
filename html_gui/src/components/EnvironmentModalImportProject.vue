@@ -1,47 +1,67 @@
 <template>
-    <div>
-        <Alert
-            v-if="errorMessage != null"
+    <Modal
+        :show-footer="false"
 
-            type="err"
-            title="Failed to import file"
-        >
-            {{ errorMessage }}
-        </Alert>
-        <br>
-        <br>
+        dom-id="importProjectModal"
+        close-button-type="default"
 
-        <div class="js-upload uk-flex uk-flex-center" uk-form-custom>
-            <input
-                @input="onFileUploaded"
-                ref="fileInput"
+        content-class="crl-dark-modal"
+        class="crl-project-import"
+    >
 
-                type="file"
-                accept=".cremu"
+        <template v-slot:toggle>
+                    <span class="crl-project-import-button">
+                        <font-awesome-icon icon="upload"/>
+                        Import Project
+                    </span>
+        </template>
+
+
+        <template v-slot:header>
+            <h3 class="uk-light">Upload project</h3>
+        </template>
+
+        <template v-slot:body>
+            <Alert
+                v-if="errorMessage != null"
+
+                type="err"
+                title="Failed to import file"
             >
+                {{ errorMessage }}
+            </Alert>
+            <br>
+            <br>
 
-            <button class="uk-button uk-button-default" type="button" tabindex="-1">Select File</button>
-        </div>
+            <div class="js-upload uk-flex uk-flex-center" uk-form-custom>
+                <input
+                    @input="onFileUploaded"
+                    ref="fileInput"
 
-        <br>
-        <br>
-    </div>
+                    type="file"
+                    accept=".cremu"
+                >
+
+                <button class="uk-button uk-button-default" type="button" tabindex="-1">Select File</button>
+            </div>
+
+            <br>
+            <br>
+        </template>
+
+    </Modal>
 </template>
 
 <script>
     import {mapActions} from "vuex";
     import Alert from "./Alert";
+    import Modal from "./Modal";
+
+    import UIkit from "uikit";
 
     export default {
-        name: "EnvironmentImportProject",
-        components: {Alert},
-
-        props: {
-            callback: {
-                type: Function,
-                required: false
-            }
-        },
+        name: "EnvironmentModalImportProject",
+        components: {Modal, Alert},
 
         data() {
             return {
@@ -67,9 +87,7 @@
                                 if (value.ok) {
                                     this.errorMessage = null;
 
-                                    if (this.callback != null) {
-                                        this.callback();
-                                    }
+                                    this.closeModal();
 
                                     this.$router.push({
                                         name: "Project",
@@ -104,10 +122,15 @@
                     reader.readAsText(file);
                 }
             },
+
+            closeModal() {
+                UIkit.modal("#importProjectModal").hide();
+            }
+
         }
     }
 </script>
 
-<style lang="less" scoped>
-
+<style lang="less">
+    @import "../assets/less/darkModal";
 </style>
