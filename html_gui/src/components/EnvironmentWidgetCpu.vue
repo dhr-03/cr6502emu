@@ -35,7 +35,6 @@
 
         <EnvironmentWidgetCpuRegister
             name="Flags"
-            value=""
         >
             <EnvironmentWidgetCpuFlags
                 :value="widget.displayData.p"

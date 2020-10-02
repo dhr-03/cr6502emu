@@ -30,7 +30,7 @@
 
             value: {
                 type: [Number, String],
-                required: true,
+                required: false,
             },
 
             lengthInBytes: {
