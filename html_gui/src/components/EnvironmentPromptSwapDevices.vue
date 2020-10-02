@@ -3,6 +3,8 @@
         :allow-stack="true"
 
         dom-id="swapDevicesPrompt"
+
+        ref="modal"
     >
 
         <template v-slot:toggle>
@@ -92,8 +94,6 @@
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
     import Alert from "./Alert";
 
-    import UIkit from "uikit";
-
     export default {
         name: "EnvironmentPromptSwapDevices",
         mixins: [MixinPreferredNumericBase],
@@ -132,9 +132,10 @@
                 this.swapDevicesByIndex([this.deviceA + 1, this.deviceB + 1]).then(success => {
                     this.failedToSwap = !success;
 
-                    //TODO: tmp
-                    if(success) UIkit.modal("#swapDevicesPrompt").hide();
-                })
+                    if(success) {
+                        this.$refs.modal.hideModal();
+                    }
+                });
             }
         },
     }

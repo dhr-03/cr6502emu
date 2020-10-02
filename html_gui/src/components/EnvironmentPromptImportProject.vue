@@ -5,6 +5,8 @@
         dom-id="importProjectModal"
 
         class="crl-project-import"
+
+        ref="modal"
     >
 
         <template v-slot:toggle>
@@ -55,8 +57,6 @@
     import Alert from "./Alert";
     import Modal from "./Modal";
 
-    import UIkit from "uikit";
-
     export default {
         name: "EnvironmentPromptImportProject",
         components: {Modal, Alert},
@@ -85,7 +85,7 @@
                                 if (value.ok) {
                                     this.errorMessage = null;
 
-                                    this.closeModal();
+                                    this.$refs.modal.hideModal();
 
                                     this.$router.push({
                                         name: "Project",
@@ -120,11 +120,6 @@
                     reader.readAsText(file);
                 }
             },
-
-            closeModal() {
-                UIkit.modal("#importProjectModal").hide();
-            }
-
         }
     }
 </script>

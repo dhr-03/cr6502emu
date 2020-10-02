@@ -3,6 +3,8 @@
         :allow-stack="true"
 
         dom-id="addDevicePrompt"
+
+        ref="modal"
     >
         <template v-slot:toggle>
             <button class="cr-info uk-button">
@@ -134,7 +136,6 @@
 
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
 
-    import UIkit from "uikit";
     import Alert from "./Alert";
 
     export default {
@@ -211,8 +212,9 @@
                 }).then(success => {
                     this.failedToAdd = !success;
 
-                    //TODO: tmp
-                    if (success) UIkit.modal("#addDevicePrompt").hide()
+                    if (success) {
+                        this.$refs.modal.hideModal();
+                    }
                 });
             },
         },

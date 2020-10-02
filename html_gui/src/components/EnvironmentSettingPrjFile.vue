@@ -22,6 +22,8 @@
                 :allow-stack="true"
 
                 dom-id="confirm-delete"
+
+                ref="modal"
             >
 
                 <template v-slot:toggle>
@@ -75,8 +77,6 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import Modal from "./Modal";
 
-    import UIkit from "uikit";
-
     export default {
         name: "EnvironmentSettingPrjFile",
         components: {Modal},
@@ -102,7 +102,7 @@
             },
 
             cancelDelete() {
-                UIkit.modal("#confirm-delete").hide();
+                this.$refs.modal.hideModal();
             },
 
             performDelete() {
@@ -111,10 +111,6 @@
                 this.$router.push({
                     name: "Home"
                 }, _ => {
-                    //TODO: tmp
-                    UIkit.modal("#confirm-delete").hide();
-                    UIkit.modal("#settings-menu").hide();
-
                     this.$store.dispatch("prj/completelyDeleteProjectById", pidToDelete);
                 });
             }
