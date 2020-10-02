@@ -1,6 +1,6 @@
 <template>
     <div
-        class="cr-dev-holder uk-flex uk-flex-middle"
+        class="cr-dev-holder uk-flex uk-flex-middle uk-flex-wrap"
         uk-sortable="group: widgets; handle: .cr-widget-handle-container"
     >
         <div class="cr-dev-holder-empty">

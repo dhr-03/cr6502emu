@@ -165,6 +165,7 @@
 
     .cr-devholder-pool {
         margin-top: 3em;
+        margin-bottom: 3em;
     }
 
 </style>
