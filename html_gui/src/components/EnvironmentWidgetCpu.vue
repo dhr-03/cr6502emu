@@ -27,6 +27,13 @@
         />
 
         <EnvironmentWidgetCpuRegister
+            name="Stack Ptr"
+            :value="widget.displayData.s"
+
+            :length-in-bytes="1"
+        />
+
+        <EnvironmentWidgetCpuRegister
             name="Flags"
             value=""
         >
@@ -84,6 +91,6 @@
 
     .crl-separator {
         background: black;
-        margin: 10px 5px 10px 5px;
+        margin: 5px;
     }
 </style>
