@@ -111,7 +111,7 @@
                         </template>
 
                         <template v-slot:body>
-                            <EnvironmentSettings class="crl-settings-container"/>
+                            <EnvironmentSettingsMenu class="crl-settings-container"/>
                         </template>
 
                         <template v-slot:footer>
@@ -139,12 +139,12 @@
     import {mapGetters, mapActions} from "vuex"
     import Modal from "./Modal";
     import Environment from "../views/Environment";
-    import EnvironmentSettings from "./EnvironmentSettings";
+    import EnvironmentSettingsMenu from "./EnvironmentSettingsMenu";
 
     export default {
         name: "EnvironmentActionbar",
         components: {
-            EnvironmentSettings,
+            EnvironmentSettingsMenu,
             Environment,
             Modal,
             EnvironmentActionbarSeparator,
