@@ -139,7 +139,7 @@
     import Alert from "./Alert";
 
     export default {
-        name: "EnvironmentModalAddDevice",
+        name: "EnvironmentPromptAddDevice",
         mixins: [MixinPreferredNumericBase],
         components: {Alert, NumericInput, Modal},
 

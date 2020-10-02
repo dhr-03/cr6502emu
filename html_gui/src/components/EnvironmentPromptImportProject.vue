@@ -60,7 +60,7 @@
     import UIkit from "uikit";
 
     export default {
-        name: "EnvironmentModalImportProject",
+        name: "EnvironmentPromptImportProject",
         components: {Modal, Alert},
 
         data() {

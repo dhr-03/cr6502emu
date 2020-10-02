@@ -79,9 +79,9 @@
         </table>
 
         <div class="uk-flex uk-flex-around">
-            <EnvironmentModalAddDevice/>
+            <EnvironmentPromptAddDevice/>
 
-            <EnvironmentModalSwapDevices/>
+            <EnvironmentPromptSwapDevices/>
         </div>
 
         <hr>
@@ -118,14 +118,14 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
-    import EnvironmentModalAddDevice from "./EnvironmentModalAddDevice";
-    import EnvironmentModalSwapDevices from "./EnvironmentModalSwapDevices";
+    import EnvironmentPromptAddDevice from "./EnvironmentPromptAddDevice";
+    import EnvironmentPromptSwapDevices from "./EnvironmentPromptSwapDevices";
 
 
     export default {
         name: "EnvironmentSettingPrjDevices",
         mixins: [MixinSettingsPage, MixinPreferredNumericBase],
-        components: {EnvironmentModalSwapDevices, EnvironmentModalAddDevice, EnvironmentNumberContainer},
+        components: {EnvironmentPromptSwapDevices, EnvironmentPromptAddDevice, EnvironmentNumberContainer},
 
         niceName: "Devices",
 

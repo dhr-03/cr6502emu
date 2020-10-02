@@ -52,7 +52,7 @@
             </a>
 
 
-            <EnvironmentModalImportProject/>
+            <EnvironmentPromptImportProject/>
 
         </div>
 
@@ -64,11 +64,11 @@
     import Tools from "../assets/js/tools";
     import {mapGetters, mapActions} from "vuex";
     import Modal from "../components/Modal";
-    import EnvironmentModalImportProject from "../components/EnvironmentModalImportProject";
+    import EnvironmentPromptImportProject from "../components/EnvironmentPromptImportProject";
 
     export default {
         name: "Home",
-        components: {EnvironmentModalImportProject, Modal},
+        components: {EnvironmentPromptImportProject, Modal},
         computed: {
             ...mapGetters("prj", {
                     "projectsList": "getAllProjects"

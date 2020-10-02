@@ -96,7 +96,7 @@
     import UIkit from "uikit";
 
     export default {
-        name: "EnvironmentModalSwapDevices",
+        name: "EnvironmentPromptSwapDevices",
         mixins: [MixinPreferredNumericBase],
         components: {Alert, Modal},
 
