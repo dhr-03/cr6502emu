@@ -98,18 +98,15 @@
                 "editorInitialCode",
                 "initErrorMessage",
                 "targetProgramRomIndex",
+                "currentProjectId",
             ]),
 
             initErrorMessageOrDefault() {
-              return this.initErrorMessage || "Unknown Error";
+                return this.initErrorMessage || "Unknown Error";
             },
         },
 
         methods: {
-            ...mapGetters("env", [
-                "currentProjectId",
-            ]),
-
             ...mapActions("prj", [
                 "loadProjectFromId",
                 "saveCurrentProject",
@@ -128,7 +125,7 @@
         },
 
         async beforeRouteLeave(to, from, next) {
-            if (this.currentProjectId()) {
+            if (this.currentProjectId != null && this.successfulInitialize) {
                 await this.saveCurrentProject();
             }
 
