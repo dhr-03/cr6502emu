@@ -85,7 +85,7 @@
 
                 for (let i = 0; i < this.cappedRowCount; i++) {
                     let sliceStart = i * perRow;
-                    let sliceEnd = Math.min(sliceStart + perRow, this.deviceSize - 1);
+                    let sliceEnd = Math.min(sliceStart + perRow, this.deviceSize);
 
                     rows.push([
                             this.device.start + sliceStart,

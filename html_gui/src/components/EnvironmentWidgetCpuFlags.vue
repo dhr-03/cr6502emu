@@ -1,5 +1,10 @@
 <template>
-    <span>{{ formattedFlags }}</span>
+    <div>
+        <span class="crl-flag" uk-tooltip="Negative">{{ formattedFlags.n }}</span>
+        <span class="crl-flag" uk-tooltip="Overflow">{{ formattedFlags.o }}</span>
+        <span class="crl-flag" uk-tooltip="Zero">{{ formattedFlags.z }}</span>
+        <span class="crl-flag" uk-tooltip="Carry">{{ formattedFlags.c }}</span>
+    </div>
 </template>
 
 <script>
@@ -23,19 +28,16 @@
 
         computed: {
             formattedFlags() {
-                const FLAGS = "cz___-on";
-
-                let formatted = "";
-
-                for (let i = 0; i < FLAGS.length; i++) {
-                    if ((this.value >> i) & 0b1) {
-                        formatted += FLAGS[i].toUpperCase();
-                    } else {
-                        formatted += FLAGS[i];
-                    }
+                function getFlag(value, name) {
+                    return value ? name.toUpperCase() : name;
                 }
 
-                return formatted;
+                return {
+                    n: getFlag(this.value >> 7, "n"),
+                    o: getFlag(this.value >> 6, "o"),
+                    z: getFlag(this.value >> 1, "z"),
+                    c: getFlag(this.value >> 0, "c"),
+                };
             }
         },
 
@@ -46,3 +48,11 @@
         }
     }
 </script>
+
+<style lang="less" scoped>
+    .crl-flag {
+        &:not(:last-child) {
+            margin-right: 0.5em;
+        }
+    }
+</style>

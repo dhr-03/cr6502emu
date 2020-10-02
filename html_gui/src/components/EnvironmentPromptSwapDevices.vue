@@ -2,8 +2,9 @@
     <Modal
         :allow-stack="true"
 
-        content-class="crl-dark-modal"
         dom-id="swapDevicesPrompt"
+
+        ref="modal"
     >
 
         <template v-slot:toggle>
@@ -93,10 +94,8 @@
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
     import Alert from "./Alert";
 
-    import UIkit from "uikit";
-
     export default {
-        name: "EnvironmentModalSwapDevices",
+        name: "EnvironmentPromptSwapDevices",
         mixins: [MixinPreferredNumericBase],
         components: {Alert, Modal},
 
@@ -133,14 +132,11 @@
                 this.swapDevicesByIndex([this.deviceA + 1, this.deviceB + 1]).then(success => {
                     this.failedToSwap = !success;
 
-                    //TODO: tmp
-                    if(success) UIkit.modal("#swapDevicesPrompt").hide();
-                })
+                    if(success) {
+                        this.$refs.modal.hideModal();
+                    }
+                });
             }
         },
     }
 </script>
-
-<style lang="less" scoped>
-    @import "../assets/less/darkModal";
-</style>

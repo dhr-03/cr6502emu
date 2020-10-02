@@ -90,9 +90,8 @@ export const ProjectManagerStore = {
             context.state.timeoutSavePrj = setTimeout(_ => {
                     promise.then(prj => {
                         context.dispatch("saveProjectFromObject", prj, autoSync)
+                            .then(_ => context.state.timeoutSavePrj = null);
                     });
-
-                    context.state.timeoutSavePrj = null;
                 }
                 , DEBOUNCE_DURATION
             );
@@ -193,8 +192,7 @@ export const ProjectManagerStore = {
                     context.commit("env/setStatusIdle", null, {root: true});
 
                 } else {
-                    let schemaErr = context.getters.schemaValidationErrMsg();
-                    let userMessage = "Failed to load project: Invalid schema.\n" + schemaErr;
+                    let userMessage = "Failed to load project: Invalid schema.";
 
                     console.error(userMessage, context.state.__schemaValidator.errors);
 

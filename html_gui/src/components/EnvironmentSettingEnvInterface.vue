@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <div class="uk-margin">
             <label class="uk-form-label">Preferred numeric base</label>
@@ -31,7 +31,7 @@
             >
         </div>
 
-    </form>
+    </div>
 </template>
 
 <script>

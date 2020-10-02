@@ -15,7 +15,7 @@
         <span>Failed to initialize Environment</span>
 
         <br>
-        <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessage }}</code>
+        <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessageOrDefault }}</code>
     </div>
 
     <div v-else>
@@ -32,14 +32,14 @@
             </Alert>
 
             <div class="uk-grid uk-grid-small">
-                <div class="uk-width-expand">
+                <div
+                    @keyup="scheduleCurrentProjectSave"
 
+                    class="uk-width-expand"
+                >
                     <EnvironmentEditor
                         :initial-code="editorInitialCode"
-
-                        :key-up-callback="scheduleCurrentProjectSave"
                     />
-
                 </div>
 
                 <div class="uk-width-auto">
@@ -89,21 +89,24 @@
             EnvironmentActionbar, EnvironmentWidget, EnvironmentWidgetsHolder, EnvironmentEditor
         },
 
-        computed: mapGetters("env", [
-            "isInitializing",
-            "successfulInitialize",
-            "isExecuting",
-            "deviceList",
-            "editorInitialCode",
-            "initErrorMessage",
-            "targetProgramRomIndex",
-        ]),
-
-        methods: {
+        computed: {
             ...mapGetters("env", [
+                "isInitializing",
+                "successfulInitialize",
+                "isExecuting",
+                "deviceList",
+                "editorInitialCode",
+                "initErrorMessage",
+                "targetProgramRomIndex",
                 "currentProjectId",
             ]),
 
+            initErrorMessageOrDefault() {
+                return this.initErrorMessage || "Unknown Error";
+            },
+        },
+
+        methods: {
             ...mapActions("prj", [
                 "loadProjectFromId",
                 "saveCurrentProject",
@@ -122,7 +125,7 @@
         },
 
         async beforeRouteLeave(to, from, next) {
-            if (this.currentProjectId()) {
+            if (this.currentProjectId != null && this.successfulInitialize) {
                 await this.saveCurrentProject();
             }
 
@@ -154,11 +157,13 @@
     }
 
     .cr-devholder-main {
+        max-width: calc(15.5em * 3);
         height: 100%;
     }
 
     .cr-devholder-pool {
         margin-top: 3em;
+        margin-bottom: 3em;
     }
 
 </style>

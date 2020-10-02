@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <div class="uk-margin">
             <label class="uk-form-label">Download Project</label>
@@ -21,8 +21,9 @@
             <Modal
                 :allow-stack="true"
 
-                dom-id="confirm-delete"
-                content-class="crl-dark-modal"
+                dom-id="confirmDeleteProject"
+
+                ref="modal"
             >
 
                 <template v-slot:toggle>
@@ -69,14 +70,12 @@
 
         <a style="display: none" ref="downloadTrick"></a>
 
-    </form>
+    </div>
 </template>
 
 <script>
     import MixinSettingsPage from "./MixinSettingsPage";
     import Modal from "./Modal";
-
-    import UIkit from "uikit";
 
     export default {
         name: "EnvironmentSettingPrjFile",
@@ -103,7 +102,7 @@
             },
 
             cancelDelete() {
-                UIkit.modal("#confirm-delete").hide();
+                this.$refs.modal.hideModal();
             },
 
             performDelete() {
@@ -112,10 +111,6 @@
                 this.$router.push({
                     name: "Home"
                 }, _ => {
-                    //TODO: tmp
-                    UIkit.modal("#confirm-delete").hide();
-                    UIkit.modal("#settings-menu").hide();
-
                     this.$store.dispatch("prj/completelyDeleteProjectById", pidToDelete);
                 });
             }
@@ -125,7 +120,6 @@
 
 <style lang="less" scoped>
     @import "../assets/less/modifierStyles";
-    @import "../assets/less/darkModal";
 
     .crl-button {
         width: 15em; //same width for all

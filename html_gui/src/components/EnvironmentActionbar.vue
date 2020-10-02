@@ -94,9 +94,11 @@
 
                         close-button-type="none"
 
-                        dom-id="settings-menu"
+                        dom-id="settingsMenu"
 
                         content-class="crl-settings-menu"
+
+                        ref="modal"
                     >
                         <template v-slot:toggle>
                             <EnvironmentActionbarButton
@@ -111,15 +113,14 @@
                         </template>
 
                         <template v-slot:body>
-                            <EnvironmentSettings class="crl-settings-container"/>
+                            <EnvironmentSettingsMenu class="crl-settings-container"/>
                         </template>
 
                         <template v-slot:footer>
                             <button
-                                @click="scheduleCurrentProjectSave"
+                                @click="saveChanges"
 
                                 class="uk-button uk-button-primary"
-                                uk-toggle="#settings-menu"
                             >
                                 Save
                             </button>
@@ -139,12 +140,12 @@
     import {mapGetters, mapActions} from "vuex"
     import Modal from "./Modal";
     import Environment from "../views/Environment";
-    import EnvironmentSettings from "./EnvironmentSettings";
+    import EnvironmentSettingsMenu from "./EnvironmentSettingsMenu";
 
     export default {
         name: "EnvironmentActionbar",
         components: {
-            EnvironmentSettings,
+            EnvironmentSettingsMenu,
             Environment,
             Modal,
             EnvironmentActionbarSeparator,
@@ -202,6 +203,12 @@
                 this.systemExecuteOperation();
             },
 
+            saveChanges() {
+                this.$refs.modal.hideModal();
+
+                this.scheduleCurrentProjectSave();
+            }
+
         },
     }
 </script>
@@ -222,11 +229,8 @@
 
 <style lang="less">
     @import "../../node_modules/open-color/open-color";
-    @import "../assets/less/darkModal";
 
     .crl-settings-menu {
-        .crl-dark-modal();
-
         .uk-modal-body {
             height: 100vh; //let uikit cap it to the max value
             overflow: hidden;

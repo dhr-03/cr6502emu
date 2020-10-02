@@ -44,7 +44,7 @@
 
         <div class="uk-text-center">
             <a
-                @change="addProjectAndGo"
+                @click="addProjectAndGo"
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
@@ -52,33 +52,7 @@
             </a>
 
 
-            <Modal
-                :show-footer="false"
-
-                dom-id="importProjectModal"
-                close-button-type="default"
-
-                content-class="crl-dark-modal"
-                class="crl-project-import"
-            >
-
-                <template v-slot:toggle>
-                    <span class="crl-project-import-button">
-                        <font-awesome-icon icon="upload"/>
-                        Import Project
-                    </span>
-                </template>
-
-
-                <template v-slot:header>
-                    <h3 class="uk-light">Upload project</h3>
-                </template>
-
-                <template v-slot:body>
-                    <EnvironmentImportProject :callback="closeImportModal"/>
-                </template>
-
-            </Modal>
+            <EnvironmentPromptImportProject/>
 
         </div>
 
@@ -90,13 +64,11 @@
     import Tools from "../assets/js/tools";
     import {mapGetters, mapActions} from "vuex";
     import Modal from "../components/Modal";
-    import EnvironmentImportProject from "../components/EnvironmentImportProject";
-
-    import UIkit from "uikit";
+    import EnvironmentPromptImportProject from "../components/EnvironmentPromptImportProject";
 
     export default {
         name: "Home",
-        components: {EnvironmentImportProject, Modal},
+        components: {EnvironmentPromptImportProject, Modal},
         computed: {
             ...mapGetters("prj", {
                     "projectsList": "getAllProjects"
@@ -129,10 +101,6 @@
                     }
                 });
             },
-
-            closeImportModal() {
-                UIkit.modal("#importProjectModal").hide();
-            }
         }
     }
 </script>
@@ -171,14 +139,13 @@
     .crl-project-import {
         display: inline-block;
     }
+</style>
 
+<style lang="less">
+    @import "../../node_modules/open-color/open-color";
     .crl-project-import-button {
         margin-left: 3em;
 
         color: @oc-yellow-5;
     }
-</style>
-
-<style lang="less">
-    @import "../assets/less/darkModal";
 </style>

@@ -5,9 +5,9 @@
         data-linenumber="1"
         spellcheck="false"
 
-        @keyup="keyUpCallback"
-
         :contenteditable="editable"
+
+        ref="editor"
     >{{ initialCode }}</pre>
 </template>
 
@@ -38,16 +38,10 @@
                 type: String,
                 default: "",
             },
-
-            keyUpCallback: {
-                type: Function,
-                default: _ => {
-                },
-            }
         },
 
         mounted: function () {
-            let editor = document.querySelector("#editor");
+            let editor = this.$refs.editor;
 
             editor = bililiteRange.fancyText(editor, Prism.highlightElement);
 

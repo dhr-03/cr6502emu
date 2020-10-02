@@ -1,5 +1,5 @@
 <template>
-    <form class="uk-form-stacked">
+    <div class="uk-form-stacked">
 
         <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-light">
             <thead>
@@ -79,9 +79,9 @@
         </table>
 
         <div class="uk-flex uk-flex-around">
-            <EnvironmentModalAddDevice/>
+            <EnvironmentPromptAddDevice/>
 
-            <EnvironmentModalSwapDevices/>
+            <EnvironmentPromptSwapDevices/>
         </div>
 
         <hr>
@@ -107,7 +107,7 @@
             </select>
         </div>
 
-    </form>
+    </div>
 </template>
 
 <script>
@@ -118,14 +118,14 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import EnvironmentNumberContainer from "./EnvironmentNumberContainer";
     import MixinPreferredNumericBase from "./MixinPreferredNumericBase";
-    import EnvironmentModalAddDevice from "./EnvironmentModalAddDevice";
-    import EnvironmentModalSwapDevices from "./EnvironmentModalSwapDevices";
+    import EnvironmentPromptAddDevice from "./EnvironmentPromptAddDevice";
+    import EnvironmentPromptSwapDevices from "./EnvironmentPromptSwapDevices";
 
 
     export default {
         name: "EnvironmentSettingPrjDevices",
         mixins: [MixinSettingsPage, MixinPreferredNumericBase],
-        components: {EnvironmentModalSwapDevices, EnvironmentModalAddDevice, EnvironmentNumberContainer},
+        components: {EnvironmentPromptSwapDevices, EnvironmentPromptAddDevice, EnvironmentNumberContainer},
 
         niceName: "Devices",
 

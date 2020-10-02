@@ -32,7 +32,7 @@
     import EnvironmentSettingPrjDevices from "./EnvironmentSettingPrjDevices";
 
     export default {
-        name: "EnvironmentSettings",
+        name: "EnvironmentSettingsMenu",
         components: {
             EnvironmentSettingPrjMeta,
             EnvironmentSettingPrjFile,

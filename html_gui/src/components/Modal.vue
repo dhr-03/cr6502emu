@@ -4,11 +4,11 @@
             :id="domId"
             :class="{'uk-modal-container': this.container}"
 
-            :uk-modal="ukModalSettings"
+            ref="container"
         >
             <div
                 :class="{'uk-margin-auto-vertical': this.center, [this.contentClass]: this.contentClass}"
-                class="uk-modal-dialog uk-overflow-auto"
+                class="crl-dark-modal uk-modal-dialog uk-overflow-auto"
             >
                 <font-awesome-icon
                     v-if="showCloseButton"
@@ -45,9 +45,7 @@
         </div>
 
         <a
-            :href="toggleAction"
-
-            uk-toggle
+            @click="toggleModal"
         >
             <slot
                 name="toggle"
@@ -59,6 +57,8 @@
 </template>
 
 <script>
+    import UIkit from "uikit";
+
     export default {
         name: "Modal",
 
@@ -75,7 +75,7 @@
 
             closeButtonType: {
                 type: String,
-                default: "none",
+                default: "default",
 
                 validator: val => ["default", "outside", "none"].indexOf(val) !== -1,
             },
@@ -122,17 +122,13 @@
 
         },
 
+        data() {
+            return {
+                ukModal: null,
+            };
+        },
+
         computed: {
-            ukModalSettings() {
-                return `esc-close: ${this.escClose}; bg-close: ${this.bgClose};stack: ${this.allowStack}`;
-            },
-
-
-            toggleAction() {
-                return `#${this.domId}`;
-            },
-
-
             showCloseButton() {
                 return this.closeButtonType !== "none";
             },
@@ -140,6 +136,50 @@
             closeButtonClass() {
                 return `uk-modal-close-${this.closeButtonType}`;
             }
-        }
+        },
+
+        methods: {
+            toggleModal() {
+                this.ukModal.toggle();
+            },
+
+            showModal() {
+                this.ukModal.show();
+            },
+
+            hideModal() {
+                this.ukModal.hide();
+
+            },
+        },
+
+        mounted() {
+            // lets make sure that everything is mounted.
+            this.$nextTick(_ => {
+                this.ukModal = UIkit.modal(this.$refs.container, {
+                    escClose: this.escClose,
+                    bgClose: this.bgClose,
+
+                    stack: this.allowStack,
+                });
+            });
+        },
+
+        beforeDestroy() {
+            this.ukModal.$destroy(true);
+        },
     }
 </script>
+
+<style lang="less" scoped>
+    @import "../../node_modules/open-color/open-color";
+
+    .crl-dark-modal {
+        background: @oc-gray-9;
+        color: #fff;
+
+        .uk-modal-header, .uk-modal-footer {
+            background: lighten(@oc-gray-9, 5%);
+        }
+    }
+</style>
