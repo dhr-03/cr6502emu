@@ -32,9 +32,9 @@ pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::PlaceHolder);
 
 pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::PlaceHolder);
 
-pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::PlaceHolder);
+pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::None);
 
-pub const PHP: AnnotatedOpcode = (php, AddressingModifier::PlaceHolder);
+pub const PHP: AnnotatedOpcode = (php, AddressingModifier::None);
 
 pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::PlaceHolder);
 

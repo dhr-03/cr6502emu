@@ -195,12 +195,13 @@ pub fn txs(inter: &mut CPUInterface) {
     inter.reg.s = inter.reg.x;
 }
 
-//TODO: impl
-pub fn pha(inter: &mut CPUInterface) {}
+pub fn pha(inter: &mut CPUInterface) {
+    stack_push(inter, inter.reg.a);
+}
 
-
-//TODO: impl
-pub fn php(inter: &mut CPUInterface) {}
+pub fn php(inter: &mut CPUInterface) {
+    stack_push(inter, inter.reg.p);
+}
 
 
 //TODO: impl
