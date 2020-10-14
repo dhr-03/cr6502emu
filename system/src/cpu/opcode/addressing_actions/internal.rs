@@ -347,8 +347,23 @@ pub fn asb_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressing
     op_fn(inter);
 }
 
-// #######  #######
-// #######  #######
+// ####### SRT (Stack Return from Subroutine) #######
+pub use waste_cycle as srt_1;
+
+pub use waste_cycle as srt_2;
+
+pub fn srt_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.reg.itr = stack_pull(inter);
+}
+
+pub fn srt_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pch = stack_pull(inter);
+    inter.mem.set_data(pch);
+}
+
+pub fn srt_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    op_fn(inter);
+}
 
 
 

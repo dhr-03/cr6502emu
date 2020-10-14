@@ -382,8 +382,11 @@ pub fn jmp(inter: &mut CPUInterface) {
 
 pub use jmp as jsr;
 
-//TODO: impl
-pub fn rts(inter: &mut CPUInterface) {}
+pub fn rts(inter: &mut CPUInterface) {
+    jmp(inter);
+
+    inter.reg.pc += 1;
+}
 
 
 /* #######################  Branches  ####################### */

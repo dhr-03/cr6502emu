@@ -88,8 +88,13 @@ pub const SPL: [AddressingFn; 3] = [ //stack pull
     execute_op_fn,
 ];
 
-//TODO: implement
-pub const SRT: [AddressingFn; 0] = []; //stack RTS
+pub const SRT: [AddressingFn; 5] = [//stack RTS
+    srt_1,
+    srt_2,
+    srt_3,
+    srt_4,
+    srt_5,
+];
 
 //TODO: implement
 pub const SBK: [AddressingFn; 0] = []; //stack BRK
