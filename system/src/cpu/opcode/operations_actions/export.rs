@@ -28,9 +28,9 @@ pub const TYA: AnnotatedOpcode = (tya, AddressingModifier::None);
 
 /* #######################  Stack Operations  ####################### */
 
-pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::PlaceHolder);
+pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::None);
 
-pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::PlaceHolder);
+pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::None);
 
 pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::None);
 
