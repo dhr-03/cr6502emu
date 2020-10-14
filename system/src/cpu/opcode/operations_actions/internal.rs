@@ -17,9 +17,8 @@ enum FlagPositionOffset {
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen]
+#[wasm_bindgen(inline_js = "export function alert_2(a, b) {alert(a + b)}")]
 extern {
-    #[wasm_bindgen(inline_js = "function alert_2(a, b) {alert(a + b)}")]
     fn alert_2(a: &str, b: &str);
 }
 
@@ -460,7 +459,7 @@ pub fn sed(_inter: &mut CPUInterface) {
     on_unimplemented_feature("Decimal Mode");
 }
 
-pub fn sei(inter: &mut CPUInterface) {
+pub fn sei(_inter: &mut CPUInterface) {
     on_unsupported_feature("Interrupts");
 }
 
@@ -472,8 +471,9 @@ pub fn nop(_inter: &mut CPUInterface) {
     //do_nothing();
 }
 
-//TODO: impl
-pub fn rti(inter: &mut CPUInterface) {}
+pub fn rti(_inter: &mut CPUInterface) {
+    on_unsupported_feature("Interrupts");
+}
 
 
 
