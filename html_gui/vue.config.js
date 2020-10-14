@@ -9,5 +9,7 @@ module.exports = {
         })
     },
 
-    productionSourceMap: false
+    productionSourceMap: false,
+
+    //publicPath: "/cr6502emu_demo/" //used for gh pages
 }
