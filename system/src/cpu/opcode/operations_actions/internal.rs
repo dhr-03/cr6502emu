@@ -108,10 +108,10 @@ fn stack_push(inter: &mut CPUInterface, value: u8) {
 }
 
 fn stack_pull(inter: &mut CPUInterface) -> u8 {
+    inter.reg.s += 1;
+
     inter.mem.set_addr(0x0100);
     inter.mem.set_addr_lo(inter.reg.s);
-
-    inter.reg.s += 1;
 
     inter.mem.read_at_addr()
 }
@@ -203,14 +203,17 @@ pub fn php(inter: &mut CPUInterface) {
     stack_push(inter, inter.reg.p);
 }
 
+pub fn pla(inter: &mut CPUInterface) {
+    let value = stack_pull(inter);
+    inter.reg.a = value;
 
-//TODO: impl
-pub fn pla(inter: &mut CPUInterface) {}
+    set_flag_is_zero(inter, value);
+    set_flag_is_negative(inter, value);
+}
 
-
-//TODO: impl
-pub fn plp(inter: &mut CPUInterface) {}
-
+pub fn plp(inter: &mut CPUInterface) {
+    inter.reg.p = stack_pull(inter);
+}
 
 /* #######################  Logical  ####################### */
 pub fn and(inter: &mut CPUInterface) {

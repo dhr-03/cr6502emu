@@ -36,9 +36,9 @@ pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::None);
 
 pub const PHP: AnnotatedOpcode = (php, AddressingModifier::None);
 
-pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::PlaceHolder);
+pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::None);
 
-pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::PlaceHolder);
+pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::None);
 
 
 /* #######################  Logical  ####################### */
