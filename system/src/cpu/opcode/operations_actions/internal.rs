@@ -1,5 +1,10 @@
 use crate::cpu::CPUInterface;
 
+use super::super::shared::{
+    stack_push,
+    stack_pull,
+};
+
 // ############### Const ###############
 #[allow(dead_code)]
 #[repr(u8)]
@@ -95,25 +100,6 @@ fn alu_sub__flag_zn(inter: &mut CPUInterface, val_1: u8, val_2: u8) -> u8 {
     set_flag_is_negative(inter, inter.reg.alu);
 
     inter.reg.alu
-}
-
-fn stack_push(inter: &mut CPUInterface, value: u8) {
-    inter.mem.set_addr(0x0100);
-    inter.mem.set_addr_lo(inter.reg.s);
-
-    inter.reg.s -= 1;
-
-    inter.mem.set_data(value);
-    inter.mem.write_at_addr();
-}
-
-fn stack_pull(inter: &mut CPUInterface) -> u8 {
-    inter.reg.s += 1;
-
-    inter.mem.set_addr(0x0100);
-    inter.mem.set_addr_lo(inter.reg.s);
-
-    inter.mem.read_at_addr()
 }
 
 // ############### Operations ###############
@@ -390,17 +376,11 @@ pub fn ror(inter: &mut CPUInterface) {
 
 /* #######################  Jumps & Calls  ####################### */
 pub fn jmp(inter: &mut CPUInterface) {
-    let mut new_addr: u16;
-
-    new_addr = inter.reg.itr as u16;
-    new_addr |= (inter.mem.data() as u16) << 8;
-
-    inter.reg.pc = new_addr;
+    inter.reg.pc = inter.reg.itr as u16;
+    inter.reg.pc |= (inter.mem.data() as u16) << 8;
 }
 
-//TODO: impl
-pub fn jsr(inter: &mut CPUInterface) {}
-
+pub use jmp as jsr;
 
 //TODO: impl
 pub fn rts(inter: &mut CPUInterface) {}

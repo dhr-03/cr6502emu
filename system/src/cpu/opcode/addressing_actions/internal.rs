@@ -2,6 +2,11 @@ use super::super::{InstructionFn, AddressingModifier};
 
 use crate::cpu::CPUInterface;
 
+use super::super::shared::{
+    stack_push,
+    stack_pull,
+};
+
 //pub fn x_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
 
 //pub fn {mode}_[1-9](...)
@@ -319,11 +324,24 @@ pub fn idx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addre
 // ####### ASB (ABS JUMP) #######
 pub fn asb_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
-
-    inter.reg.itr = inter.mem.data()
+    inter.reg.itr = inter.mem.data();
 }
 
-pub fn asb_2(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+pub use waste_cycle as asb_2;
+
+pub fn asb_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pch = (inter.reg.pc >> 8) as u8;
+
+    stack_push(inter, pch);
+}
+
+pub fn asb_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pcl = inter.reg.pc as u8;
+
+    stack_push(inter, pcl);
+}
+
+pub fn asb_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
 
     op_fn(inter);
