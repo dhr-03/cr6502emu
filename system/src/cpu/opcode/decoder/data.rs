@@ -13,25 +13,25 @@ mod __table {
     const INVALID_OPC: DecodedInstruction = (&IMP, NOP);
     pub static DECODE_TABLE: [DecodedInstruction; 256] = [
         (&IMP, BRK), (&IXD, ORA), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZP_, ORA), (&ZP_, ASL), INVALID_OPC,
-        (&IMP, PHP), (&IMM, ORA), (&A__, ASL), INVALID_OPC, INVALID_OPC, (&ABS, ORA), (&ABS, ASL), INVALID_OPC,
+        (&SPH, PHP), (&IMM, ORA), (&A__, ASL), INVALID_OPC, INVALID_OPC, (&ABS, ORA), (&ABS, ASL), INVALID_OPC,
         //
         (&REL, BPL), (&IDX, ORA), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZPX, ORA), (&ZPX, ASL), INVALID_OPC,
         (&IMP, CLC), (&ABY, ORA), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ABX, ORA), (&ABX, ASL), INVALID_OPC,
         //
         (&ASB, JSR), (&IXD, AND), INVALID_OPC, INVALID_OPC, (&ZP_, BIT), (&ZP_, AND), (&ZP_, ROL), INVALID_OPC,
-        (&IMP, PLP), (&IMM, AND), (&A__, ROL), INVALID_OPC, (&ABS, BIT), (&ABS, AND), (&ABS, ROL), INVALID_OPC,
+        (&SPL, PLP), (&IMM, AND), (&A__, ROL), INVALID_OPC, (&ABS, BIT), (&ABS, AND), (&ABS, ROL), INVALID_OPC,
         //
         (&REL, BMI), (&IDX, AND), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZPX, AND), (&ZPX, ROL), INVALID_OPC,
         (&IMP, SEC), (&ABY, AND), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ABX, AND), (&ABX, ROL), INVALID_OPC,
         //
         (&SRT, RTI), (&IXD, EOR), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZP_, EOR), (&ZP_, LSR), INVALID_OPC,
-        (&IMP, PHA), (&IMM, EOR), (&A__, LSR), INVALID_OPC, (&ABS, JMP), (&ABS, EOR), (&ABS, LSR), INVALID_OPC,
+        (&SPH, PHA), (&IMM, EOR), (&A__, LSR), INVALID_OPC, (&ABS, JMP), (&ABS, EOR), (&ABS, LSR), INVALID_OPC,
         //
         (&REL, BVC), (&IDX, EOR), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZPX, EOR), (&ZPX, LSR), INVALID_OPC,
         (&IMP, CLI), (&ABY, EOR), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ABX, EOR), (&ABX, LSR), INVALID_OPC,
         //
         (&SRT, RTS), (&IXD, ADC), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZP_, ADC), (&ZP_, ROR), INVALID_OPC,
-        (&IMP, PLA), (&IMM, ADC), (&A__, ROR), INVALID_OPC, (&IND, JMP), (&ABS, ADC), (&ABS, ROR), INVALID_OPC,
+        (&SPL, PLA), (&IMM, ADC), (&A__, ROR), INVALID_OPC, (&IND, JMP), (&ABS, ADC), (&ABS, ROR), INVALID_OPC,
         //
         (&REL, BVS), (&IDX, ADC), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ZPX, ADC), (&ZPX, ROR), INVALID_OPC,
         (&IMP, SEI), (&ABY, ADC), INVALID_OPC, INVALID_OPC, INVALID_OPC, (&ABX, ADC), (&ABX, ROR), INVALID_OPC,

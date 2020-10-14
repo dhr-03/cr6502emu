@@ -34,6 +34,10 @@ fn execute_with_read_or_write(inter: &mut CPUInterface, op_fn: InstructionFn, op
 
 pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
 
+pub fn execute_op_fn(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    op_fn(inter);
+}
+
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);

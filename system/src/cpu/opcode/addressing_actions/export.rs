@@ -72,11 +72,16 @@ pub const IXD: [AddressingFn; 4] = [
 //TODO: implement
 pub const ASB: [AddressingFn; 0] = []; //absolute JSR
 
-//TODO: implement
-pub const SPH: [AddressingFn; 0] = []; //stack push
+pub const SPH: [AddressingFn; 2] = [ //stack push
+    waste_cycle,
+    execute_op_fn,
+];
 
-//TODO: implement
-pub const SPL: [AddressingFn; 0] = []; //stack pull
+pub const SPL: [AddressingFn; 3] = [ //stack pull
+    waste_cycle,
+    waste_cycle,
+    execute_op_fn,
+];
 
 //TODO: implement
 pub const SRT: [AddressingFn; 0] = []; //stack RTS
