@@ -102,7 +102,11 @@ fn alu_sub__flag_zn(inter: &mut CPUInterface, val_1: u8, val_2: u8) -> u8 {
     inter.reg.alu
 }
 
-// ############### Operations ###############
+//pub as it is reexported
+pub fn set_pc_from_itr_and_data(inter: &mut CPUInterface) {
+    inter.reg.pc = inter.reg.itr as u16;
+    inter.reg.pc |= (inter.mem.data() as u16) << 8;
+}
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {
@@ -375,15 +379,12 @@ pub fn ror(inter: &mut CPUInterface) {
 
 
 /* #######################  Jumps & Calls  ####################### */
-pub fn jmp(inter: &mut CPUInterface) {
-    inter.reg.pc = inter.reg.itr as u16;
-    inter.reg.pc |= (inter.mem.data() as u16) << 8;
-}
+pub use set_pc_from_itr_and_data as jmp;
 
-pub use jmp as jsr;
+pub use set_pc_from_itr_and_data as jsr;
 
 pub fn rts(inter: &mut CPUInterface) {
-    jmp(inter);
+    set_pc_from_itr_and_data(inter);
 
     inter.reg.pc += 1;
 }

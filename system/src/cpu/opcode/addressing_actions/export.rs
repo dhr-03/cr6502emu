@@ -78,14 +78,14 @@ pub const ASB: [AddressingFn; 5] = [ //absolute JSR
 ];
 
 pub const SPH: [AddressingFn; 2] = [ //stack push
-    waste_cycle,
-    execute_op_fn,
+    sph_1,
+    sph_2,
 ];
 
 pub const SPL: [AddressingFn; 3] = [ //stack pull
-    waste_cycle,
-    waste_cycle,
-    execute_op_fn,
+    spl_1,
+    spl_2,
+    spl_3,
 ];
 
 pub const SRT: [AddressingFn; 5] = [//stack RTS

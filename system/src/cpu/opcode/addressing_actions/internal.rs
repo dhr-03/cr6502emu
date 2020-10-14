@@ -347,6 +347,18 @@ pub fn asb_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: Addressing
     op_fn(inter);
 }
 
+// ####### SPH (Stack Push) #######
+pub use waste_cycle as sph_1;
+
+pub use execute_op_fn as sph_2;
+
+// ####### SPL (Stack Pull) #######
+pub use waste_cycle as spl_1;
+
+pub use waste_cycle as spl_2;
+
+pub use execute_op_fn as spl_3;
+
 // ####### SRT (Stack Return from Subroutine) #######
 pub use waste_cycle as srt_1;
 
@@ -364,11 +376,3 @@ pub fn srt_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: Addressin
 pub fn srt_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     op_fn(inter);
 }
-
-
-
-
-
-
-
-
