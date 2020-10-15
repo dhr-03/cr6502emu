@@ -35,14 +35,10 @@ impl DeviceTrait for Rom {
         self.widget_update = true;
     }
 
-    fn update_widget(&mut self) -> Option<Map> {
-        let pkg = Map::new();
-
-        utils::js_map_add_entry_bool(&pkg, "update", self.widget_update);
+    fn update_widget(&mut self, pkg: &Map) {
+        utils::js_map_add_entry_bool(pkg, "update", self.widget_update);
 
         self.widget_update = false;
-
-        Some(pkg)
     }
 
     fn device_id(&self) -> DeviceId {
