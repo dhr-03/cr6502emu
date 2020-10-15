@@ -138,7 +138,7 @@ pub const SEI: AnnotatedOpcode = (sei, AddressingModifier::None);
 
 /* #######################  System Functions  ####################### */
 
-pub const BRK: AnnotatedOpcode = (brk, AddressingModifier::PlaceHolder);
+pub const BRK: AnnotatedOpcode = (brk, AddressingModifier::None);
 
 pub const NOP: AnnotatedOpcode = (nop, AddressingModifier::None);
 
