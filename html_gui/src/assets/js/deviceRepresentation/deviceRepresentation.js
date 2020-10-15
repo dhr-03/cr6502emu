@@ -16,6 +16,9 @@ export class DeviceRepresentation {
         // The Widget.
         this._widget = new DeviceWidget();
 
+        // A Map used to exchange information with rust.
+        this._updatePkg = new Map();
+
     }
 
 
@@ -65,6 +68,10 @@ export class DeviceRepresentation {
         return this._widget;
     }
 
+    get updatePkg() {
+        return this._updatePkg;
+    }
+
     getRepresentationString(numericBase=10) {
         let addrStart = this.start.toString(numericBase);
         let addrEnd = this.end.toString(numericBase);
@@ -73,15 +80,11 @@ export class DeviceRepresentation {
     }
 
 
-    getWasmSetupPkg() {
-        return new Map();
-    }
-
-    setupWidget(pkg, memArrayBuilder) {
+    setupWidget(memArrayBuilder) {
         console.warn("Unimplemented setup");
     }
 
-    updateWidget(pkg) {
+    updateWidget() {
         console.warn("Unimplemented updater");
     }
 

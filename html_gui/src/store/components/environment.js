@@ -378,8 +378,7 @@ export const EnvironmentStore = {
         },
 
         setupDeviceWidgetByIndexAndRepr(context, {index, device}) {
-            let wasmSetupPackage = device.getWasmSetupPkg();
-            let widgetSetupPackage = context.getters.__system.device_widget_setup_by_index(index, wasmSetupPackage);
+            context.getters.__system.device_widget_setup_by_index(index, device.updatePkg);
 
             let getMemFn = function () {
                 let ptr = context.getters.__system.device_data_ptr_by_index(index);
@@ -387,16 +386,16 @@ export const EnvironmentStore = {
                 return new Uint8Array(context.getters.__system.memory.buffer, ptr, device.size);
             };
 
-            device.setupWidget(widgetSetupPackage, getMemFn);
+            device.setupWidget(getMemFn);
         },
 
         updateDeviceWidgetByIndex(context, index) {
             let device = context.state.devices[index];
 
             if (device.constructor.needsExplicitUpdates) {
-                let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+                context.getters.__system.device_widget_update_by_index(index, device.updatePkg);
 
-                device.updateWidget(updatePackage);
+                device.updateWidget();
             }
         },
 

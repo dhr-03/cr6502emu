@@ -32,12 +32,12 @@ export class RepresentedAsciiBuffer extends DeviceRepresentation {
     }
 
 
-    setupWidget(pkg) {
-        this.widget.displayData.in = pkg.get("in");
-        this.widget.displayData.out = pkg.get("out");
+    setupWidget() {
+        this.widget.displayData.in = this.updatePkg.get("in");
+        this.widget.displayData.out = this.updatePkg.get("out");
     }
 
-    updateWidget(pkg) {
+    updateWidget() {
         //doNothing();
     }
 }

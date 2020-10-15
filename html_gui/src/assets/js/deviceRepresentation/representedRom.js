@@ -32,12 +32,12 @@ export class RepresentedRom extends DeviceRepresentation {
     }
 
 
-    setupWidget(pkg, memArrayBuilder) {
+    setupWidget(memArrayBuilder) {
         this.widget.displayData.memArray = memArrayBuilder();
     }
 
-    updateWidget(pkg, memArrayBuilder) {
-        if (pkg.get("update")) {
+    updateWidget(memArrayBuilder) {
+        if (this.updatePkg.get("update")) {
             // Vue doesnt support typed arrays for reactivity, so we need to force an update.
             this.widget.displayData.__ob__.dep.notify();
         }
