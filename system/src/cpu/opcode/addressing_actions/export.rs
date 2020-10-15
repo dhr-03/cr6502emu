@@ -100,6 +100,3 @@ pub const SRT: [AddressingFn; 5] = [//stack RTS
     srt_4,
     srt_5,
 ];
-
-//TODO: implement
-pub const SBK: [AddressingFn; 0] = []; //stack BRK

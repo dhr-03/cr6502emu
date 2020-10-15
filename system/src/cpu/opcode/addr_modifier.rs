@@ -6,8 +6,6 @@ pub enum AddressingModifier {
     Read,
     Write,
     RMW,
-
-    PlaceHolder, //TODO: remove
 }
 
 impl AddressingModifier {

@@ -470,8 +470,9 @@ pub fn sei(_inter: &mut CPUInterface) {
 }
 
 /* #######################  System Functions  ####################### */
-//TODO: impl
-pub fn brk(inter: &mut CPUInterface) {}
+pub fn brk(_inter: &mut CPUInterface) {
+    on_unsupported_feature("Interrupts");
+}
 
 pub fn nop(_inter: &mut CPUInterface) {
     //do_nothing();
