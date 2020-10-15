@@ -82,7 +82,11 @@ impl DeviceTrait for CPU {
     fn reset_hard(&mut self) {
         self.reset_system();
     }
-    
+
+    fn setup_widget(&mut self, pkg: &Map) {
+        self.update_widget(pkg);
+    }
+
     fn update_widget(&mut self, pkg: &Map) {
         // see crate::cpu::register::RegisterContainer for more info.
 
