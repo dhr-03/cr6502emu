@@ -142,4 +142,4 @@ pub const BRK: AnnotatedOpcode = (brk, AddressingModifier::PlaceHolder);
 
 pub const NOP: AnnotatedOpcode = (nop, AddressingModifier::None);
 
-pub const RTI: AnnotatedOpcode = (rti, AddressingModifier::PlaceHolder);
+pub const RTI: AnnotatedOpcode = (rti, AddressingModifier::None);
