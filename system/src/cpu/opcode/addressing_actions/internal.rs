@@ -2,6 +2,11 @@ use super::super::{InstructionFn, AddressingModifier};
 
 use crate::cpu::CPUInterface;
 
+use super::super::shared::{
+    stack_push,
+    stack_pull,
+};
+
 //pub fn x_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
 
 //pub fn {mode}_[1-9](...)
@@ -33,6 +38,10 @@ fn execute_with_read_or_write(inter: &mut CPUInterface, op_fn: InstructionFn, op
 // ############### Functions ###############
 
 pub fn waste_cycle(_inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {}
+
+pub fn execute_op_fn(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    op_fn(inter);
+}
 
 // ####### Implied #######
 pub fn imp(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
@@ -315,23 +324,55 @@ pub fn idx_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addre
 // ####### ASB (ABS JUMP) #######
 pub fn asb_1(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
-
-    inter.reg.itr = inter.mem.data()
+    inter.reg.itr = inter.mem.data();
 }
 
-pub fn asb_2(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+pub use waste_cycle as asb_2;
+
+pub fn asb_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pch = (inter.reg.pc >> 8) as u8;
+
+    stack_push(inter, pch);
+}
+
+pub fn asb_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pcl = inter.reg.pc as u8;
+
+    stack_push(inter, pcl);
+}
+
+pub fn asb_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
     read_at_pc_inc(inter);
 
     op_fn(inter);
 }
 
-// #######  #######
-// #######  #######
+// ####### SPH (Stack Push) #######
+pub use waste_cycle as sph_1;
 
+pub use execute_op_fn as sph_2;
 
+// ####### SPL (Stack Pull) #######
+pub use waste_cycle as spl_1;
 
+pub use waste_cycle as spl_2;
 
+pub use execute_op_fn as spl_3;
 
+// ####### SRT (Stack Return from Subroutine) #######
+pub use waste_cycle as srt_1;
 
+pub use waste_cycle as srt_2;
 
+pub fn srt_3(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.reg.itr = stack_pull(inter);
+}
 
+pub fn srt_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    let pch = stack_pull(inter);
+    inter.mem.set_data(pch);
+}
+
+pub fn srt_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    op_fn(inter);
+}

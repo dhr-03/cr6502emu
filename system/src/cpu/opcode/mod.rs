@@ -4,6 +4,8 @@ mod operations_actions;
 mod decoder;
 mod addr_modifier;
 
+mod shared;
+
 pub use addressing_actions::export as addressing;
 pub use operations_actions::export as operations;
 

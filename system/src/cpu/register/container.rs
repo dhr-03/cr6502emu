@@ -67,7 +67,6 @@ impl RegisterContainer {
         tmp
     }
 
-    //TODO reset vector
     pub fn reset(&mut self) {
         self.alu = 0;
 
@@ -78,7 +77,7 @@ impl RegisterContainer {
         self.p = 0;
 
         self.pc = 0;
-        self.s = 0;
+        self.s = 0xFF;
 
         self.itr = 0;
     }
