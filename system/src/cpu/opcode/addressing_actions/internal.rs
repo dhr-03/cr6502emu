@@ -32,7 +32,7 @@ fn execute_with_read_or_write(inter: &mut CPUInterface, op_fn: InstructionFn, op
 }
 
 // A few functions do exactly the same thing, but with different names.
-// I'm doing this simplicity and to avoid bugs in the future,
+// I'm doing this for simplicity and to avoid bugs in the future,
 // surely the compiler will detect those and "unify" them.
 
 // ############### Functions ###############
@@ -105,10 +105,8 @@ pub use zp_1 as zpx_1;
 pub use waste_cycle as zpx_2;
 
 pub fn zpx_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr(0);
-
-    inter.mem.set_addr_lo(
-        inter.mem.data() + inter.reg.x //wrapping add
+    inter.mem.set_addr(
+        (inter.mem.data() + inter.reg.x) as u16 //wrapping add
     );
 
     __zp_common(inter, op_fn, op_mod);
@@ -120,10 +118,8 @@ pub use zp_1 as zpy_1;
 pub use waste_cycle as zpy_2;
 
 pub fn zpy_3(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: AddressingModifier) {
-    inter.mem.set_addr(0);
-
-    inter.mem.set_addr_lo(
-        inter.mem.data() + inter.reg.y //wrapping add
+    inter.mem.set_addr(
+        (inter.mem.data() + inter.reg.y) as u16 //wrapping add
     );
 
     execute_with_read_or_write(inter, op_fn, op_mod);
@@ -262,6 +258,28 @@ fn aby_extra_1(inter: &mut CPUInterface, op_fn: InstructionFn, op_mod: Addressin
     inter.mem.set_addr(new_addr);
 
     execute_with_read_or_write(inter, op_fn, op_mod);
+}
+
+// ####### IND (Absolute Indirect) #######
+pub use abs_1 as ind_1;
+
+pub use abs_2 as ind_2;
+
+pub use waste_cycle as ind_3;
+
+pub fn ind_4(inter: &mut CPUInterface, _op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr_hi(inter.mem.data());
+    inter.mem.set_addr_lo(inter.reg.itr);
+
+    inter.reg.itr = inter.mem.read_at_addr();
+}
+
+pub fn ind_5(inter: &mut CPUInterface, op_fn: InstructionFn, _op_mod: AddressingModifier) {
+    inter.mem.set_addr(inter.mem.addr() + 1);
+
+    inter.mem.read_at_addr();
+
+    op_fn(inter);
 }
 
 // ####### IXD (ZP Indexed Indirect with X) #######

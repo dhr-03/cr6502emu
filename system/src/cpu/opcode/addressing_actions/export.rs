@@ -52,8 +52,13 @@ pub const ABY: [AddressingFn; 3] = [
     aby_3,
 ];
 
-//TODO: implement
-pub const IND: [AddressingFn; 0] = [];
+pub const IND: [AddressingFn; 5] = [
+    ind_1,
+    ind_2,
+    ind_3,
+    ind_4,
+    ind_5,
+];
 
 pub const IDX: [AddressingFn; 4] = [
     idx_1,
