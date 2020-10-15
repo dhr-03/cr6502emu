@@ -17,7 +17,7 @@ pub trait DeviceTrait {
     /// Takes a JS Map and uses that data to setup the device and/or widget.
     ///
     /// After that, returns an new Map containing relevant information and an update package.
-    fn setup_widget(&mut self, data: Map) -> Option<Map> {
+    fn setup_widget(&mut self, data: &Map) -> Option<Map> {
         self.update_widget()
     }
 

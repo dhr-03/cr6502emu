@@ -150,7 +150,7 @@ impl System {
         }
     }
 
-    pub fn device_widget_setup_by_index(&mut self, index: usize, data: Map) -> Option<Map> {
+    pub fn device_widget_setup_by_index(&mut self, index: usize, data: &Map) -> Option<Map> {
         if index == 0 {
             self.cpu.setup_widget(data)
         } else {

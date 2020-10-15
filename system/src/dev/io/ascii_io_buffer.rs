@@ -35,7 +35,7 @@ impl DeviceTrait for AsciiIOBuffer {
         self.reset_system();
     }
 
-    fn setup_widget(&mut self, data: Map) -> Option<Map> {
+    fn setup_widget(&mut self, _data: &Map) -> Option<Map> {
         let pkg = Map::new();
 
         pkg.set(&JsValue::from_str("in"), &self.ascii_in);

@@ -74,7 +74,7 @@ impl DeviceTrait for PixelScreen {
         self.reset_system();
     }
 
-    fn setup_widget(&mut self, _data: Map) -> Option<Map> {
+    fn setup_widget(&mut self, _data: &Map) -> Option<Map> {
         let pkg = Map::new();
 
         pkg.set(&JsValue::from_str("canvas"), &self.canvas);
