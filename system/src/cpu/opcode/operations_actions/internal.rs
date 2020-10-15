@@ -1,5 +1,10 @@
 use crate::cpu::CPUInterface;
 
+use super::super::shared::{
+    stack_push,
+    stack_pull,
+};
+
 // ############### Const ###############
 #[allow(dead_code)]
 #[repr(u8)]
@@ -96,8 +101,11 @@ fn alu_sub__flag_zn(inter: &mut CPUInterface, val_1: u8, val_2: u8) -> u8 {
     inter.reg.alu
 }
 
-
-// ############### Operations ###############
+//pub as it is reexported
+pub fn set_pc_from_itr_and_data(inter: &mut CPUInterface) {
+    inter.reg.pc = inter.reg.itr as u16;
+    inter.reg.pc |= (inter.mem.data() as u16) << 8;
+}
 
 /* #######################  Load/Store Operations  ####################### */
 pub fn lda(inter: &mut CPUInterface) {
@@ -176,21 +184,25 @@ pub fn txs(inter: &mut CPUInterface) {
     inter.reg.s = inter.reg.x;
 }
 
-//TODO: impl
-pub fn pha(inter: &mut CPUInterface) {}
+pub fn pha(inter: &mut CPUInterface) {
+    stack_push(inter, inter.reg.a);
+}
 
+pub fn php(inter: &mut CPUInterface) {
+    stack_push(inter, inter.reg.p);
+}
 
-//TODO: impl
-pub fn php(inter: &mut CPUInterface) {}
+pub fn pla(inter: &mut CPUInterface) {
+    let value = stack_pull(inter);
+    inter.reg.a = value;
 
+    set_flag_is_zero(inter, value);
+    set_flag_is_negative(inter, value);
+}
 
-//TODO: impl
-pub fn pla(inter: &mut CPUInterface) {}
-
-
-//TODO: impl
-pub fn plp(inter: &mut CPUInterface) {}
-
+pub fn plp(inter: &mut CPUInterface) {
+    inter.reg.p = stack_pull(inter);
+}
 
 /* #######################  Logical  ####################### */
 pub fn and(inter: &mut CPUInterface) {
@@ -366,21 +378,15 @@ pub fn ror(inter: &mut CPUInterface) {
 
 
 /* #######################  Jumps & Calls  ####################### */
-pub fn jmp(inter: &mut CPUInterface) {
-    let mut new_addr: u16;
+pub use set_pc_from_itr_and_data as jmp;
 
-    new_addr = inter.reg.itr as u16;
-    new_addr |= (inter.mem.data() as u16) << 8;
+pub use set_pc_from_itr_and_data as jsr;
 
-    inter.reg.pc = new_addr;
+pub fn rts(inter: &mut CPUInterface) {
+    set_pc_from_itr_and_data(inter);
+
+    inter.reg.pc += 1;
 }
-
-//TODO: impl
-pub fn jsr(inter: &mut CPUInterface) {}
-
-
-//TODO: impl
-pub fn rts(inter: &mut CPUInterface) {}
 
 
 /* #######################  Branches  ####################### */

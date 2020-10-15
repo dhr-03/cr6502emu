@@ -69,17 +69,32 @@ pub const IXD: [AddressingFn; 4] = [
     ixd_4,
 ];
 
-//TODO: implement
-pub const ASB: [AddressingFn; 0] = []; //absolute JSR
+pub const ASB: [AddressingFn; 5] = [ //absolute JSR
+    asb_1,
+    asb_2,
+    asb_3,
+    asb_4,
+    asb_5,
+];
 
-//TODO: implement
-pub const SPH: [AddressingFn; 0] = []; //stack push
+pub const SPH: [AddressingFn; 2] = [ //stack push
+    sph_1,
+    sph_2,
+];
 
-//TODO: implement
-pub const SPL: [AddressingFn; 0] = []; //stack pull
+pub const SPL: [AddressingFn; 3] = [ //stack pull
+    spl_1,
+    spl_2,
+    spl_3,
+];
 
-//TODO: implement
-pub const SRT: [AddressingFn; 0] = []; //stack RTS
+pub const SRT: [AddressingFn; 5] = [//stack RTS
+    srt_1,
+    srt_2,
+    srt_3,
+    srt_4,
+    srt_5,
+];
 
 //TODO: implement
 pub const SBK: [AddressingFn; 0] = []; //stack BRK

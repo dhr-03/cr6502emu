@@ -28,17 +28,17 @@ pub const TYA: AnnotatedOpcode = (tya, AddressingModifier::None);
 
 /* #######################  Stack Operations  ####################### */
 
-pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::PlaceHolder);
+pub const TSX: AnnotatedOpcode = (tsx, AddressingModifier::None);
 
-pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::PlaceHolder);
+pub const TXS: AnnotatedOpcode = (txs, AddressingModifier::None);
 
-pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::PlaceHolder);
+pub const PHA: AnnotatedOpcode = (pha, AddressingModifier::None);
 
-pub const PHP: AnnotatedOpcode = (php, AddressingModifier::PlaceHolder);
+pub const PHP: AnnotatedOpcode = (php, AddressingModifier::None);
 
-pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::PlaceHolder);
+pub const PLA: AnnotatedOpcode = (pla, AddressingModifier::None);
 
-pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::PlaceHolder);
+pub const PLP: AnnotatedOpcode = (plp, AddressingModifier::None);
 
 
 /* #######################  Logical  ####################### */
@@ -95,9 +95,9 @@ pub const ROR: AnnotatedOpcode = (ror, AddressingModifier::RMW);
 
 pub const JMP: AnnotatedOpcode = (jmp, AddressingModifier::None);
 
-pub const JSR: AnnotatedOpcode = (jsr, AddressingModifier::PlaceHolder);
+pub const JSR: AnnotatedOpcode = (jsr, AddressingModifier::None);
 
-pub const RTS: AnnotatedOpcode = (rts, AddressingModifier::PlaceHolder);
+pub const RTS: AnnotatedOpcode = (rts, AddressingModifier::None);
 
 
 /* #######################  Branches  ####################### */
