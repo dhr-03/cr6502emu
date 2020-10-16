@@ -39,6 +39,8 @@ const EnvironmentInitialState = {
         system: null,
     },
 
+    runModeInterval: null,
+
     errorMessage: null,
 
     meta: {},
@@ -291,24 +293,20 @@ export const EnvironmentStore = {
         },
 
         toggleRun(context) {
-            const DEFAULT_DELAY_MS = 10;
-
-            function executeUntilStopped() {
-                setTimeout(_ => {
-                    context.dispatch("systemExecuteOperation");
-
-                    if (context.getters.isRunning) {
-                        executeUntilStopped();
-                    }
-                }, DEFAULT_DELAY_MS);
-            }
-
             if (context.getters.isRunning) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
+
+                clearInterval(context.state.runModeInterval);
             } else {
                 context.dispatch("resetSystem");
 
-                executeUntilStopped();
+                let operationsPerCycle = context.getters.projectSettings.runModeOperationsPerCycle;
+
+                context.state.runModeInterval = setInterval(_ => {
+                    context.getters.__system.execute_operation_x(operationsPerCycle);
+
+                    context.dispatch("updateAllDevicesWidgets");
+                }, 4);
 
                 context.commit("currentStatus", EnvironmentState.RUNNING);
             }
