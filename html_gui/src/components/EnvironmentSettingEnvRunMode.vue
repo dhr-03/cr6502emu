@@ -57,14 +57,8 @@
                     );
 
                     this.projectSettings.runModeOperationsPerCycle = validValue;
-
-                    console.log(this.projectSettings.runModeOperationsPerCycle)
                 }
             },
-
-            a() {
-                return this.projectSettings.runModeOperationsPerCycle
-            }
         }
     }
 </script>
