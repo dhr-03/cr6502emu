@@ -30,6 +30,7 @@
     import EnvironmentSettingPrjFile from "./EnvironmentSettingPrjFile";
     import EnvironmentSettingEnvInterface from "./EnvironmentSettingEnvInterface";
     import EnvironmentSettingPrjDevices from "./EnvironmentSettingPrjDevices";
+    import EnvironmentSettingEnvRunMode from "./EnvironmentSettingEnvRunMode";
 
     export default {
         name: "EnvironmentSettingsMenu",
@@ -38,6 +39,7 @@
             EnvironmentSettingPrjFile,
             EnvironmentSettingEnvInterface,
             EnvironmentSettingPrjDevices,
+            EnvironmentSettingEnvRunMode,
         },
 
         data() {
@@ -47,6 +49,7 @@
                     "EnvironmentSettingPrjFile",
                     "EnvironmentSettingEnvInterface",
                     "EnvironmentSettingPrjDevices",
+                    "EnvironmentSettingEnvRunMode",
                 ],
 
                 activeComponent: "EnvironmentSettingPrjMeta",
