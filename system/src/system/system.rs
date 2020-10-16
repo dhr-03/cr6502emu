@@ -30,12 +30,6 @@ impl System {
         self.cpu.tick_with_mem(&mut self.mem);
     }
 
-    pub fn tick_x(&mut self, amm: i32) {
-        for _ in 0..amm {
-            self.tick();
-        }
-    }
-
     pub fn execute_operation(&mut self) {
         let mut continue_execution = true;
 
@@ -43,6 +37,12 @@ impl System {
             self.tick();
 
             continue_execution = !self.cpu.operation_is_done();
+        }
+    }
+
+    pub fn execute_operation_x(&mut self, amm: i32) {
+        for _ in 0..amm {
+            self.execute_operation();
         }
     }
 
