@@ -32,11 +32,11 @@ export class RepresentedPixelScreen extends DeviceRepresentation {
     }
 
 
-    setupWidget(pkg) {
-        this.widget.displayData.canvas = pkg.get("canvas");
+    setupWidget() {
+        this.widget.displayData.canvas = this.updatePkg.get("canvas");
     }
 
-    updateWidget(pkg) {
+    updateWidget() {
         //doNothing();
     }
 }

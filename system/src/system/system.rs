@@ -30,12 +30,6 @@ impl System {
         self.cpu.tick_with_mem(&mut self.mem);
     }
 
-    pub fn tick_x(&mut self, amm: i32) {
-        for _ in 0..amm {
-            self.tick();
-        }
-    }
-
     pub fn execute_operation(&mut self) {
         let mut continue_execution = true;
 
@@ -43,6 +37,12 @@ impl System {
             self.tick();
 
             continue_execution = !self.cpu.operation_is_done();
+        }
+    }
+
+    pub fn execute_operation_x(&mut self, amm: i32) {
+        for _ in 0..amm {
+            self.execute_operation();
         }
     }
 
@@ -140,23 +140,22 @@ impl System {
         self.mem.device_data_ptr(index - 1)
     }
 
-    pub fn device_widget_update_by_index(&mut self, index: usize) -> Option<Map> {
+    pub fn device_widget_update_by_index(&mut self, index: usize, pkg: &Map) {
         if index == 0 {
-            self.cpu.update_widget()
+            self.cpu.update_widget(pkg);
         } else {
             self.mem.devices_mut()
                 .get_mut(index - 1)
-                .and_then(|dev| dev.device_mut().update_widget())
+                .and_then(|dev| Some(dev.device_mut().update_widget(pkg)));
         }
     }
-
-    pub fn device_widget_setup_by_index(&mut self, index: usize, data: Map) -> Option<Map> {
+    pub fn device_widget_setup_by_index(&mut self, index: usize, pkg: &Map) {
         if index == 0 {
-            self.cpu.setup_widget(data)
+            self.cpu.setup_widget(pkg);
         } else {
             self.mem.devices_mut()
                 .get_mut(index - 1)
-                .and_then(|dev| dev.device_mut().setup_widget(data))
+                .and_then(|dev| Some(dev.device_mut().setup_widget(pkg)));
         }
     }
 }

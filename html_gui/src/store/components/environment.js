@@ -39,6 +39,8 @@ const EnvironmentInitialState = {
         system: null,
     },
 
+    runModeInterval: null,
+
     errorMessage: null,
 
     meta: {},
@@ -291,24 +293,20 @@ export const EnvironmentStore = {
         },
 
         toggleRun(context) {
-            const DEFAULT_DELAY_MS = 10;
-
-            function executeUntilStopped() {
-                setTimeout(_ => {
-                    context.dispatch("systemExecuteOperation");
-
-                    if (context.getters.isRunning) {
-                        executeUntilStopped();
-                    }
-                }, DEFAULT_DELAY_MS);
-            }
-
             if (context.getters.isRunning) {
                 context.commit("currentStatus", EnvironmentState.IDLE);
+
+                clearInterval(context.state.runModeInterval);
             } else {
                 context.dispatch("resetSystem");
 
-                executeUntilStopped();
+                let operationsPerCycle = context.getters.projectSettings.runModeOperationsPerCycle;
+
+                context.state.runModeInterval = setInterval(_ => {
+                    context.getters.__system.execute_operation_x(operationsPerCycle);
+
+                    context.dispatch("updateAllDevicesWidgets");
+                }, 4);
 
                 context.commit("currentStatus", EnvironmentState.RUNNING);
             }
@@ -378,8 +376,7 @@ export const EnvironmentStore = {
         },
 
         setupDeviceWidgetByIndexAndRepr(context, {index, device}) {
-            let wasmSetupPackage = device.getWasmSetupPkg();
-            let widgetSetupPackage = context.getters.__system.device_widget_setup_by_index(index, wasmSetupPackage);
+            context.getters.__system.device_widget_setup_by_index(index, device.updatePkg);
 
             let getMemFn = function () {
                 let ptr = context.getters.__system.device_data_ptr_by_index(index);
@@ -387,16 +384,16 @@ export const EnvironmentStore = {
                 return new Uint8Array(context.getters.__system.memory.buffer, ptr, device.size);
             };
 
-            device.setupWidget(widgetSetupPackage, getMemFn);
+            device.setupWidget(getMemFn);
         },
 
         updateDeviceWidgetByIndex(context, index) {
             let device = context.state.devices[index];
 
             if (device.constructor.needsExplicitUpdates) {
-                let updatePackage = context.getters.__system.device_widget_update_by_index(index);
+                context.getters.__system.device_widget_update_by_index(index, device.updatePkg);
 
-                device.updateWidget(updatePackage);
+                device.updateWidget();
             }
         },
 

@@ -41,12 +41,12 @@ export class RepresentedCpu extends DeviceRepresentation {
     }
 
 
-    setupWidget(pkg) {
-        this.updateWidget(pkg);
+    setupWidget() {
+        this.updateWidget();
     }
 
-    updateWidget(pkg) {
+    updateWidget() {
         // Vue doesnt support Maps for reactivity.
-        Object.assign(this.widget.displayData, Object.fromEntries(pkg))
+        Object.assign(this.widget.displayData, Object.fromEntries(this.updatePkg))
     }
 }

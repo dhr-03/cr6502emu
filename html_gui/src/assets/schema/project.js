@@ -73,12 +73,21 @@ export const ProjectSchema = {
 
                     default: null,
                 },
+
+                runModeOperationsPerCycle: {
+                    type: "integer",
+                    minimum: 1,
+                    maximum: 50000,
+
+                    default: 2000,
+                }
             },
 
             required: [
                 "preferredNumericBase",
                 "memoryMonitorMaxRows",
                 "targetProgramRomId",
+                "runModeOperationsPerCycle",
             ],
         },
 

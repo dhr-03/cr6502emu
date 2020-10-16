@@ -83,23 +83,23 @@ impl DeviceTrait for CPU {
         self.reset_system();
     }
 
-    fn update_widget(&mut self) -> Option<Map> {
-        let pkg = Map::new();
+    fn setup_widget(&mut self, pkg: &Map) {
+        self.update_widget(pkg);
+    }
 
+    fn update_widget(&mut self, pkg: &Map) {
         // see crate::cpu::register::RegisterContainer for more info.
 
-        utils::js_map_add_entry_f64(&pkg, "a", self.reg.a);
-        utils::js_map_add_entry_f64(&pkg, "x", self.reg.x);
-        utils::js_map_add_entry_f64(&pkg, "y", self.reg.y);
-        utils::js_map_add_entry_f64(&pkg, "p", self.reg.p);
+        utils::js_map_add_entry_f64(pkg, "a", self.reg.a);
+        utils::js_map_add_entry_f64(pkg, "x", self.reg.x);
+        utils::js_map_add_entry_f64(pkg, "y", self.reg.y);
+        utils::js_map_add_entry_f64(pkg, "p", self.reg.p);
 
-        utils::js_map_add_entry_f64(&pkg, "pc", self.reg.pc);
-        utils::js_map_add_entry_f64(&pkg, "s", self.reg.s);
+        utils::js_map_add_entry_f64(pkg, "pc", self.reg.pc);
+        utils::js_map_add_entry_f64(pkg, "s", self.reg.s);
 
-        utils::js_map_add_entry_f64(&pkg, "busAddr", self.bus_value_widget_cache.0);
-        utils::js_map_add_entry_f64(&pkg, "busData", self.bus_value_widget_cache.1);
-
-        Some(pkg)
+        utils::js_map_add_entry_f64(pkg, "busAddr", self.bus_value_widget_cache.0);
+        utils::js_map_add_entry_f64(pkg, "busData", self.bus_value_widget_cache.1);
     }
 
     fn device_id(&self) -> DeviceId {
