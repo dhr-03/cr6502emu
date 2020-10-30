@@ -8,6 +8,7 @@ use crate::system::MemManager;
 
 use crate::dev::{DeviceTrait, DeviceId, utils};
 
+use wasm_bindgen::JsValue;
 use js_sys::Map;
 
 pub struct CPU {
@@ -19,7 +20,7 @@ pub struct CPU {
     extra_cycle: Option<AddressingFn>,
 
     // we only have access to MemManager in Self::tick_with_mem, but also need it Self::in update_widget
-    bus_value_widget_cache: (u16, u8),
+    bus_value_widget_cache: (u16, u8, bool),
 }
 
 impl CPU {
@@ -32,7 +33,7 @@ impl CPU {
 
             extra_cycle: None,
 
-            bus_value_widget_cache: (0, 0),
+            bus_value_widget_cache: (0, 0, true),
         }
     }
 
@@ -51,6 +52,7 @@ impl CPU {
 
         self.bus_value_widget_cache.0 = mem_ref.addr();
         self.bus_value_widget_cache.1 = mem_ref.data();
+        self.bus_value_widget_cache.2 = mem_ref.rw();
     }
 
     pub fn operation_is_done(&self) -> bool {
@@ -73,7 +75,7 @@ impl DeviceTrait for CPU {
         self.opcode.force_is_done();
         self.extra_cycle = None;
 
-        self.bus_value_widget_cache = (0, 0);
+        self.bus_value_widget_cache = (0, 0, true);
 
 
         self.reg.pc = self.initial_pc;
@@ -100,6 +102,7 @@ impl DeviceTrait for CPU {
 
         utils::js_map_add_entry_f64(pkg, "busAddr", self.bus_value_widget_cache.0);
         utils::js_map_add_entry_f64(pkg, "busData", self.bus_value_widget_cache.1);
+        pkg.set(&JsValue::from("busRw"), &JsValue::from(self.bus_value_widget_cache.2));
     }
 
     fn device_id(&self) -> DeviceId {

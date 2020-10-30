@@ -52,4 +52,8 @@ impl Bus {
     pub fn addr_mut_ref(&mut self) -> &mut u16 {
         &mut self.addr
     }
+
+    pub fn rw(&self) -> bool {
+        self.rw
+    }
 }

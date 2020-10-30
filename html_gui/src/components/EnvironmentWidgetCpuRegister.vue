@@ -3,12 +3,16 @@
         <div class="crl-reg-name uk-text-bolder">{{ name }}</div>
 
         <slot>
-            <EnvironmentNumberContainer
-                :value="watchedValue"
-                :length-in-bytes="lengthInBytes"
+            <div>
+                <span>{{ watchedPreValue }}</span>
 
-                :base="preferredNumericBase"
-            />
+                <EnvironmentNumberContainer
+                    :value="watchedValue"
+                    :length-in-bytes="lengthInBytes"
+
+                    :base="preferredNumericBase"
+                />
+            </div>
         </slot>
     </div>
 </template>
@@ -28,6 +32,11 @@
                 required: true,
             },
 
+            preValue: {
+                type: String,
+                default: ""
+            },
+
             value: {
                 type: [Number, String],
                 required: false,
@@ -41,13 +50,18 @@
 
         data() {
             return {
-                watchedValue: this.value
+                watchedValue: this.value,
+                watchedPreValue: this.preValue,
             };
         },
 
         watch: {
             value(val) {
                 this.watchedValue = val;
+            },
+
+            preValue(val) {
+                this.watchedPreValue = val;
             }
         }
     }
