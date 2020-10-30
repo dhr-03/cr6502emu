@@ -85,13 +85,15 @@
 
         methods: {
             async downloadProject() {
-                let projectData = JSON.stringify(
+                let jsonProjectData = JSON.stringify(
                      await this.$store.dispatch("env/saveProjectState")
                 );
 
+                let encodedProjectData = btoa(unescape(encodeURIComponent(jsonProjectData)))
+
                 let dwnNode = this.$refs.downloadTrick;
 
-                dwnNode.href = `data:application/octet-stream;base64,${btoa(projectData)}`;
+                dwnNode.href = `data:application/octet-stream;base64,${encodedProjectData}`;
                 dwnNode.download = `${this.projectMeta.name}.cremu`;
 
                 dwnNode.click();
