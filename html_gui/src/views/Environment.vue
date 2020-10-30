@@ -93,6 +93,7 @@
             ...mapGetters("env", [
                 "isInitializing",
                 "successfulInitialize",
+                "isRunning",
                 "isExecuting",
                 "deviceList",
                 "editorInitialCode",
@@ -114,12 +115,16 @@
                 "debouncedSaveCacheToLS",
             ]),
 
+            ...mapActions("env", [
+                "toggleRun",
+            ]),
+
             ...mapMutations("prj", [
-               "clearScheduledProjectSave",
+                "clearScheduledProjectSave",
             ]),
 
             ...mapMutations("env", [
-               "setStatusInitializing",
+                "setStatusInitializing",
             ]),
 
 
@@ -137,6 +142,10 @@
 
         async beforeRouteLeave(to, from, next) {
             if (this.currentProjectId != null && this.successfulInitialize) {
+                if (this.isRunning) {
+                    this.toggleRun();
+                }
+
                 await this.saveCurrentProject();
                 await this.debouncedSaveCacheToLS();
 
