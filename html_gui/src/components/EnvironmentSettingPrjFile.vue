@@ -95,14 +95,24 @@
 
                 let encodedProjectData = btoa(
                     unescape(encodeURIComponent( //utf8 fix
-                    JSON.stringify(projectData)
-                ))
+                        JSON.stringify(projectData)
+                    ))
                 );
 
                 let dwnNode = this.$refs.downloadTrick;
 
+                let dwnFileName = "";
+                for (let i = 0; i < projectData.meta.name.length; i++) {
+                    let normalizedChar = projectData.meta.name[i]
+                        .toLowerCase()
+                        .replace(" ", "_")
+                        .replace(/[^a-z-_]/, "");
+
+                    dwnFileName += normalizedChar;
+                }
+
                 dwnNode.href = `data:application/octet-stream;base64,${encodedProjectData}`;
-                dwnNode.download = `${this.projectMeta.name}.cremu`;
+                dwnNode.download = `${dwnFileName}.cremu`;
 
                 dwnNode.click();
 
