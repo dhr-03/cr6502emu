@@ -52,8 +52,8 @@
 
                 } else {
                     // copied from bililite docs.
-                    if (e.ctrlKey && e.which === 90) bililiteRange.undo(evt); // control z
-                    if (e.ctrlKey && e.which === 89) bililiteRange.redo(evt); // control y
+                    if (e.ctrlKey && e.which === 90) bililiteRange.undo(e); // control z
+                    if (e.ctrlKey && e.which === 89) bililiteRange.redo(e); // control y
                 }
             });
 
