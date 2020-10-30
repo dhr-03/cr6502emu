@@ -45,11 +45,18 @@
 
             editor = bililiteRange.fancyText(editor, Prism.highlightElement);
 
-            // add the undo's
-            editor.addEventListener('keydown', function (evt) {
-                if (evt.ctrlKey && evt.which === 90) bililiteRange.undo(evt); // control z
-                if (evt.ctrlKey && evt.which === 89) bililiteRange.redo(evt); // control y
+            editor.addEventListener('keydown', e => {
+                if (e.code === "Tab") {
+                    bililiteRange(editor).bounds("selection").sendkeys("    ").select()
+                    e.preventDefault();
+
+                } else {
+                    // copied from bililite docs.
+                    if (e.ctrlKey && e.which === 90) bililiteRange.undo(evt); // control z
+                    if (e.ctrlKey && e.which === 89) bililiteRange.redo(evt); // control y
+                }
             });
+
 
             bililiteRange(editor).data().autoindent = true;
         }
