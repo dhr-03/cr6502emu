@@ -17,7 +17,7 @@
                         hidden
                 />
 
-                <span class="uk-text-bold uk-padding-small uk-padding-remove-vertical">Build Log</span>
+                <span class="uk-text-bold uk-padding-small uk-padding-remove-vertical">Status Log</span>
             </div>
 
             <Badge
