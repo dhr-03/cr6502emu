@@ -83,4 +83,8 @@ window.onbeforeunload = function (e) {
     }
 }
 
+window.addEventListener("storage", _ => {
+    store.commit("prj/syncFromLS");
+});
+
 store.commit("prj/reloadFromLS");
