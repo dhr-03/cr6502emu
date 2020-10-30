@@ -84,12 +84,20 @@
         mixins: [MixinSettingsPage],
 
         methods: {
-            async downloadProject() {
-                let jsonProjectData = JSON.stringify(
-                     await this.$store.dispatch("env/saveProjectState")
-                );
+            async downloadProject(e) {
+                let projectData = await this.$store.dispatch("env/saveProjectState");
 
-                let encodedProjectData = btoa(unescape(encodeURIComponent(jsonProjectData)))
+                if (e.shiftKey) {
+                    // set timestamps to unix 0 + 1 day
+                    projectData.meta.created = 24 * 60 * 60 * 1000;
+                    projectData.meta.lastMod = 24 * 60 * 60 * 1000;
+                }
+
+                let encodedProjectData = btoa(
+                    unescape(encodeURIComponent( //utf8 fix
+                    JSON.stringify(projectData)
+                ))
+                );
 
                 let dwnNode = this.$refs.downloadTrick;
 
