@@ -106,7 +106,7 @@
                     let normalizedChar = projectData.meta.name[i]
                         .toLowerCase()
                         .replace(" ", "_")
-                        .replace(/[^a-z-_]/, "");
+                        .replace(/\W/, "");
 
                     dwnFileName += normalizedChar;
                 }
