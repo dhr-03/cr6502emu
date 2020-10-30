@@ -123,6 +123,7 @@ impl MemManager {
             self.bus.set_data(val);
             self.bus.data()
         } else {
+            self.bus.set_data(0);
             0
         }
     }
