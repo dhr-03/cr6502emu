@@ -6,7 +6,7 @@
 
             @scroll="onOutputScroll"
         >
-            <span>{{ formattedOutput }}</span>
+            <pre>{{ formattedOutput }}</pre>
         </div>
 
         <input
