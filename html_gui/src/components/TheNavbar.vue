@@ -1,7 +1,7 @@
 <template>
     <nav class="cr-navbar uk-navbar uk-navbar-container uk-navbar-transparent">
         <div class="uk-navbar-left">
-            <span class="cr-navbar-logo uk-navbar-item uk-logo">CrDemo</span>
+            <span class="cr-navbar-logo uk-navbar-item uk-logo">Cr6502Emu</span>
 
             <ul class="uk-navbar-nav">
                 <BaseNavbarItem target="Home" :match-exact="true"/>
