@@ -123,6 +123,7 @@ impl MemManager {
             self.bus.set_data(val);
             self.bus.data()
         } else {
+            self.bus.set_data(0);
             0
         }
     }
@@ -161,6 +162,10 @@ impl MemManager {
     pub fn set_addr_hi(&mut self, addr: u8) {
         *self.bus.addr_mut_ref() &= 0x00FF;
         *self.bus.addr_mut_ref() |= (addr as u16) << 8;
+    }
+
+    pub fn rw(&self) -> bool {
+        self.bus.rw()
     }
 
     /// Resets the bus to 0

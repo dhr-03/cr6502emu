@@ -17,8 +17,11 @@ export const EnvironmentState = {
 
 // Im not sure how is done in js, but as this is not an {} object, i think that screaming snake case is the correct one.
 const DEFAULT_EDITOR_CODE = `\
-LDX #65
-LDY #02
+loop:
+    LDX #65
+    LDY #02
+    
+    JMP %loop
 `;
 
 const EnvironmentInitialState = {

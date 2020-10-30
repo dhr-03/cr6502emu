@@ -1,12 +1,15 @@
 <template>
     <nav class="cr-navbar uk-navbar uk-navbar-container uk-navbar-transparent">
         <div class="uk-navbar-left">
-            <span class="cr-navbar-logo uk-navbar-item uk-logo">CrDemo</span>
+            <span class="cr-navbar-logo uk-navbar-item uk-logo">Cr6502Emu</span>
 
             <ul class="uk-navbar-nav">
                 <BaseNavbarItem target="Home" :match-exact="true"/>
-                <BaseNavbarItem :target="{name: 'Project', params: {pid: '_'}}" :clickable="false"/>
-                <BaseNavbarItem target="About"/>
+                <BaseNavbarItem
+                    :target="{name: 'Project', params: {pid: currentProjectIdOrPlaceholder}}"
+                    :clickable="projectLoaded"
+                />
+                <BaseNavbarItem target="About" :match-exact="true"/>
             </ul>
         </div>
     </nav>
@@ -14,10 +17,25 @@
 
 <script>
     import BaseNavbarItem from "./BaseNavbarItem"
+    import {mapGetters} from "vuex";
 
     export default {
         name: "TheNavbar",
         components: {BaseNavbarItem},
+
+        computed: {
+            ...mapGetters("env", [
+                "currentProjectId"
+            ]),
+
+            currentProjectIdOrPlaceholder() {
+                return this.currentProjectId || "_";
+            },
+
+            projectLoaded() {
+                return this.currentProjectId != null;
+            }
+        }
     }
 </script>
 

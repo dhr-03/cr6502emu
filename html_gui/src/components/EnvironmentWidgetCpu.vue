@@ -49,6 +49,7 @@
             name="Bus Addr"
             :value="widget.displayData.busAddr"
 
+            :pre-value="busMode"
             :length-in-bytes="2"
         />
 
@@ -69,7 +70,13 @@
         name: "EnvironmentWidgetCpu",
         mixins: [MixinEnvironmentWidget],
 
-        components: {EnvironmentWidgetCpuFlags, EnvironmentWidgetCpuRegister}
+        components: {EnvironmentWidgetCpuFlags, EnvironmentWidgetCpuRegister},
+
+        computed: {
+            busMode() {
+                return this.widget.displayData.busRw ? "r" : "w";
+            }
+        }
     }
 </script>
 

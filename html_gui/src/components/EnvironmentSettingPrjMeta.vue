@@ -4,7 +4,7 @@
         <div class="uk-margin">
             <label class="uk-form-label">Project Name</label>
             <input
-                v-model="projectMeta.name"
+                v-model="prjName"
 
                 required
 
@@ -54,6 +54,9 @@
 
 <script>
     import MixinSettingsPage from "./MixinSettingsPage";
+    import {ProjectSchema} from "../assets/schema/project";
+
+    const DefaultPrjName = ProjectSchema.properties.meta.properties.name.default;
 
     export default {
         name: "EnvironmentSettingPrjMeta",
@@ -63,6 +66,16 @@
         mixins: [MixinSettingsPage],
 
         computed: {
+            prjName: {
+                get() {
+                    return this.projectMeta.name;
+                },
+
+                set(value) {
+                    this.projectMeta.name = value || DefaultPrjName;
+                }
+            },
+
             prjNiceLastMod() {
                 let date = new Date(this.projectMeta.lastMod);
 

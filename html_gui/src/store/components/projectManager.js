@@ -38,6 +38,31 @@ export const ProjectManagerStore = {
             state.projectsCache = JSON.parse(localStorage.getItem(LS_KEY)) || [];
         },
 
+        // Hacky? way to sync between tabs.
+        // TODO: replace with shared worker.
+        syncFromLS(state) {
+            let newCache = state.projectsCache;
+            let lsPrjs = JSON.parse(localStorage.getItem(LS_KEY)) || [];
+
+            for (let item of lsPrjs) {
+                let ourPrjIndex = newCache.findIndex(
+                    prj => prj.meta.pid === item.meta.pid
+                );
+
+                if (ourPrjIndex >= 0) {
+                    let ourPrj = newCache[ourPrjIndex];
+
+                    if (item.meta.lastMod > ourPrj.meta.lastMod) {
+                        newCache.splice(ourPrjIndex, 1);
+
+                        newCache.push(item);
+                    }
+                } else {
+                    newCache.push(item);
+                }
+            }
+        },
+
         // should this be here?
         saveCacheToLS(state) {
             let serializedProjects = JSON.stringify(state.projectsCache);
@@ -124,7 +149,7 @@ export const ProjectManagerStore = {
                 },
 
                 settings: {
-                  targetProgramRomId: 1001,
+                    targetProgramRomId: 1001,
                 },
 
                 devices: [

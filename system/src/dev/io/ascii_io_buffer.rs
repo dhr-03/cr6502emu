@@ -47,7 +47,7 @@ impl DeviceTrait for AsciiIOBuffer {
 
 impl AddressableDeviceTrait for AsciiIOBuffer {
     fn size(&self) -> u16 {
-        1
+        DeviceId::fixed_size(&DeviceId::AsciiIOBuffer).unwrap()
     }
 
     fn read_unchecked(&self, _offset: u16) -> u8 {

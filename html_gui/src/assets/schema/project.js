@@ -33,6 +33,10 @@ export const ProjectSchema = {
 
                 pid: {
                     type: "string",
+                    minLength: 3,
+                    maxLength: 15,
+
+                    pattern: "^[A-z0-9]*$"
                 },
             },
 

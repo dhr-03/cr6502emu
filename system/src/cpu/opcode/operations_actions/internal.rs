@@ -22,19 +22,22 @@ enum FlagPositionOffset {
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[wasm_bindgen(inline_js = "export function alert_2(a, b) {alert(a + b)}")]
+#[wasm_bindgen(module = "/js_snippets/CappedLogger.js")]
 extern {
-    fn alert_2(a: &str, b: &str);
+    type CappedLogger;
+
+    #[wasm_bindgen(static_method_of = CappedLogger, js_name = cappedExplainedErr)]
+    fn explained_err(msg1: &str, code: &str, msg2: &str);
 }
 
 fn on_unsupported_feature(name: &str) {
-    alert_2("This feature is not supported: ", name);
+    CappedLogger::explained_err("This feature is not supported: ", name, "");
 }
 
 //This should only be used when a feature such as decimal mode is not yet implemented,
 //but might be in the future.
 fn on_unimplemented_feature(name: &str) {
-    alert_2("This feature is not implemented: ", name);
+    CappedLogger::explained_err("This feature is not implemented: ", name, "");
 }
 
 // ############### Flags ###############

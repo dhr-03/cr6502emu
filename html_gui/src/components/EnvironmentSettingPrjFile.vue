@@ -84,15 +84,35 @@
         mixins: [MixinSettingsPage],
 
         methods: {
-            async downloadProject() {
-                let projectData = JSON.stringify(
-                     await this.$store.dispatch("env/saveProjectState")
+            async downloadProject(e) {
+                let projectData = await this.$store.dispatch("env/saveProjectState");
+
+                if (e.shiftKey) {
+                    // set timestamps to unix 0 + 1 day
+                    projectData.meta.created = 24 * 60 * 60 * 1000;
+                    projectData.meta.lastMod = 24 * 60 * 60 * 1000;
+                }
+
+                let encodedProjectData = btoa(
+                    unescape(encodeURIComponent( //utf8 fix
+                        JSON.stringify(projectData)
+                    ))
                 );
 
                 let dwnNode = this.$refs.downloadTrick;
 
-                dwnNode.href = `data:application/octet-stream;base64,${btoa(projectData)}`;
-                dwnNode.download = `${this.projectMeta.name}.cremu`;
+                let dwnFileName = "";
+                for (let i = 0; i < projectData.meta.name.length; i++) {
+                    let normalizedChar = projectData.meta.name[i]
+                        .toLowerCase()
+                        .replace(" ", "_")
+                        .replace(/\W/, "");
+
+                    dwnFileName += normalizedChar;
+                }
+
+                dwnNode.href = `data:application/octet-stream;base64,${encodedProjectData}`;
+                dwnNode.download = `${dwnFileName}.cremu`;
 
                 dwnNode.click();
 

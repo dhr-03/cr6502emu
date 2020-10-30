@@ -6,7 +6,7 @@
 
             @scroll="onOutputScroll"
         >
-            <span>{{ formattedOutput }}</span>
+            <pre>{{ formattedOutput }}</pre>
         </div>
 
         <input
@@ -37,7 +37,8 @@
 
         watch: {
             formattedOutput() {
-                if (this.doAutoScroll) {
+                //TODO: temp fix
+                if (true || this.doAutoScroll) {
                     let element = this.$refs.a;
 
                     element.scrollTop = element.scrollHeight;
