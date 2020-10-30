@@ -75,13 +75,11 @@ new Vue({
     render: h => h(App)
 }).$mount("#app");
 
-window.onbeforeunload = function (e) {
+window.addEventListener("beforeunload", async _ => {
     if (!store.getters["prj/isSafeToShutdown"]) {
-        store.dispatch("prj/beforeShutdown")
-
-        return "";
+        await store.dispatch("prj/beforeShutdown")
     }
-}
+});
 
 window.addEventListener("storage", _ => {
     store.commit("prj/syncFromLS");
