@@ -29,7 +29,7 @@ Prism.languages.asm6502 = {
     /* ############### Custom ############### */
 
     'labeldef': {
-        pattern: /\b\D\w{3,15}:\s*\n/i,
+        pattern: /\b\w{3,15}:\s*\n/i,
         alias: "function"
     },
 
