@@ -79,7 +79,7 @@ impl Parser {
 
     #[inline(always)]
     pub fn is_macro(line: &str) -> bool {
-        line.starts_with("#")
+        line.starts_with(".")
     }
 
     #[inline(always)]
