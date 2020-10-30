@@ -1,7 +1,7 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import Home from "../views/Home.vue"
-import ErrorNotFound from "../components/ErrorNotFound"
+import ErrorNotFound from "../views/ErrorNotFound"
 
 Vue.use(VueRouter);
 
@@ -33,6 +33,12 @@ const routes = [
 
 const router = new VueRouter({
     routes,
+});
+
+router.afterEach((to, _) => {
+    Vue.nextTick(_ => {
+        document.title = `${to.name} - Cr6502Emu`
+    })
 });
 
 export default router
