@@ -26,6 +26,7 @@ const COLOR_PALETTE: [&'static str; 16] = [
 
 const BACKGROUND_COLOR: &'static str = COLOR_PALETTE[0];
 
+// keep in sync with DeviceID::fixed_size
 const DEFAULT_WIDTH: u16 = 50;
 const DEFAULT_HEIGHT: u16 = 50;
 
@@ -85,7 +86,7 @@ impl DeviceTrait for PixelScreen {
 
 impl AddressableDeviceTrait for PixelScreen {
     fn size(&self) -> u16 {
-        DEFAULT_WIDTH * DEFAULT_HEIGHT
+        DeviceId::fixed_size(&DeviceId::PixelScreen).unwrap()
     }
 
     fn read_unchecked(&self, offset: u16) -> u8 {

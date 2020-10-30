@@ -63,7 +63,10 @@ impl System {
     }
 
     pub fn add_device_with_uid(&mut self, device: DeviceId, start: u16, size: u16, uid: u16) -> bool {
-        if (std::u16::MAX - size) >= start { //check for overflows
+        let actual_device_size = DeviceId::fixed_size(&device)
+            .unwrap_or(size);
+
+        if (std::u16::MAX - actual_device_size) >= start { //check for overflows
             let result = DeviceFactory::with_size(device, size);
 
             match result {

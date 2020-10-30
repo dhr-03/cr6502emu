@@ -17,15 +17,16 @@ pub enum DeviceId {
 }
 
 impl DeviceId {
-    pub fn has_fixed_size(&self) -> bool {
+    pub fn fixed_size(&self) -> Option<u16> {
         match self {
-            Self::PixelScreen => true,
-            Self::AsciiIOBuffer => true,
+            // keep in sync with PixelScreen width and height
+            Self::PixelScreen => Some(50 * 50),
+            Self::AsciiIOBuffer => Some(1),
 
-            Self::Rom => false,
-            Self::Ram => false,
+            Self::Rom => None,
+            Self::Ram => None,
 
-            Self::CPU => true,
+            Self::CPU => Some(0),
         }
     }
 }

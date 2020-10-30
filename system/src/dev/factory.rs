@@ -16,7 +16,7 @@ impl DeviceFactory {
     /// ## Err type
     /// In the future, `E` might contain some kind of error, but for now, the only error is an invalid size.
     pub fn with_size(dev_type: DeviceId, size: u16) -> Result<BoxedDev, ()> {
-        let has_fixed_sz = dev_type.has_fixed_size();
+        let has_fixed_sz = dev_type.fixed_size().is_some();
 
         if (size == 0 && !has_fixed_sz) || (size != 0 && has_fixed_sz) {
             Err(())
