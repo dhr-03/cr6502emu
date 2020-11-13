@@ -24,7 +24,7 @@
         <div class="uk-margin">
             <label
                 class="uk-form-label"
-                v-t="'environment.settings.EnvironmentSettingPrjFile.downloadPrj'"
+                v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrj'"
             />
 
             <Modal

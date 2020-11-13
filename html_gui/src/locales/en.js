@@ -30,7 +30,7 @@ const LangEn = {
             error: {
                 title: "Failed to import file:",
 
-                invalidData: "Invalid Data",
+                invalidData: "Invalid Data.",
                 unavailableId: "A project with the id {pid} already exists.",
                 unknown: "Unknown error.",
 
@@ -80,9 +80,9 @@ const LangEn = {
                 deletePrj: "Delete Project",
 
                 deletePrompt: {
-                    "nameTitle": "Delete project:",
-                    "idTitle": "Id:"
-                }
+                    nameTitle: "Delete project:",
+                    idTitle: "Id:"
+                },
             },
 
             EnvironmentSettingEnvInterface: {
@@ -124,7 +124,7 @@ const LangEn = {
                     button: {
                         toggle: "Add device",
                         submit: "Add Device",
-                    }
+                    },
 
                 },
 
@@ -143,7 +143,7 @@ const LangEn = {
                     button: {
                         toggle: "Swap devices",
                         submit: "Swap devices",
-                    }
+                    },
                 },
 
                 buildRom: {
@@ -151,7 +151,7 @@ const LangEn = {
 
                     emptyMessage: "None found",
                     nonEmptyMessage: "Select one"
-                }
+                },
 
             },
 
@@ -190,8 +190,8 @@ const LangEn = {
                     bus: {
                         addr: "Bus Addr",
                         data: "Bus Data"
-                    }
-                }
+                    },
+                },
             },
 
             asciiBuffer: {
@@ -203,7 +203,7 @@ const LangEn = {
             title: "Status Log",
 
             emptyMessage: "Wow, such empty"
-        }
+        },
     },
 
     about: {
@@ -221,7 +221,7 @@ const LangEn = {
         numericBase: {
             hex: "Hexadecimal",
             dec: "Decimal",
-        }
+        },
     },
 };
 

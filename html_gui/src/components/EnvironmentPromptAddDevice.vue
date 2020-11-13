@@ -131,8 +131,7 @@
 
                 class="uk-button uk-button-primary"
                 v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.button.submit'"
-            >
-            </button>
+            />
         </template>
 
     </Modal>

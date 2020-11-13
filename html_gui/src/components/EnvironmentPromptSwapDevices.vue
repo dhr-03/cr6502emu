@@ -97,9 +97,8 @@
                 :disabled="!allowSubmit"
 
                 class="uk-button uk-button-primary"
-            >
-                Swap devices
-            </button>
+                v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.button.submit'"
+            />
         </template>
     </Modal>
 </template>
