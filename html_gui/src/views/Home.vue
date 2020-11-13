@@ -1,6 +1,6 @@
 <template>
     <div class="crg-container crg-mg-top">
-        <h2>Open Local Project</h2>
+        <h2>{{ $t("projectChooser.title.openLocal") }}</h2>
 
         <hr>
 
@@ -36,7 +36,7 @@
 
                 class="uk-text-center"
             >
-                <span>No saved projects found.</span>
+                <span>{{$t("projectChooser.title.noSavedProjects")}}</span>
             </div>
         </div>
 
@@ -48,7 +48,7 @@
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
-                New Project
+                {{ $t("projectChooser.button.new") }}
             </a>
 
 

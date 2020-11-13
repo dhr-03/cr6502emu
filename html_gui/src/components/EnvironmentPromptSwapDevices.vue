@@ -10,13 +10,19 @@
         <template v-slot:toggle>
             <button class="cr-info uk-button">
                 <font-awesome-icon icon="random"/>
-                Swap devices
+                <span
+                    class="cr-mg-t"
+                    v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.button.toggle'"
+                />
             </button>
         </template>
 
 
         <template v-slot:header>
-            <h3 class="uk-modal-title uk-light">Swap devices</h3>
+            <h3
+                class="uk-modal-title uk-light"
+                v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.title'"
+            />
         </template>
 
         <template v-slot:body>
@@ -26,18 +32,23 @@
 
                     type="err"
                 >
-                    Failed to swap devices.
+                    <span v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.failedToSwap'"/>
                 </Alert>
 
 
                 <div class="uk-margin">
-                    <label class="uk-form-label">Device A</label>
+                    <label
+                        class="uk-form-label"
+                        v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.dev.a'"
+                    />
                     <select
                         v-model="deviceA"
 
                         class="uk-select"
                     >
-                        <option value="null" class="uk-hidden">Select one</option>
+                        <option value="null" class="uk-hidden">
+                            {{ $t("environment.settings.EnvironmentSettingPrjDevices.swapPrompt.dev.select") }}
+                        </option>
 
                         <option
                             v-for="(devNames, index) in devicesReprString"
@@ -51,13 +62,18 @@
                 </div>
 
                 <div class="uk-margin">
-                    <label class="uk-form-label">Device B</label>
+                    <label
+                        class="uk-form-label"
+                        v-t="'environment.settings.EnvironmentSettingPrjDevices.swapPrompt.dev.b'"
+                    />
                     <select
                         v-model="deviceB"
 
                         class="uk-select"
                     >
-                        <option value="null" class="uk-hidden">Select one</option>
+                        <option value="null" class="uk-hidden">
+                            {{ $t("environment.settings.EnvironmentSettingPrjDevices.swapPrompt.dev.select") }}
+                        </option>
 
                         <option
                             v-for="(devNames, index) in devicesReprString"
@@ -132,7 +148,7 @@
                 this.swapDevicesByIndex([this.deviceA + 1, this.deviceB + 1]).then(success => {
                     this.failedToSwap = !success;
 
-                    if(success) {
+                    if (success) {
                         this.$refs.modal.hideModal();
                     }
                 });

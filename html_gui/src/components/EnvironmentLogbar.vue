@@ -3,40 +3,43 @@
         <div class="cr-logbar-header">
 
             <div
-                    class="cr-logbar-toggle"
-                    uk-toggle="target: .__logbar-toggle; animation: uk-animation-slide-bottom uk-animation-fast"
+                class="cr-logbar-toggle"
+                uk-toggle="target: .__logbar-toggle; animation: uk-animation-slide-bottom uk-animation-fast"
             >
 
                 <font-awesome-icon
-                        class="__logbar-toggle"
-                        icon="chevron-right"
+                    class="__logbar-toggle"
+                    icon="chevron-right"
                 />
                 <font-awesome-icon
-                        class="__logbar-toggle"
-                        icon="chevron-down"
-                        hidden
+                    class="__logbar-toggle"
+                    icon="chevron-down"
+                    hidden
                 />
 
-                <span class="uk-text-bold uk-padding-small uk-padding-remove-vertical">Status Log</span>
+                <span
+                    class="uk-text-bold uk-padding-small uk-padding-remove-vertical"
+                    v-t="'environment.logbar.title'"
+                />
             </div>
 
             <Badge
-                    type="err"
-                    v-if="errMsgCount > 0"
+                type="err"
+                v-if="errMsgCount > 0"
 
-                    :value="errMsgCount"
+                :value="errMsgCount"
             />
             <Badge
-                    type="warn"
-                    v-if="warnMsgCount > 0"
+                type="warn"
+                v-if="warnMsgCount > 0"
 
-                    :value="warnMsgCount"
+                :value="warnMsgCount"
             />
             <Badge
-                    type="info"
-                    v-if="infoMsgCount"
+                type="info"
+                v-if="infoMsgCount"
 
-                    :value="infoMsgCount"
+                :value="infoMsgCount"
             />
 
         </div>
@@ -47,26 +50,26 @@
                     <div class="cr-logbar-empty-icon">
                         <font-awesome-icon icon="ghost"/>
                     </div>
-                    <span>Wow, such empty</span>
+                    <span v-t="'environment.logbar.emptyMessage'"/>
                 </div>
 
                 <Alert
-                        v-for="(item, index) in messagesList"
+                    v-for="(item, index) in messagesList"
 
-                        :key="index"
+                    :key="index"
 
-                        :type="item.type"
-                        :title="item.title"
+                    :type="item.type"
+                    :title="item.title"
                 >
                     <slot>
 
                         <component
-                                v-for="(part, index) in item.parts"
-                                :is="part.isCode ? 'code' : 'span'"
-                                :key="index"
+                            v-for="(part, index) in item.parts"
+                            :is="part.isCode ? 'code' : 'span'"
+                            :key="index"
 
-                                class="cr-alert-part"
-                                :class="{__code_reset: part.isCode}"
+                            class="cr-alert-part"
+                            :class="{__code_reset: part.isCode}"
                         >{{ part.content }}</component>
 
                     </slot>

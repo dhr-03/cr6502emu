@@ -1,9 +1,9 @@
 <template>
     <div>
-        <span class="crl-flag" uk-tooltip="Negative">{{ formattedFlags.n }}</span>
-        <span class="crl-flag" uk-tooltip="Overflow">{{ formattedFlags.o }}</span>
-        <span class="crl-flag" uk-tooltip="Zero">{{ formattedFlags.z }}</span>
-        <span class="crl-flag" uk-tooltip="Carry">{{ formattedFlags.c }}</span>
+        <span class="crl-flag" :uk-tooltip="$t('environment.widget.cpu.flags.negative')">{{ formattedFlags.n }}</span>
+        <span class="crl-flag" :uk-tooltip="$t('environment.widget.cpu.flags.overflow')">{{ formattedFlags.o }}</span>
+        <span class="crl-flag" :uk-tooltip="$t('environment.widget.cpu.flags.zero')">{{ formattedFlags.z }}</span>
+        <span class="crl-flag" :uk-tooltip="$t('environment.widget.cpu.flags.carry')">{{ formattedFlags.c }}</span>
     </div>
 </template>
 

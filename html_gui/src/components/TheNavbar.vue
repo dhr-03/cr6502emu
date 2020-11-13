@@ -23,10 +23,10 @@
 
                     <div uk-dropdown="mode: click">
                         <ul class="uk-nav uk-dropdown-nav">
-                            <li class="uk-nav-header">
-                                Language
-                            </li>
-
+                            <li
+                                class="uk-nav-header"
+                                v-t="'navbar.lang'"
+                            />
                             <li
                                 v-for="(locale, index) in getAvailableLocales"
                                 :key="index"

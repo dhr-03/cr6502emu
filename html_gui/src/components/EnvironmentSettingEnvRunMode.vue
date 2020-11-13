@@ -1,23 +1,17 @@
 <template>
     <div class="uk-form-stacked">
 
-        <p>
-            Due to some technical difficulties, the project can only execute ASM code every 4ms-10ms (approx).
-        </p>
-
-        <p>
-            The following setting determines how many opcodes are executed at once in every cycle (execute and update
-            widgets).
-        </p>
-
-        <p>
-            Be aware that while the cycle is running the whole web page will freeze.
-        </p>
+        <p v-t="'environment.settings.EnvironmentSettingEnvRunMode.explanation.a'"/>
+        <p v-t="'environment.settings.EnvironmentSettingEnvRunMode.explanation.b'"/>
+        <p v-t="'environment.settings.EnvironmentSettingEnvRunMode.explanation.c'"/>
 
         <hr>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Operations per cycle</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingEnvRunMode.operationsPerCycle'"
+            />
             <input
                 v-model.number="operationsPerCycle"
 
@@ -40,9 +34,6 @@
 
     export default {
         name: "EnvironmentSettingEnvRunMode",
-
-        niceName: "Run Mode",
-
         mixins: [MixinSettingsPage],
 
         computed: {

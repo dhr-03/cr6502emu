@@ -1,23 +1,24 @@
 <template>
     <router-link
-            :to="targetObj"
-            v-slot="{ href, route, navigate, isActive, isExactActive}"
+        :to="targetObj"
+        v-slot="{ href, route, navigate, isActive, isExactActive}"
     >
         <li
-                class="cr-nav-item"
-                :class="{'uk-active': (isActive && !matchExact) || isExactActive}"
+            class="cr-nav-item"
+            :class="{'uk-active': (isActive && !matchExact) || isExactActive}"
         >
             <a
-                    v-if="clickable"
-                    :href="href"
-                    @click="navigate"
-            >
-                {{ route.name }}
-            </a>
+                v-if="clickable"
+                :href="href"
+                @click="navigate"
 
-            <a v-else>
-                {{ route.name }}
-            </a>
+                v-t="'router.' + route.name"
+            />
+
+            <a
+                v-else
+                v-t="'router.' + route.name"
+            />
         </li>
     </router-link>
 </template>

@@ -11,13 +11,13 @@
 
                 @click="updateActiveComponent(component)"
             >
-                {{ getNiceNameForComponent(component) }}
+                {{ $t(getNiceNameKeyForComponent(component)) }}
             </div>
 
         </div>
 
         <div class="crl-setting-container crl-inherit-mh crl-scrollable uk-width-expand">
-            <h3>{{ activeComponentNiceName }}</h3>
+            <h3 v-t="activeComponentNiceNameKey"/>
             <hr>
 
             <component :is="activeComponent"/>
@@ -63,14 +63,14 @@
                 }
             },
 
-            getNiceNameForComponent(name) {
-                return this.$options.components[name].niceName;
+            getNiceNameKeyForComponent(name) {
+                return `environment.settings.${name}.niceName`;
             }
         },
 
         computed: {
-            activeComponentNiceName() {
-                return this.getNiceNameForComponent(this.activeComponent);
+            activeComponentNiceNameKey() {
+                return this.getNiceNameKeyForComponent(this.activeComponent);
             }
         }
     }

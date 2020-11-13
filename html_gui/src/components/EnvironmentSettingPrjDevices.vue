@@ -4,16 +4,19 @@
         <table class="uk-table uk-table-divider uk-table-hover uk-table-middle uk-light">
             <thead>
             <tr>
-                <th>UID</th>
-                <th>Type</th>
+                <th v-t="'environment.settings.EnvironmentSettingPrjDevices.table.uid'"/>
+                <th v-t="'environment.settings.EnvironmentSettingPrjDevices.table.type'"/>
 
-                <th>Start</th>
-                <th>End</th>
-                <th>Size</th>
+                <th v-t="'environment.settings.EnvironmentSettingPrjDevices.table.start'"/>
+                <th v-t="'environment.settings.EnvironmentSettingPrjDevices.table.end'"/>
+                <th v-t="'environment.settings.EnvironmentSettingPrjDevices.table.size'"/>
 
                 <th></th>
 
-                <th class="uk-table-shrink">Actions</th>
+                <th
+                    class="uk-table-shrink"
+                    v-t="'environment.settings.EnvironmentSettingPrjDevices.table.actions'"
+                />
             </tr>
             </thead>
 
@@ -72,7 +75,10 @@
 
                 class="uk-text-center"
             >
-                <td colspan="7">No devices found.</td>
+                <td
+                    colspan="7"
+                    v-t="'environment.settings.EnvironmentSettingPrjDevices.table.emptyMessage'"
+                />
             </tr>
 
             </tbody>
@@ -87,14 +93,21 @@
         <hr>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Build Rom</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjDevices.buildRom.title'"
+            />
             <select
                 v-model="selectedRomId"
 
                 class="uk-select"
             >
                 <option class="uk-hidden" value="null">
-                    {{ romList.length ? "Select One" : "None found" }}
+                    {{
+                        $t("environment.settings.EnvironmentSettingPrjDevices.buildRom."
+                            + (romList.length ? "nonEmptyMessage" : "emptyMessage")
+                        )
+                    }}
                 </option>
 
                 <option
@@ -126,8 +139,6 @@
         name: "EnvironmentSettingPrjDevices",
         mixins: [MixinSettingsPage, MixinPreferredNumericBase],
         components: {EnvironmentPromptSwapDevices, EnvironmentPromptAddDevice, EnvironmentNumberContainer},
-
-        niceName: "Devices",
 
         computed: {
             ...mapGetters("env", [

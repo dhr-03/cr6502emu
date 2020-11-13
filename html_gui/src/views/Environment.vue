@@ -4,7 +4,7 @@
         v-if="isInitializing"
     >
         <font-awesome-icon class="uk-margin-small" icon="cog" spin size="4x"/>
-        <span>Initializing</span>
+        <span>{{ $t("environment.initialize.initializing") }}</span>
     </div>
 
     <div
@@ -12,7 +12,7 @@
         v-else-if="!successfulInitialize"
     >
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
-        <span>Failed to initialize Environment</span>
+        <span>{{ $t("environment.initializing.failed") }}</span>
 
         <br>
         <code style="background: #fff; color: red; padding: 1em">{{ initErrorMessageOrDefault }}</code>
@@ -28,7 +28,7 @@
 
                 type="warn"
             >
-                No <strong>Rom</strong> Selected
+                {{ $t("environment.noRomSelected") }}
             </Alert>
 
             <div class="uk-grid uk-grid-small">

@@ -11,7 +11,7 @@
 
                     <EnvironmentActionbarButton
                         icon="hammer"
-                        explanation="Build"
+                        explanation-key="environment.actionbar.build"
 
                         :enabled="ableToBuild"
                         :on-click="onBuild"
@@ -21,7 +21,7 @@
 
                     <EnvironmentActionbarButton
                         icon="sync-alt"
-                        explanation="Reset"
+                        explanation-key="environment.actionbar.reset"
 
                         :enabled="ableToReset"
                         :on-click="onReset"
@@ -36,7 +36,7 @@
                         icon="play"
                         icon-active="stop"
                         color-name-active="red"
-                        explanation="Run"
+                        explanation-key="environment.actionbar.run"
 
                         :enabled="ableToRun"
                         :active="isRunning"
@@ -49,7 +49,7 @@
                         icon="bug"
                         icon-active="stop"
                         color-name-active="red"
-                        explanation="Debug"
+                        explanation-key="environment.actionbar.debug"
 
                         :enabled="ableToDebug"
                         :active="isDebugging"
@@ -58,7 +58,7 @@
 
                     <EnvironmentActionbarButton
                         icon="chevron-right"
-                        explanation="Execute Cycle"
+                        explanation-key="environment.actionbar.debugCycle"
                         color-name="yellow"
 
                         :enabled="ableToStep"
@@ -67,7 +67,7 @@
 
                     <EnvironmentActionbarButton
                         icon="chevron-right"
-                        explanation="Execute Instruction"
+                        explanation-key="environment.actionbar.debugInstruction"
                         color-name="yellow"
 
                         :enabled="ableToStep"
@@ -103,12 +103,12 @@
                         <template v-slot:toggle>
                             <EnvironmentActionbarButton
                                 icon="cog"
-                                explanation="Settings"
+                                explanation-key="environment.actionbar.settings"
                                 color-name="gray"
 
                                 :enabled="ableToConfig"
                             >
-                                <b> Settings</b>
+                                <b class="cr-mg-t" v-t="'environment.actionbar.settings'"/>
                             </EnvironmentActionbarButton>
                         </template>
 
@@ -121,9 +121,8 @@
                                 @click="saveChanges"
 
                                 class="uk-button uk-button-primary"
-                            >
-                                Save
-                            </button>
+                                v-t="'guiCommon.button.save'"
+                            />
                         </template>
 
                     </Modal>

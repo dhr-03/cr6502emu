@@ -1,6 +1,6 @@
 <template>
     <div class="crl-reg-container uk-grid uk-grid-collapse uk-child-width-1-2 uk-text-center">
-        <div class="crl-reg-name uk-text-bolder">{{ name }}</div>
+        <div class="crl-reg-name uk-text-bolder">{{ watchedName }}</div>
 
         <slot>
             <div>
@@ -50,12 +50,17 @@
 
         data() {
             return {
+                watchedName: this.name,
                 watchedValue: this.value,
                 watchedPreValue: this.preValue,
             };
         },
 
         watch: {
+            name(val) {
+                this.watchedName = val;
+            },
+
             value(val) {
                 this.watchedValue = val;
             },
