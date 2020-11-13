@@ -1,6 +1,6 @@
 <template>
     <div class="crg-container crg-mg-top">
-        <h2>{{ $t("projectChooser.title.openLocal") }}</h2>
+        <h2 v-t="'projectChooser.title.openLocal'"/>
 
         <hr>
 
@@ -36,7 +36,7 @@
 
                 class="uk-text-center"
             >
-                <span>{{$t("projectChooser.title.noSavedProjects")}}</span>
+                <span v-t="'projectChooser.title.noSavedProjects'"/>
             </div>
         </div>
 
@@ -143,6 +143,7 @@
 
 <style lang="less">
     @import "../../node_modules/open-color/open-color";
+
     .crl-project-import-button {
         margin-left: 3em;
 
