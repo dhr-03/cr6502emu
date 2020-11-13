@@ -36,7 +36,7 @@ export const GlobalStore = {
     },
 
     getters: {
-        getCurrentLang(state) {
+        getCurrentLocale(state) {
             return state.i18nInstance.locale;
         },
 

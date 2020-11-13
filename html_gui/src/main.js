@@ -11,6 +11,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 
 // commented == imported more than once
 import {
+    //TheNavbar
+    faLanguage, faCaretDown,
+
     //Home
     faArrowCircleRight, faPlusSquare, faUpload,
 
@@ -51,6 +54,7 @@ import {
     from "@fortawesome/free-solid-svg-icons"
 
 library.add(
+    faLanguage, faCaretDown,
     faArrowCircleRight, faPlusSquare, faUpload,
     faCode,
     faExternalLinkSquareAlt,
