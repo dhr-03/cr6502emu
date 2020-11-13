@@ -70,6 +70,8 @@ Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 Vue.config.productionTip = false;
 
+store.commit("global/setI18n", i18n); // needed before rendering
+
 new Vue({
     router,
     store,
@@ -88,3 +90,5 @@ window.addEventListener("storage", _ => {
 });
 
 store.commit("prj/reloadFromLS");
+
+store.dispatch("global/tryLoadLocaleFromLS");
