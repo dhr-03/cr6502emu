@@ -223,6 +223,19 @@ const LangEs = {
             dec: "Decimal",
         },
     },
+
+    timeAgo: {
+        template: "Hace {amount} {unit}",
+
+        unit: {
+            second: "segundo | segundos",
+            minute: "minuto | minutos",
+            hour: "hora | horas",
+            day: "dia | dias",
+            month: "mes | meses",
+            year: "año | años",
+        },
+    },
 };
 
 export default LangEs;

@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="uk-width-1-3 uk-inline uk-text-center">
-                        {{ getTimeAgo(prj.meta.lastMod) }} ago
+                        {{ getTimeAgo(prj.meta.lastMod) }}
                     </div>
 
                     <router-link
@@ -87,7 +87,12 @@
             ]),
 
             getTimeAgo(date) {
-                return Tools.timeSince(date);
+                let data = Tools.timeSince(date);
+
+                return this.$t("timeAgo.template", {
+                    amount: data.amount,
+                    unit: this.$tc("timeAgo.unit." + data.unit, data.amount),
+                });
             },
 
             async addProjectAndGo() {
