@@ -4,8 +4,8 @@ use crate::parser::types::*;
 
 use crate::opcodes::{OPCODES_MAP, OPCODE_NONE};
 
-use crate::js_logger::{Logger, err_code};
-use crate::lang::assembler as lang;
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
 
 impl Parser {
     pub fn parse_instruction(line: &str) -> ParseResult<(u8, ParsedValue)> {
@@ -17,7 +17,7 @@ impl Parser {
 
         let opcode_val = OPCODES_MAP.get(opcode)
             .ok_or_else(|| {
-                err_code(lang::ERR_UNKNOWN_OPCODE, opcode, "");
+                Logger::explained_err(LoggerMessage::AsmErrUnknownOpcode, opcode);
 
                 ParseError::UnknownOpcode
             })?;
@@ -30,12 +30,11 @@ impl Parser {
                 if *v != OPCODE_NONE {
                     Ok((*v, parsed_addr))
                 } else {
-                    Logger::begin_err();
-                    Logger::write_str(lang::ERR_ADDR_MODE_1);
-                    Logger::write_code(opcode);
-                    Logger::write_str(lang::ERR_ADDR_MODE_2);
-                    Logger::write_code(parsed_addr.addr_mode().to_str());
-                    Logger::end_msg();
+                    Logger::explained_err_2(
+                        LoggerMessage::AsmErrAddrMode,
+                        opcode,
+                        parsed_addr.addr_mode().to_str()
+                    );
 
                     Err(ParseError::WrongAddressingMode)
                 }

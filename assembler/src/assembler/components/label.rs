@@ -3,8 +3,8 @@ use crate::parser::types::{ParseResult, ParseError};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
-use crate::js_logger::{err_code};
-use crate::lang::assembler as lang;
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
 
 pub struct Label {
     name: String
@@ -15,14 +15,14 @@ impl Label {
         let name = &line[0..line.len() - 1];
 
         if name.len() > 15 {
-            err_code(lang::ERR_LBL_LONG_1, name, lang::ERR_LBL_LONG_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblLong, name);
 
             Err(ParseError::ValueSize)
         } else if name.len() < 3 {
-            err_code(lang::ERR_LBL_SHORT_1, name, lang::ERR_LBL_SHORT_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblShort, name);
 
             Err(ParseError::ValueSize)
-        } else{
+        } else {
             Ok(Label {
                 name: name.to_string()
             })
@@ -45,13 +45,13 @@ impl CodeItemTrait for Label {
         let ok;
 
         if let Some(_) = asm.get_label_value(self.name.as_str()) {
-            err_code(lang::ERR_LBL_RE_DEF_1, self.name.as_str(), lang::ERR_LBL_RE_DEF_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblReDef, self.name.as_str());
 
             ok = false;
         } else {
             asm.insert_label(
                 self.name.as_str(),
-                asm.rom_start() + asm.write_ptr()
+                asm.rom_start() + asm.write_ptr(),
             );
 
             ok = true;
@@ -66,6 +66,6 @@ impl CodeItemTrait for Label {
         panic!("label.execute");
 
         #[allow(unreachable_code)]
-        Ok(())
+            Ok(())
     }
 }

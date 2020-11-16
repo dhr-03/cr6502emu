@@ -55,24 +55,28 @@
 
                 <Alert
                     v-for="(item, index) in messagesList"
-
                     :key="index"
 
                     :type="item.type"
-                    :title="item.title"
                 >
-                    <slot>
+                    <template v-slot:title>{{ item.title }}: </template>
 
-                        <component
-                            v-for="(part, index) in item.parts"
-                            :is="part.isCode ? 'code' : 'span'"
-                            :key="index"
+                    <i18n :path="'wasmAsm.' + item.templateId" tag="span">
 
-                            class="cr-alert-part"
-                            :class="{__code_reset: part.isCode}"
-                        >{{ part.content }}</component>
+                        <template
+                            v-slot:code
+                            v-if="item.codeItems.length"
+                        >
+                            <code class="__code_reset">{{ item.codeItems[0] }}</code>
+                        </template>
 
-                    </slot>
+                        <template
+                            v-slot:code2
+                            v-if="item.codeItems.length > 1"
+                        >
+                            <code class="__code_reset">{{ item.codeItems[1] }}</code>
+                        </template>
+                    </i18n>
                 </Alert>
             </div>
         </div>

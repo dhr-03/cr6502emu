@@ -3,10 +3,8 @@ use crate::parser::{Parser, types::*};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
-use crate::js_logger::{err_code, err_msg};
-
-use crate::lang::macros as lang_macro;
-use crate::lang::assembler as lang_asm;
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
 
 pub struct Instruction {
     opcode: u8,
@@ -44,12 +42,8 @@ impl Instruction {
 
             let offset = target - (asm.rom_start() as i32 + position + 1);
 
-            if offset > 127 {
-                err_msg(lang_macro::ERR_TARGET_TOO_FAR);
-
-                Err(ParseError::ValueSize)
-            } else if offset < -128 {
-                err_msg(lang_macro::ERR_TARGET_TOO_FAR);
+            if offset > 127 || offset < -128 {
+                Logger::err_msg(LoggerMessage::AsmErrTargetTooFar);
 
                 Err(ParseError::ValueSize)
             } else {
@@ -103,9 +97,9 @@ impl CodeItemTrait for Instruction {
             }
 
             None => {
-                err_code(lang_asm::ERR_LBL_NEVER_DEF_1,
-                         self.value.label_name().get_or_insert(""),
-                         lang_asm::ERR_LBL_NEVER_DEF_2,
+                Logger::explained_err(
+                    LoggerMessage::AsmErrLblNeverDef,
+                    self.value.label_name().get_or_insert(""),
                 );
 
                 Err(ParseError::UnknownIdentifier)

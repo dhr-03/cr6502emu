@@ -9,9 +9,9 @@ use crate::assembler::components::{CodeItemTrait, Instruction, Label, MacroFacto
 use crate::parser::Parser;
 use crate::parser::types::ParseError;
 
-use crate::js_logger::{Logger, info_code_i32, err_msg};
+use crate::js_logger::Logger;
 
-use crate::lang::assembler as lang;
+use crate::lang::LoggerMessage;
 
 
 #[wasm_bindgen]
@@ -77,7 +77,7 @@ impl Assembler {
             } else {
                 if let Err(e) = item {
                     if !Logger::msg_handled() {
-                        err_msg(e.to_str());
+                        Logger::err_msg(e.to_logger_msg());
                     }
 
                     st2_ok = false;
@@ -102,10 +102,10 @@ impl Assembler {
 
         if interface.write_ptr() < 1 {
             if st2_ok {
-                err_msg(lang::ERR_EMPTY_INPUT);
+                Logger::err_msg(LoggerMessage::AsmErrEmptyInput);
             }
         } else if interface.write_ptr() > interface.rom_size() {
-            err_msg(lang::ERR_ROM_TOO_SMALL);
+            Logger::err_msg(LoggerMessage::AsmErrRomTooSmall);
         } else if st2_ok {
             //Stage 4: Write
 
@@ -118,7 +118,7 @@ impl Assembler {
 
                 if let Err(e) = item.execute(&mut interface) {
                     if !Logger::msg_handled() {
-                        err_msg(e.to_str());
+                        Logger::err_msg(e.to_logger_msg());
                     }
 
                     rsv_write_ok = false;
@@ -130,9 +130,7 @@ impl Assembler {
         Logger::set_current_line_str("EOF");
 
         if rsv_write_ok {
-            info_code_i32(lang::INFO_ASM_SUCCESS_1,
-                          interface.write_ptr() as i32,
-                          lang::INFO_ASM_SUCCESS_2);
+            Logger::explained_info_i32(LoggerMessage::AsmInfoAsmSuccess, interface.write_ptr() as i32);
 
             Self::clear_unused_rom(&mut interface);
 
@@ -140,7 +138,7 @@ impl Assembler {
 
             true
         } else {
-            err_msg(lang::ERR_ASM_FAILED);
+            Logger::err_msg(LoggerMessage::AsmErrAsmFailed);
 
             self.identifiers.clear();
 
