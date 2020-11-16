@@ -1,3 +1,5 @@
+const WasmMsgs = require(process.env.VUE_APP_ASM_JS_PATH).LoggerMessage;
+
 const LangEn = {
     router: {
         Home: "Home",
@@ -235,6 +237,49 @@ const LangEn = {
             month: "month | months",
             year: "year | years",
         },
+    },
+
+    wasmAsm: {
+        [WasmMsgs.PrsErrNumParse]: "Failed to parse value {code} as uint 8/uint 16",
+        [WasmMsgs.PrsErrNumParseI8]: "Failed to parse value {code} as int 8",
+
+        [WasmMsgs.PrsErrExpectedZP]: "Expected 1 byte, found 2",
+
+
+        [WasmMsgs.AsmErrLblNeverDef]: "Label {code} is never defined",
+        [WasmMsgs.AsmErrLblReDef]: "Label {code} has already been defined",
+        [WasmMsgs.AsmErrLblShort]: "Label {code} it's too short",
+        [WasmMsgs.AsmErrLblLong]: "Label {code} it's too long",
+
+        [WasmMsgs.AsmErrAsmFailed]: "Assemble failed",
+        [WasmMsgs.AsmErrRomTooSmall]: "The program ROM is too small",
+
+        [WasmMsgs.AsmErrUnknownOpcode]: "Unknown opcode",
+        [WasmMsgs.AsmErrAddrMode]: "Opcode: {code} is incompatible with {code2}",
+        [WasmMsgs.AsmErrTargetTooFar]: "The target it's not in the -128-127 range",
+
+        [WasmMsgs.AsmErrEmptyInput]: "Nothing to assemble",
+
+        [WasmMsgs.AsmInfoAsmSuccess]: "Assembled into {code} bytes",
+
+
+        [WasmMsgs.McrErrNonAscii]: "Non ascii chars found",
+        [WasmMsgs.McrErrNumParse]: "Failed to parse {code} as a number",
+
+
+        [WasmMsgs.PreUnknownOpcode]: "Unknown opcode",
+        [WasmMsgs.PreUnknownMacro]: "Unknown macro",
+        [WasmMsgs.PreUnknownPattern]: "Unknown pattern",
+        [WasmMsgs.PreUnknownIdentifier]: "Unknown identifier",
+
+        [WasmMsgs.PreUnknownAddressingMode]: "Unknown addressing mode",
+        [WasmMsgs.PreWrongAddressingMode]: "Wrong addressing mode",
+
+        [WasmMsgs.PreInvalidValue]: "Invalid value",
+        [WasmMsgs.PreValueSize]: "Value size",
+
+        [WasmMsgs.PreSyntaxError]: "Syntax error",
+
     },
 };
 
