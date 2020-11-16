@@ -270,6 +270,12 @@ const BACKGROUND_COLOR: &'static str = COLOR_PALETTE[0];
 const DEFAULT_WIDTH: u16 = 50;
 const DEFAULT_HEIGHT: u16 = 50;
 
+// scaling prevents blurring
+const SCALE_FACTOR: u16 = 20;
+
+const SCALED_WIDTH: u16 = DEFAULT_WIDTH * SCALE_FACTOR;
+const SCALED_HEIGHT: u16 = DEFAULT_HEIGHT * SCALE_FACTOR;
+
 pub struct PixelScreen {
     canvas: HtmlCanvasElement,
     canvas_context: CanvasRenderingContext2d,
@@ -284,8 +290,8 @@ impl PixelScreen {
             .dyn_into::<web_sys::HtmlCanvasElement>()
             .unwrap();
 
-        canvas.set_width(DEFAULT_WIDTH as u32);
-        canvas.set_height(DEFAULT_HEIGHT as u32);
+        canvas.set_width(SCALED_WIDTH as u32);
+        canvas.set_height(SCALED_HEIGHT as u32);
 
         let canvas_context = canvas
             .get_context("2d")
@@ -308,7 +314,7 @@ impl PixelScreen {
 impl DeviceTrait for PixelScreen {
     fn reset_system(&mut self) {
         self.canvas_context.set_fill_style(&JsValue::from_str(BACKGROUND_COLOR));
-        self.canvas_context.fill_rect(0.0, 0.0, DEFAULT_WIDTH as f64, DEFAULT_HEIGHT as f64);
+        self.canvas_context.fill_rect(0.0, 0.0, SCALED_WIDTH as f64, SCALED_HEIGHT as f64);
     }
 
     fn reset_hard(&mut self) {
@@ -334,12 +340,12 @@ impl AddressableDeviceTrait for PixelScreen {
     }
 
     fn write_unchecked(&mut self, offset: u16, value: u8) {
-        let x = offset % 50;
-        let y = offset / 50;
+        let x = (offset % 50) * SCALE_FACTOR;
+        let y = (offset / 50) * SCALE_FACTOR;
 
         let color = COLOR_PALETTE[value as usize];
 
         self.canvas_context.set_fill_style(&JsValue::from_str(color));
-        self.canvas_context.fill_rect(x as f64, y as f64, 1.0, 1.0);
+        self.canvas_context.fill_rect(x as f64, y as f64, SCALE_FACTOR.into(), SCALE_FACTOR.into());
     }
 }
