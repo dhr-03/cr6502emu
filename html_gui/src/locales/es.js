@@ -1,3 +1,5 @@
+const WasmMsgs = require(process.env.VUE_APP_ASM_JS_PATH).LoggerMessage;
+
 const LangEs = {
     router: {
         Home: "Home",
@@ -207,7 +209,7 @@ const LangEs = {
     },
 
     about: {
-        description: "cr6502emu es un ensablador y emulador de la CPU MOS 6502.",
+        description: "cr6502emu es un ensamblador y emulador de la CPU MOS 6502.",
         gitLinkText: "Repositorio de Github",
     },
 
@@ -236,6 +238,50 @@ const LangEs = {
             year: "año | años",
         },
     },
+
+    wasmAsm: {
+        [WasmMsgs.PrsErrNumParse]: "El valor {code} no es un uint 8/uint 16 valido",
+        [WasmMsgs.PrsErrNumParseI8]: "El valor {code} no es un int 8 valido",
+
+        [WasmMsgs.PrsErrExpectedZP]: "Se esperaba un byte, se encontraron 2",
+
+
+        [WasmMsgs.AsmErrLblNeverDef]: "La etiqueta {code} nunca es definida",
+        [WasmMsgs.AsmErrLblReDef]: "La etiqueta {code} ya fue definida",
+        [WasmMsgs.AsmErrLblShort]: "La etiqueta {code} es muy corta",
+        [WasmMsgs.AsmErrLblLong]: "La etiqueta {code} es muy corta",
+
+        [WasmMsgs.AsmErrAsmFailed]: "No se pudo ensamblar",
+        [WasmMsgs.AsmErrRomTooSmall]: "La ROM de programa es muy chica",
+
+        [WasmMsgs.AsmErrUnknownOpcode]: "Opcode desconocido",
+        [WasmMsgs.AsmErrAddrMode]: "El opcode: {code} no es compatible con {code2}",
+        [WasmMsgs.AsmErrTargetTooFar]: "La direccion no esta en el rango -128-127 desde la direccion actual",
+
+        [WasmMsgs.AsmErrEmptyInput]: "No hay nada para ensamblar",
+
+        [WasmMsgs.AsmInfoAsmSuccess]: "Ensamblado en {code} bytes",
+
+
+        [WasmMsgs.McrErrNonAscii]: "Hay que no son ascii",
+        [WasmMsgs.McrErrNumParse]: "No se pudo convertir {code} a un numero",
+
+
+        [WasmMsgs.PreUnknownOpcode]: "Opcode desconocido",
+        [WasmMsgs.PreUnknownMacro]: "Macro desconocida",
+        [WasmMsgs.PreUnknownPattern]: "Patron desconocido",
+        [WasmMsgs.PreUnknownIdentifier]: "Identificador desconocido",
+
+        [WasmMsgs.PreUnknownAddressingMode]: "Modo de direccionamiento desconocido",
+        [WasmMsgs.PreWrongAddressingMode]: "Modo de direccionamiento invalido",
+
+        [WasmMsgs.PreInvalidValue]: "Valor invalido",
+        [WasmMsgs.PreValueSize]: "Tamaño de valor invalido",
+
+        [WasmMsgs.PreSyntaxError]: "Error de sintaxis",
+
+    },
+
 };
 
 export default LangEs;
