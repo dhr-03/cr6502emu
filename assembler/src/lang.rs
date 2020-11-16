@@ -78,20 +78,20 @@ impl AddressingMode {
             Immediate => "Immediate",
 
             ZeroPage => "ZeroPage",
-            ZeroPageX => "ZeroPageX",
-            ZeroPageY => "ZeroPageY",
+            ZeroPageX => "ZeroPage X",
+            ZeroPageY => "ZeroPage Y",
 
-            RelativeOffset => "RelativeOffset",
-            RelativeTarget => "RelativeTarget",
+            RelativeOffset => "Relative Offset",
+            RelativeTarget => "Relative Target",
 
             Absolute => "Absolute",
-            AbsoluteX => "AbsoluteX",
-            AbsoluteY => "AbsoluteY",
+            AbsoluteX => "Absolute X",
+            AbsoluteY => "Absolute Y",
 
             Indirect => "Indirect",
 
-            IndexedIndirect => "IndexedIndirect",
-            IndirectIndexed => "IndirectIndexed",
+            IndexedIndirect => "Indexed Indirect",
+            IndirectIndexed => "Indirect Indexed",
         }
     }
 }
