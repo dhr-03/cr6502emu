@@ -2,21 +2,30 @@
     <div class="uk-form-stacked">
 
         <div class="uk-margin">
-            <label class="uk-form-label">Download Project</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjFile.downloadPrj'"
+            />
             <button
                 @click="downloadProject"
 
                 class="crl-button cr-info uk-button"
             >
                 <font-awesome-icon icon="download"/>
-                Download project
+                <span
+                    class="cr-mg-t"
+                    v-t="'environment.settings.EnvironmentSettingPrjFile.downloadPrj'"
+                />
             </button>
         </div>
 
         <hr>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Delete Project</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrj'"
+            />
 
             <Modal
                 :allow-stack="true"
@@ -29,19 +38,30 @@
                 <template v-slot:toggle>
                     <button class="crl-button cr-err uk-button">
                         <font-awesome-icon icon="trash-alt"/>
-                        Delete Project
+                        <span
+                            class="cr-mg-t"
+                            v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrj'"
+                        />
                     </button>
                 </template>
 
 
                 <template v-slot:header>
-                    <span class="uk-modal-title uk-text-large">Delete Project</span>
+                    <span
+                        class="uk-modal-title uk-text-large"
+                        v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrj'"
+                    />
                 </template>
 
                 <template v-slot:body>
                     <p>
-                        Delete project: "<strong>{{ projectMeta.name }}</strong>"
-                        id: "<strong>{{ projectMeta.pid }}</strong>" ?
+                        <span v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrompt.nameTitle'"/>
+                        "<strong>{{ projectMeta.name }}</strong>"
+                    </p>
+
+                    <p>
+                        <span v-t="'environment.settings.EnvironmentSettingPrjFile.deletePrompt.idTitle'"/>
+                        "<strong>{{ projectMeta.pid }}</strong>" ?
                     </p>
                 </template>
 
@@ -51,17 +71,15 @@
                             @click="cancelDelete"
 
                             class="cr-info uk-button uk-margin-right"
-                        >
-                            Cancel
-                        </button>
+                            v-t="'guiCommon.button.cancel'"
+                        />
 
                         <button
                             @click="performDelete"
 
                             class="cr-err uk-button"
-                        >
-                            Delete
-                        </button>
+                            v-t="'guiCommon.button.delete'"
+                        />
                     </div>
                 </template>
 
@@ -80,7 +98,6 @@
     export default {
         name: "EnvironmentSettingPrjFile",
         components: {Modal},
-        niceName: "File",
         mixins: [MixinSettingsPage],
 
         methods: {

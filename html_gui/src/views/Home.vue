@@ -1,6 +1,6 @@
 <template>
     <div class="crg-container crg-mg-top">
-        <h2>Open Local Project</h2>
+        <h2 v-t="'projectChooser.title.openLocal'"/>
 
         <hr>
 
@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="uk-width-1-3 uk-inline uk-text-center">
-                        {{ getTimeAgo(prj.meta.lastMod) }} ago
+                        {{ getTimeAgo(prj.meta.lastMod) }}
                     </div>
 
                     <router-link
@@ -36,7 +36,7 @@
 
                 class="uk-text-center"
             >
-                <span>No saved projects found.</span>
+                <span v-t="'projectChooser.title.noSavedProjects'"/>
             </div>
         </div>
 
@@ -48,7 +48,7 @@
                 class="crl-project-add"
             >
                 <font-awesome-icon icon="plus-square"/>
-                New Project
+                {{ $t("projectChooser.button.new") }}
             </a>
 
 
@@ -87,7 +87,12 @@
             ]),
 
             getTimeAgo(date) {
-                return Tools.timeSince(date);
+                let data = Tools.timeSince(date);
+
+                return this.$t("timeAgo.template", {
+                    amount: data.amount,
+                    unit: this.$tc("timeAgo.unit." + data.unit, data.amount),
+                });
             },
 
             async addProjectAndGo() {
@@ -143,6 +148,7 @@
 
 <style lang="less">
     @import "../../node_modules/open-color/open-color";
+
     .crl-project-import-button {
         margin-left: 3em;
 

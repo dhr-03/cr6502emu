@@ -2,7 +2,10 @@
     <div class="uk-form-stacked">
 
         <div class="uk-margin">
-            <label class="uk-form-label">Project Name</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjMeta.prjName'"
+            />
             <input
                 v-model="prjName"
 
@@ -10,12 +13,15 @@
 
                 class="uk-input"
                 type="text"
-                placeholder="Project Name"
+                :placeholder="$t('environment.settings.EnvironmentSettingPrjMeta.prjName')"
             >
         </div>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Project Id</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjMeta.prjId'"
+            />
             <input
                 :value="projectMeta.pid"
 
@@ -28,7 +34,10 @@
         <hr>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Last project activity</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjMeta.dateLastMod'"
+            />
             <input
                 :value="prjNiceLastMod"
 
@@ -39,7 +48,10 @@
         </div>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Project creation date</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingPrjMeta.dateCreated'"
+            />
             <input
                 :value="prjNiceCreationDate"
 
@@ -60,9 +72,6 @@
 
     export default {
         name: "EnvironmentSettingPrjMeta",
-
-        niceName: "Project about",
-
         mixins: [MixinSettingsPage],
 
         computed: {

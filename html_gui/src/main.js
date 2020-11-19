@@ -2,6 +2,7 @@ import Vue from "vue"
 import App from "./App.vue"
 import router from "./router"
 import store from "./store"
+import {default as i18n} from "./i18n"
 
 import "../node_modules/uikit/dist/js/uikit.min"
 
@@ -10,6 +11,9 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
 
 // commented == imported more than once
 import {
+    //TheNavbar
+    faLanguage, faCaretDown,
+
     //Home
     faArrowCircleRight, faPlusSquare, faUpload,
 
@@ -50,6 +54,7 @@ import {
     from "@fortawesome/free-solid-svg-icons"
 
 library.add(
+    faLanguage, faCaretDown,
     faArrowCircleRight, faPlusSquare, faUpload,
     faCode,
     faExternalLinkSquareAlt,
@@ -69,9 +74,12 @@ Vue.component("font-awesome-icon", FontAwesomeIcon);
 
 Vue.config.productionTip = false;
 
+store.commit("global/setI18n", i18n); // needed before rendering
+
 new Vue({
     router,
     store,
+    i18n,
     render: h => h(App)
 }).$mount("#app");
 
@@ -86,3 +94,5 @@ window.addEventListener("storage", _ => {
 });
 
 store.commit("prj/reloadFromLS");
+
+store.dispatch("global/tryLoadLocaleFromLS");

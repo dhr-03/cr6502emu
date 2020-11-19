@@ -1,12 +1,15 @@
 <template>
     <div class="crg-container crg-mg-top">
-        <p>
-            cr6502emu is an assembler and emulator of the MOS 6502 CPU.
-        </p>
+        <p
+            v-t="'about.description'"
+        />
 
         <a href="https://github.com/dhreck/cr6502emu">
             <font-awesome-icon icon="code"/>
-            Github Repo
+            <span
+                class="cr-mg-t"
+                v-t="'about.gitLinkText'"
+            />
         </a>
     </div>
 </template>

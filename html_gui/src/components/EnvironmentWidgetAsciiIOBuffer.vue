@@ -11,7 +11,7 @@
 
         <input
             @keypress="onInput"
-            type="text" class="crl-input" placeholder="Write here ..."
+            type="text" class="crl-input" :placeholder="$t('environment.widget.asciiBuffer.writeHere')"
         >
     </div>
 </template>

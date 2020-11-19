@@ -59,4 +59,8 @@
     .crg-mg-top {
         margin-top: 2em;
     }
+
+    .cr-mg-t {
+        margin-left: 0.2em;
+    }
 </style>

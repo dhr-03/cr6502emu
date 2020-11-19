@@ -1,22 +1,18 @@
 <template>
     <div
-            class="cr-alert"
-            :class="typeClass"
+        class="cr-alert"
+        :class="typeClass"
     >
         <div class="cr-alert-icon">
             <font-awesome-icon :icon="iconName"/>
         </div>
 
         <div class="cr-alert-content">
-            <slot name="title">
-                <b v-if="title !== ''">
-                    {{ title }}:
-                </b>
-            </slot>
+            <b>
+                <slot name="title"></slot>
+            </b>
 
-            <slot>
-                {{ text }}
-            </slot>
+            <slot></slot>
         </div>
 
     </div>
@@ -28,19 +24,6 @@
     export default {
         name: "Alert",
         mixins: [MixinStatusElement],
-
-        props: {
-            title: {
-                type: String,
-                default: _ => "",
-            },
-
-            text: {
-                type: String,
-                default: _ => "",
-            }
-        },
-
     }
 </script>
 

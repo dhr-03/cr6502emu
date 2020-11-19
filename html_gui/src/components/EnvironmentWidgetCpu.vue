@@ -1,17 +1,17 @@
 <template>
     <div class="cr-widget-cpu">
         <EnvironmentWidgetCpuRegister
-            name="A"
+            :name="$t('environment.widget.cpu.items.a')"
             :value="widget.displayData.a"
         />
 
         <EnvironmentWidgetCpuRegister
-            name="X"
+            :name="$t('environment.widget.cpu.items.x')"
             :value="widget.displayData.x"
         />
 
         <EnvironmentWidgetCpuRegister
-            name="Y"
+            :name="$t('environment.widget.cpu.items.y')"
             :value="widget.displayData.y"
         />
 
@@ -20,21 +20,21 @@
 
 
         <EnvironmentWidgetCpuRegister
-            name="PC"
+            :name="$t('environment.widget.cpu.items.pc')"
             :value="widget.displayData.pc"
 
             :length-in-bytes="2"
         />
 
         <EnvironmentWidgetCpuRegister
-            name="Stack Ptr"
+            :name="$t('environment.widget.cpu.items.s')"
             :value="widget.displayData.s"
 
             :length-in-bytes="1"
         />
 
         <EnvironmentWidgetCpuRegister
-            name="Flags"
+            :name="$t('environment.widget.cpu.items.flags')"
         >
             <EnvironmentWidgetCpuFlags
                 :value="widget.displayData.p"
@@ -46,7 +46,7 @@
 
 
         <EnvironmentWidgetCpuRegister
-            name="Bus Addr"
+            :name="$t('environment.widget.cpu.items.bus.addr')"
             :value="widget.displayData.busAddr"
 
             :pre-value="busMode"
@@ -54,7 +54,7 @@
         />
 
         <EnvironmentWidgetCpuRegister
-            name="Bus Data"
+            :name="$t('environment.widget.cpu.items.bus.data')"
             :value="widget.displayData.busData"
         />
 

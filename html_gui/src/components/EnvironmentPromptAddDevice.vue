@@ -9,13 +9,19 @@
         <template v-slot:toggle>
             <button class="cr-info uk-button">
                 <font-awesome-icon icon="plus"/>
-                Add device
+                <span
+                    class="cr-mg-t"
+                    v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.button.toggle'"
+                />
             </button>
         </template>
 
 
         <template v-slot:header>
-            <h3 class="uk-modal-title uk-light">Add device</h3>
+            <h3
+                class="uk-modal-title uk-light"
+                v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.title'"
+            />
         </template>
 
         <template v-slot:body>
@@ -24,7 +30,9 @@
 
                 type="err"
             >
-                Failed to add device.
+                <span
+                    v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.failedToAdd'"
+                />
             </Alert>
 
             <div class="uk-form-stacked uk-light">
@@ -32,7 +40,10 @@
                 <div class="uk-grid">
 
                     <div class="uk-width-2-3">
-                        <label class="uk-form-label">Device type</label>
+                        <label
+                            class="uk-form-label"
+                            v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.dev.type'"
+                        />
                         <select
                             v-model="selectedDeviceId"
 
@@ -50,14 +61,17 @@
                     </div>
 
                     <div class="uk-width-1-3">
-                        <label class="uk-form-label">Numeric Base</label>
+                        <label
+                            class="uk-form-label"
+                            v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.numBase'"
+                        />
                         <select
                             v-model.number="inputNumericBase"
 
                             class="uk-select"
                         >
-                            <option value="10">Decimal</option>
-                            <option value="16">Hexadecimal</option>
+                            <option value="10" v-t="'guiCommon.numericBase.dec'"></option>
+                            <option value="16" v-t="'guiCommon.numericBase.hex'"></option>
                         </select>
                     </div>
                 </div>
@@ -66,7 +80,10 @@
 
                 <div class="uk-grid uk-margin-top">
                     <div class="uk-width-1-2">
-                        <label class="uk-form-label">Device Addr</label>
+                        <label
+                            class="uk-form-label"
+                            v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.dev.addr'"
+                        />
                         <NumericInput
                             :numeric-base="inputNumericBase"
 
@@ -77,7 +94,10 @@
                     </div>
 
                     <div class="uk-width-1-2">
-                        <label class="uk-form-label">Device size</label>
+                        <label
+                            class="uk-form-label"
+                            v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.dev.size'"
+                        />
                         <input
                             v-if="sizeInputIsDisabled"
 
@@ -110,9 +130,8 @@
                 :disabled="!allowSubmit"
 
                 class="uk-button uk-button-primary"
-            >
-                Add Device
-            </button>
+                v-t="'environment.settings.EnvironmentSettingPrjDevices.addPrompt.button.submit'"
+            />
         </template>
 
     </Modal>

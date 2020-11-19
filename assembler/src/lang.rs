@@ -1,124 +1,97 @@
+use wasm_bindgen::prelude::wasm_bindgen;
+
 use crate::parser::types::{AddressingMode, ParseError};
 
-type STR = &'static str;
-/*
-    Format: [ERR|WARN|INF|AUX]_{DESC}(_[1..])?
-*/
+#[wasm_bindgen]
+#[repr(u8)]
+#[derive(Copy, Clone)]
+pub enum LoggerMessage {
+    // Parser
+    PrsErrNumParse,
+    PrsErrNumParseI8,
 
+    PrsErrExpectedZP,
 
-// ###################################################################################
-//                                      Parser
-// ###################################################################################
+    // Assembler
+    AsmErrLblNeverDef,
+    AsmErrLblReDef,
+    AsmErrLblShort,
+    AsmErrLblLong,
 
-pub mod parser {
-    use super::STR;
+    AsmErrAsmFailed,
+    AsmErrRomTooSmall,
 
-    pub const ERR_NUM_PARSE_1: STR = "Failed to parse value";
-    pub const ERR_NUM_PARSE_2: STR = "as";
-    pub const AUX_UNSIGNED_ZP_ABS: STR = "unsigned integer 8b/16b";
-    pub const AUX_SIGNED_ZP: STR = "signed integer 8b";
+    AsmErrUnknownOpcode,
+    AsmErrAddrMode,
+    AsmErrTargetTooFar,
 
-    pub const ERR_EXPECTED_ZP: STR = "Expected 1 byte, found 2";
-    //pub const ERR_EXPECTED_ABS: STR = "Expected 2 bytes, found 1";
+    AsmErrEmptyInput,
 
-    pub const ERR_IMM_ONLY_ZP: STR = "Immediate mode only takes 1 byte of data";
+    AsmInfoAsmSuccess,
+
+    // Macros
+    McrErrNonAscii,
+    McrErrNumParse,
+
+    // Parse Error
+    PreUnknownOpcode,
+    PreUnknownMacro,
+    PreUnknownPattern,
+    PreUnknownIdentifier,
+
+    PreUnknownAddressingMode,
+    PreWrongAddressingMode,
+
+    PreInvalidValue,
+    PreValueSize,
+
+    PreSyntaxError,
 }
-
-// ###################################################################################
-//                                     Assembler
-// ###################################################################################
-
-pub mod assembler {
-    use super::STR;
-
-    pub const ERR_LBL_NEVER_DEF_1: STR = "Label";
-    pub const ERR_LBL_NEVER_DEF_2: STR = "is never defined";
-
-    pub const ERR_LBL_RE_DEF_1: STR = ERR_LBL_NEVER_DEF_1;
-    pub const ERR_LBL_RE_DEF_2: STR = "has already been defined";
-
-    pub const ERR_LBL_SHORT_1: STR = ERR_LBL_NEVER_DEF_1;
-    pub const ERR_LBL_SHORT_2: STR = "it's too short";
-
-    pub const ERR_LBL_LONG_1: STR = ERR_LBL_NEVER_DEF_1;
-    pub const ERR_LBL_LONG_2: STR = "it's too long";
-
-    pub const ERR_ASM_FAILED: STR = "Assemble failed";
-
-    pub const ERR_ROM_TOO_SMALL: STR = "The program ROM is too small";
-
-    pub const ERR_ADDR_MODE_1: STR = "Opcode:";
-    pub const ERR_ADDR_MODE_2: STR = "is incompatible with";
-
-    pub const ERR_UNKNOWN_OPCODE: STR = "Unknown opcode";
-
-    pub const ERR_EMPTY_INPUT: STR = "Nothing to assemble";
-
-    pub const INFO_ASM_SUCCESS_1: STR = "Assembled into";
-    pub const INFO_ASM_SUCCESS_2: STR = "bytes";
-}
-
-// ###################################################################################
-//                                      Macros
-// ###################################################################################
-pub mod macros {
-    use super::STR;
-
-    pub const ERR_WRT_NON_ASCII: STR = "Non ascii chars found";
-    pub const ERR_WRT_NUM_PARSE_1: STR = "Failed to parse";
-    pub const ERR_WRT_NUM_PARSE_2: STR = "as a number";
-
-    pub const ERR_TARGET_TOO_FAR: STR = "The target it's not in the -128..=127 range, from this position";
-
-}
-
-
-// ###################################################################################
-//                                     to_str
-// ###################################################################################
 
 impl ParseError {
-    pub fn to_str(&self) -> STR {
+    pub fn to_logger_msg(&self) -> LoggerMessage {
         use ParseError::*;
+        use LoggerMessage::*;
+
         match self {
-            UnknownOpcode => "UnknownOpcode",
-            UnknownMacro => "UnknownMacro",
-            UnknownPattern  => "UnknownPattern",
-            UnknownIdentifier  => "UnknownIdentifier",
+            UnknownOpcode => PreUnknownOpcode,
+            UnknownMacro => PreUnknownMacro,
+            UnknownPattern => PreUnknownPattern,
+            UnknownIdentifier => PreUnknownIdentifier,
 
-            UnknownAddressingMode => "UnknownAddressingMode",
-            WrongAddressingMode => "WrongAddressingMode",
+            UnknownAddressingMode => PreUnknownAddressingMode,
+            WrongAddressingMode => PreWrongAddressingMode,
 
-            InvalidValue => "InvalidValue",
-            ValueSize => "ValueSize",
+            InvalidValue => PreInvalidValue,
+            ValueSize => PreValueSize,
 
-            SyntaxError => "SyntaxError",
+            SyntaxError => PreSyntaxError,
         }
     }
 }
 
 impl AddressingMode {
-    pub fn to_str(&self) -> STR {
+    pub fn to_str(&self) -> &'static str {
         use AddressingMode::*;
         match self {
             Implicit => "Implicit",
             Immediate => "Immediate",
 
             ZeroPage => "ZeroPage",
-            ZeroPageX => "ZeroPageX",
-            ZeroPageY => "ZeroPageY",
+            ZeroPageX => "ZeroPage X",
+            ZeroPageY => "ZeroPage Y",
 
-            RelativeOffset => "RelativeOffset",
-            RelativeTarget => "RelativeTarget",
+            RelativeOffset => "Relative Offset",
+            RelativeTarget => "Relative Target",
 
             Absolute => "Absolute",
-            AbsoluteX => "AbsoluteX",
-            AbsoluteY => "AbsoluteY",
+            AbsoluteX => "Absolute X",
+            AbsoluteY => "Absolute Y",
 
             Indirect => "Indirect",
 
-            IndexedIndirect => "IndexedIndirect",
-            IndirectIndexed => "IndirectIndexed",
+            IndexedIndirect => "Indexed Indirect",
+            IndirectIndexed => "Indirect Indexed",
         }
     }
 }

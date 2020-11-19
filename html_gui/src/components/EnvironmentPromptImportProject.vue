@@ -12,23 +12,28 @@
         <template v-slot:toggle>
                     <span class="crl-project-import-button">
                         <font-awesome-icon icon="upload"/>
-                        Import Project
+                        <span class="cr-mg-t" v-t="'projectChooser.button.import'"></span>
                     </span>
         </template>
 
 
         <template v-slot:header>
-            <h3 class="uk-light">Upload project</h3>
+            <h3 class="uk-light" v-t="'projectChooser.importPrompt.title'"/>
         </template>
 
         <template v-slot:body>
             <Alert
-                v-if="errorMessage != null"
+                v-if="errorKey"
 
                 type="err"
-                title="Failed to import file"
             >
-                {{ errorMessage }}
+                <template v-slot:title>
+                    <span v-t="'projectChooser.importPrompt.error.title'"></span>
+                </template>
+
+                <template v-slot>
+                    {{ $t(errorKey, errorData) }}
+                </template>
             </Alert>
             <br>
             <br>
@@ -42,7 +47,10 @@
                     accept=".cremu"
                 >
 
-                <button class="uk-button uk-button-default" type="button" tabindex="-1">Select File</button>
+                <button
+                    class="uk-button uk-button-default"
+                    v-t="'projectChooser.importPrompt.selectButtonText'"
+                />
             </div>
 
             <br>
@@ -63,7 +71,8 @@
 
         data() {
             return {
-                errorMessage: null
+                errorKey: null,
+                errorData: null,
             };
         },
 
@@ -83,7 +92,8 @@
 
                             this.tryToImportProject(prj).then(value => {
                                 if (value.ok) {
-                                    this.errorMessage = null;
+                                    this.errorKey = null;
+                                    this.errorData = null;
 
                                     this.$refs.modal.hideModal();
 
@@ -98,22 +108,25 @@
                                 } else {
                                     switch (value.err) {
                                         case "validate":
-                                            this.errorMessage = "Invalid file data.";
+                                            this.errorKey = "projectChooser.importPrompt.error.invalidData";
                                             break;
 
                                         case "exists":
-                                            this.errorMessage = `A project with the id ${prj.meta.pid} already exists.`
+                                            this.errorKey = "projectChooser.importPrompt.error.unavailableId";
+                                            this.errorData = {
+                                                pid: prj.meta.pid
+                                            };
                                             break;
 
                                         default:
-                                            this.errorMessage = "Unknown error."
+                                            this.errorKey = "projectChooser.importPrompt.error.unknown";
                                             break;
                                     }
                                 }
                             });
 
                         } catch (e) {
-                            this.errorMessage = "Invalid file structure.";
+                            this.errorKey = "projectChooser.importPrompt.error.invalidFile";
                         }
                     };
 

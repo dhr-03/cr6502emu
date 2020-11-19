@@ -3,7 +3,7 @@
         class="cr-actionbar-button cr-animate-click"
         :class="{[colorClass]: true, 'cr-disabled': !buttonEnabled, 'cr-active': buttonActive}"
 
-        :title="explanation"
+        :title="$t(explanationKey)"
         @click="clickHandler"
     >
         <font-awesome-icon :icon="iconName"/>
@@ -37,7 +37,7 @@
 
             colorNameActive: COLOR_PROP,
 
-            explanation: {
+            explanationKey: {
                 type: String,
                 default: _ => ""
             },

@@ -2,7 +2,10 @@
     <div class="uk-form-stacked">
 
         <div class="uk-margin">
-            <label class="uk-form-label">Preferred numeric base</label>
+            <label
+                class="uk-form-label"
+                v-t="'environment.settings.EnvironmentSettingEnvInterface.preferredNumBase'"
+            />
 
             <select
                 v-model.number="projectSettings.preferredNumericBase"
@@ -10,8 +13,13 @@
                 class="uk-select"
             >
 
-                <option value="10">Decimal (10)</option>
-                <option value="16">Hexadecimal (16)</option>
+                <option value="10">
+                    {{ $t("guiCommon.numericBase.dec") }}
+                </option>
+
+                <option value="16">
+                    {{ $t("guiCommon.numericBase.hex") }}
+                </option>
 
             </select>
         </div>
@@ -19,7 +27,16 @@
         <hr>
 
         <div class="uk-margin">
-            <label class="uk-form-label">Maximum Memory Monitor rows <b>(This can impact performance and loading times)</b></label>
+            <label class="uk-form-label">
+                <span
+                    v-t="'environment.settings.EnvironmentSettingEnvInterface.maxMonitorRows'"
+                />
+                <b
+                    class="cr-mg-t"
+                    v-t="'environment.settings.EnvironmentSettingEnvInterface.maxMonitorRowsExplanation'"
+                />
+            </label>
+
             <input
                 v-model.number="memMonitorMaxRows"
 
@@ -42,8 +59,7 @@
     const MEMORY_MONITOR_MAX_ROWS = ProjectSchema.properties.settings.properties.memoryMonitorMaxRows.maximum;
 
     export default {
-        name: "EnvironmentSettingPrjMeta",
-        niceName: "Interface",
+        name: "EnvironmentSettingEnvInterface",
         mixins: [MixinSettingsPage],
 
         computed: {

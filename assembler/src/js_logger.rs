@@ -1,4 +1,5 @@
 use wasm_bindgen::prelude::wasm_bindgen;
+use super::lang::LoggerMessage;
 
 #[wasm_bindgen(raw_module = "../shared/logger.js")]
 extern {
@@ -13,21 +14,6 @@ extern {
     #[wasm_bindgen(static_method_of = Logger, js_name = setCurrentLine)]
     pub fn set_current_line_str(txt: &str);
 
-    #[wasm_bindgen(static_method_of = Logger, js_name = beginInfo)]
-    pub fn begin_info();
-
-    #[wasm_bindgen(static_method_of = Logger, js_name = beginWarn)]
-    pub fn begin_warn();
-
-    #[wasm_bindgen(static_method_of = Logger, js_name = beginErr)]
-    pub fn begin_err();
-
-    #[wasm_bindgen(static_method_of = Logger, js_name = write)]
-    pub fn write_str(text: &str);
-
-    #[wasm_bindgen(static_method_of = Logger, js_name = write)]
-    pub fn write_i32(num: i32);
-
     #[wasm_bindgen(static_method_of = Logger, js_name = writeCode)]
     pub fn write_code(code: &str);
 
@@ -37,54 +23,54 @@ extern {
     #[wasm_bindgen(static_method_of = Logger, js_name = endMessage)]
     pub fn end_msg();
 
-    #[wasm_bindgen(static_method_of = Logger, js_name = genericMessage)]
-    fn generic_message(kind: &str, msg: &str);
+    #[wasm_bindgen(static_method_of = Logger, js_name = infoMessage)]
+    pub fn info_msg(id: LoggerMessage);
 
-    #[wasm_bindgen(static_method_of = Logger, js_name = genericExplainedCode)]
-    fn generic_explained_code(kind: &str, msg1: &str, code: &str, msg2: &str);
+    #[wasm_bindgen(static_method_of = Logger, js_name = warnMessage)]
+    pub fn warn_msg(id: LoggerMessage);
 
-    #[wasm_bindgen(static_method_of = Logger, js_name = genericExplainedCode)]
-    fn generic_explained_code_i32(kind: &str, msg1: &str, code: i32, msg2: &str);
+    #[wasm_bindgen(static_method_of = Logger, js_name = errMessage)]
+    pub fn err_msg(id: LoggerMessage);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedInfo)]
+    pub fn explained_info(id: LoggerMessage, code: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedInfo)]
+    pub fn explained_info_2(id: LoggerMessage, code_1: &str, code_2: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedInfo)]
+    pub fn explained_info_i32(id: LoggerMessage, code: i32);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedInfo)]
+    pub fn explained_info_i32_2(id: LoggerMessage, code_1: i32, code_2: i32);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedWarn)]
+    pub fn explained_warn(id: LoggerMessage, code: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedWarn)]
+    pub fn explained_warn_2(id: LoggerMessage, code_1: &str, code_2: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedWarn)]
+    pub fn explained_warn_i32(id: LoggerMessage, code: i32);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedWarn)]
+    pub fn explained_warn_i32_2(id: LoggerMessage, code_1: i32, code_2: i32);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedErr)]
+    pub fn explained_err(id: LoggerMessage, code: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedErr)]
+    pub fn explained_err_2(id: LoggerMessage, code_1: &str, code_2: &str);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedErr)]
+    pub fn explained_err_i32(id: LoggerMessage, code: i32);
+
+    #[wasm_bindgen(static_method_of = Logger, js_name = explainedErr)]
+    pub fn explained_err_i32_2(id: LoggerMessage, code_1: i32, code_2: i32);
 
     #[wasm_bindgen(static_method_of = Logger, js_name = msgHandled)]
     pub fn msg_handled() -> bool;
 
     #[wasm_bindgen(static_method_of = Logger, js_name = reset)]
     pub fn reset();
-}
-
-#[inline(always)]
-pub fn err_msg(msg: &str) {
-    Logger::generic_message("err", msg)
-}
-
-#[inline(always)]
-pub fn warn_msg(msg: &str) {
-    Logger::generic_message("warn", msg)
-}
-
-#[inline(always)]
-pub fn info_msg(msg: &str) {
-    Logger::generic_message("info", msg)
-}
-
-
-#[inline(always)]
-pub fn err_code(msg1: &str, code: &str, msg2: &str) {
-    Logger::generic_explained_code("err", msg1, code, msg2)
-}
-
-#[inline(always)]
-pub fn warn_code(msg1: &str, code: &str, msg2: &str) {
-    Logger::generic_explained_code("warn", msg1, code, msg2)
-}
-
-#[inline(always)]
-pub fn info_code(msg1: &str, code: &str, msg2: &str) {
-    Logger::generic_explained_code("info", msg1, code, msg2)
-}
-
-#[inline(always)]
-pub fn info_code_i32(msg1: &str, code: i32, msg2: &str) {
-    Logger::generic_explained_code_i32("info", msg1, code, msg2)
 }

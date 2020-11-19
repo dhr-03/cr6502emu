@@ -8,32 +8,35 @@ export default {
 
     // too lazy to implement it myself
     // https://stackoverflow.com/a/3177838
+    //
+    // Update: heavily modified to work with i18n
     timeSince(date) {
+        let seconds = Math.floor((Date.now() - date) / 1000);
 
-        var seconds = Math.floor((new Date() - date) / 1000);
+        const amounts = [
+            [31536000, "year"],
+            [2592000, "month"],
+            [86400, "day"],
+            [3600, "hour"],
+            [60, "minute"]
+        ];
 
-        var interval = seconds / 31536000;
+        for (let [divider, name] of amounts) {
+            let interval = seconds / divider;
 
-        if (interval > 1) {
-            return Math.floor(interval) + " years";
+            if (interval > 1) {
+                return {
+                    unit: name,
+                    amount: Math.floor(interval),
+                };
+            }
         }
-        interval = seconds / 2592000;
-        if (interval > 1) {
-            return Math.floor(interval) + " months";
+
+        return {
+            unit: "second",
+            amount: seconds
         }
-        interval = seconds / 86400;
-        if (interval > 1) {
-            return Math.floor(interval) + " days";
-        }
-        interval = seconds / 3600;
-        if (interval > 1) {
-            return Math.floor(interval) + " hours";
-        }
-        interval = seconds / 60;
-        if (interval > 1) {
-            return Math.floor(interval) + " minutes";
-        }
-        return Math.floor(seconds) + " seconds";
+
     },
 
     getRandomUID() {

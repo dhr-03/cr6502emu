@@ -3,8 +3,9 @@ use crate::parser::types::{ParseResult, ParseError, ValueMode};
 
 use super::common::CodeItemTrait;
 
-use crate::js_logger::{err_code};
-use crate::lang::assembler as lang;
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
+
 use crate::parser::Parser;
 
 pub struct MacroDefine {
@@ -21,11 +22,11 @@ impl MacroDefine {
 
         //todo: duplicated fragments: this, self.process (Label::from_str)
         if name.len() > 15 {
-            err_code(lang::ERR_LBL_LONG_1, name, lang::ERR_LBL_LONG_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblLong, name);
 
             Err(ParseError::ValueSize)
         } else if name.len() < 3 {
-            err_code(lang::ERR_LBL_SHORT_1, name, lang::ERR_LBL_SHORT_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblShort, name);
 
             Err(ParseError::ValueSize)
         } else{
@@ -64,7 +65,7 @@ impl CodeItemTrait for MacroDefine {
         let ok;
 
         if let Some(_) = asm.get_label_value(self.name.as_str()) {
-            err_code(lang::ERR_LBL_RE_DEF_1, self.name.as_str(), lang::ERR_LBL_RE_DEF_2);
+            Logger::explained_err(LoggerMessage::AsmErrLblReDef, self.name.as_str());
 
             ok = false;
         } else {

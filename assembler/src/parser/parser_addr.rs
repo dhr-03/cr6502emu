@@ -5,8 +5,9 @@ use crate::parser::Parser;
 use crate::parser::types::*;
 
 use crate::js_regex::{js_re_inx, js_re_nrm, js_re_common};
-use crate::js_logger::{Logger, err_msg};
-use crate::lang::parser as lang;
+
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
 
 impl Parser {
     fn parse_re_addr_common(re_result: &[&str], offset: usize, is_i8: bool) -> ParseResult<ValueMode> {
@@ -46,12 +47,10 @@ impl Parser {
         };
 
         if parse_rs.is_err() {
-            Logger::begin_err();
-            Logger::write_str(lang::ERR_NUM_PARSE_1);
-            Logger::write_code(str_value);
-            Logger::write_str(lang::ERR_NUM_PARSE_2);
-            Logger::write_code(if is_i8 { lang::AUX_SIGNED_ZP } else { lang::AUX_UNSIGNED_ZP_ABS });
-            Logger::end_msg();
+            Logger::explained_err(
+                if is_i8 { LoggerMessage::PrsErrNumParseI8 } else { LoggerMessage::PrsErrNumParse },
+                str_value,
+            );
         };
 
         parse_rs.
@@ -82,7 +81,7 @@ impl Parser {
 
             //immediate only accepts 1 byte
             [false, false] => {
-                err_msg(lang::ERR_IMM_ONLY_ZP);
+                Logger::err_msg(LoggerMessage::PrsErrExpectedZP);
 
                 Err(ParseError::ValueSize)
             }
@@ -160,7 +159,7 @@ fn __indexed_zp_or_err(addr_mode: AddressingMode, value: ValueMode, is_zp: bool)
             ParsedValue::new(addr_mode, value, true)
         )
     } else {
-        err_msg(lang::ERR_EXPECTED_ZP);
+        Logger::err_msg(LoggerMessage::PrsErrExpectedZP);
 
         Err(ParseError::ValueSize)
     }

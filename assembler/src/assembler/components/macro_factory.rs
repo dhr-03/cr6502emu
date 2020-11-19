@@ -2,8 +2,8 @@ use crate::parser::types::{ParseResult, ParseError};
 
 use super::common::{CodeItemTrait, to_boxed_result};
 
-use crate::js_logger::{err_msg, err_code};
-use crate::lang::macros as lang;
+use crate::js_logger::Logger;
+use crate::lang::LoggerMessage;
 
 use super::{MacroWrite, MacroDefine};
 
@@ -30,7 +30,7 @@ impl MacroFactory {
                     if args[2].is_ascii() {
                         Ok(MacroWrite::new_str(args[2]))
                     } else {
-                        err_msg(lang::ERR_WRT_NON_ASCII);
+                        Logger::err_msg(LoggerMessage::McrErrNonAscii);
 
                         Err(ParseError::InvalidValue)
                     }
@@ -59,7 +59,7 @@ impl MacroFactory {
 fn parse_or_log<T: std::str::FromStr>(txt: &str) -> ParseResult<T> {
     T::from_str(txt)
         .map_err(|_| {
-            err_code(lang::ERR_WRT_NUM_PARSE_1, txt, lang::ERR_WRT_NUM_PARSE_2);
+            Logger::explained_err(LoggerMessage::McrErrNumParse, txt);
 
             ParseError::InvalidValue
         })
