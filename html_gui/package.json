@@ -1,6 +1,7 @@
 {
   "name": "html-gui",
   "version": "0.3.0",
+  "author": "dhr <dhr.git.pub@gmail.com>",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
