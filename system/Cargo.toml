@@ -1,9 +1,13 @@
 [package]
 name = "system"
-version = "0.3.0"
-authors = ["dhr <dhr.git.pub@gmail.com>"]
+version = "0.3.1"
 edition = "2018"
+publish = false
+
+authors = ["dhr <dhr.git.pub@gmail.com>"]
+repository = "https://github.com/dhreck/cr6502emu"
 license = "GNU AGPLv3"
+homepage = "https://github.com/dhreck/cr6502emu"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
