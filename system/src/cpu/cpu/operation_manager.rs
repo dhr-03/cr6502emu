@@ -85,8 +85,4 @@ impl CPUOperationManager {
             self.unchecked_execute(inter);
         }
     }
-
-    pub fn cycle_count(&self) -> usize {
-        self.action_i
-    }
 }

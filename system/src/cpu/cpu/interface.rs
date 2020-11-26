@@ -23,10 +23,4 @@ impl CPUInterface<'_> {
             &mut self.reg.a
         }
     }
-
-    pub fn target_mut_read(&mut self) -> &mut u8 {
-        self.mem.read_at_addr();
-
-        self.mem.data_ref_mut()
-    }
 }

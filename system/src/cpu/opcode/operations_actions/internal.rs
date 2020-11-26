@@ -448,11 +448,11 @@ pub fn clc(inter: &mut CPUInterface) {
     clear_flag(inter, FlagPositionOffset::Carry);
 }
 
-pub fn cld(inter: &mut CPUInterface) {
+pub fn cld(_inter: &mut CPUInterface) {
     on_unimplemented_feature("Decimal Mode");
 }
 
-pub fn cli(inter: &mut CPUInterface) {
+pub fn cli(_inter: &mut CPUInterface) {
     on_unsupported_feature("Interrupts");
 }
 
