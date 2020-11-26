@@ -41,10 +41,12 @@ export class Logger {
             title = this.currentLine || undefined;
         }
 
+        let fullTemplate = typeof templateId === "string" ? templateId : "wasmAsm." + templateId;
+
         this.workingObj = {
             type,
             title,
-            templateId,
+            templateId: fullTemplate,
             codeItems: [],
         }
 

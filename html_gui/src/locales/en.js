@@ -201,7 +201,7 @@ const LangEn = {
             },
 
             memMonitor: {
-              cappedMsg: "-- Capped by Settings --"
+                cappedMsg: "-- Capped by Settings --"
             },
         },
 
@@ -287,6 +287,12 @@ const LangEn = {
         [WasmMsgs.PreSyntaxError]: "Syntax error",
 
     },
+
+    wasmSys: {
+        unsupported: "Unsupported feature: {code}",
+
+        unimplemented: "Unimplemented feature: {code}",
+    }
 };
 
 export default LangEn;

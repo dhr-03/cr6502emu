@@ -9,21 +9,17 @@ const hashCode = s => s.split('').reduce((a, b) => {
 export class CappedLogger {
     static waitUntil = {};
 
-    static cappedExplainedCode(kind, msg1, code, msg2) {
+    static cappedExplainedErr(template, code1, code2) {
         let now = Date.now();
 
-        let hash = hashCode(`${msg1} ${code} ${msg2}`);
+        let hash = hashCode(`${template} ${code1} ${code2}`);
         let nextMsgShow = this.waitUntil[hash] || 0;
 
         if (nextMsgShow <= now) {
             Logger.setCurrentLine("Run");
-            Logger.genericExplainedCode(kind, msg1, code, msg2);
+            Logger.explainedErr(template, code1, code2);
 
             this.waitUntil[hash] = now + (10 * 1000);
         }
-    }
-
-    static cappedExplainedErr(msg1, code, msg2) {
-        this.cappedExplainedCode("err", msg1, code, msg2);
     }
 }

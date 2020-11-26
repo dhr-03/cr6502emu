@@ -288,6 +288,12 @@ const LangEs = {
 
     },
 
+    wasmSys: {
+        unsupported: "Funcion no soportada: {code}",
+
+        unimplemented: "Funcion no implementada: {code}",
+    }
+
 };
 
 export default LangEs;

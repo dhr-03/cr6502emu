@@ -61,7 +61,7 @@
                 >
                     <template v-slot:title>{{ item.title }}: </template>
 
-                    <i18n :path="'wasmAsm.' + item.templateId" tag="span">
+                    <i18n :path="item.templateId" tag="span">
 
                         <template
                             v-slot:code
