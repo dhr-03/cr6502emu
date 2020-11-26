@@ -143,7 +143,9 @@ export const EnvironmentStore = {
                         let assembler = new asmLib.Assembler();
                         assembler.memory = wasm.memory;
 
-                        asmLib.set_panic_hook();
+                        if (process.env.NODE_ENV === 'development') {
+                            asmLib.set_panic_hook();
+                        }
 
                         context.commit("__setAsm", assembler);
                     }
@@ -156,7 +158,9 @@ export const EnvironmentStore = {
                         let system = new sysLib.System();
                         system.memory = wasm.memory;
 
-                        sysLib.set_panic_hook();
+                        if (process.env.NODE_ENV === 'development') {
+                            sysLib.set_panic_hook();
+                        }
 
                         context.commit("__setSys", system);
                     }
