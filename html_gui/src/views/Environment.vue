@@ -17,7 +17,7 @@
         <font-awesome-icon class="uk-margin-small cr-red" icon="times-circle" size="4x"/>
         <span
             class="cr-mg-t"
-            v-t="'environment.initializing.failed'"
+            v-t="'environment.initialize.failed'"
         />
 
         <br>
