@@ -199,6 +199,10 @@ const LangEn = {
             asciiBuffer: {
                 writeHere: "Write here ...",
             },
+
+            memMonitor: {
+              cappedMsg: "-- Capped by Settings --"
+            },
         },
 
         logbar: {

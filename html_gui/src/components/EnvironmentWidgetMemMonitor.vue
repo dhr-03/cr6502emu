@@ -33,10 +33,10 @@
         <p
             v-if="displayedRowsAreCapped"
 
+            v-t="'environment.widget.memMonitor.cappedMsg'"
+
             class="uk-text-center uk-text-bold uk-text-primary"
-        >
-            -- Capped by Settings --
-        </p>
+        />
     </div>
 </template>
 

@@ -199,6 +199,10 @@ const LangEs = {
             asciiBuffer: {
                 writeHere: "Escribe aqui ...",
             },
+
+            memMonitor: {
+                cappedMsg: "-- Limitado en Opciones --"
+            },
         },
 
         logbar: {
