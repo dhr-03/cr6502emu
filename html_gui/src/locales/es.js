@@ -199,6 +199,10 @@ const LangEs = {
             asciiBuffer: {
                 writeHere: "Escribe aqui ...",
             },
+
+            memMonitor: {
+                cappedMsg: "-- Limitado en Opciones --"
+            },
         },
 
         logbar: {
@@ -224,6 +228,8 @@ const LangEs = {
             hex: "Hexadecimal",
             dec: "Decimal",
         },
+
+        wait: "Espera ...",
     },
 
     timeAgo: {
@@ -281,6 +287,12 @@ const LangEs = {
         [WasmMsgs.PreSyntaxError]: "Error de sintaxis",
 
     },
+
+    wasmSys: {
+        unsupported: "Funcion no soportada: {code}",
+
+        unimplemented: "Funcion no implementada: {code}",
+    }
 
 };
 

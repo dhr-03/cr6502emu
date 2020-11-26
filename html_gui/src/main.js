@@ -50,6 +50,9 @@ import {
     //EnvironmentSettingPrjDevices
     /*faTrashAlt, faPlus,*/ faRandom,
 
+    //EnvironmentWidgetAsciiIOBuffer
+    faSortAmountDownAlt,
+
 }
     from "@fortawesome/free-solid-svg-icons"
 
@@ -67,6 +70,7 @@ library.add(
     faChevronRight, faGhost, faChevronDown,
     faTrashAlt, faDownload,
     faRandom,
+    faSortAmountDownAlt,
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

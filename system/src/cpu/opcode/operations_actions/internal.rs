@@ -27,17 +27,17 @@ extern {
     type CappedLogger;
 
     #[wasm_bindgen(static_method_of = CappedLogger, js_name = cappedExplainedErr)]
-    fn explained_err(msg1: &str, code: &str, msg2: &str);
+    fn explained_err(template: &str, code1: &str);
 }
 
 fn on_unsupported_feature(name: &str) {
-    CappedLogger::explained_err("This feature is not supported: ", name, "");
+    CappedLogger::explained_err("wasmSys.unsupported", name);
 }
 
 //This should only be used when a feature such as decimal mode is not yet implemented,
 //but might be in the future.
 fn on_unimplemented_feature(name: &str) {
-    CappedLogger::explained_err("This feature is not implemented: ", name, "");
+    CappedLogger::explained_err("wasmSys.unimplemented", name);
 }
 
 // ############### Flags ###############
@@ -448,11 +448,11 @@ pub fn clc(inter: &mut CPUInterface) {
     clear_flag(inter, FlagPositionOffset::Carry);
 }
 
-pub fn cld(inter: &mut CPUInterface) {
+pub fn cld(_inter: &mut CPUInterface) {
     on_unimplemented_feature("Decimal Mode");
 }
 
-pub fn cli(inter: &mut CPUInterface) {
+pub fn cli(_inter: &mut CPUInterface) {
     on_unsupported_feature("Interrupts");
 }
 

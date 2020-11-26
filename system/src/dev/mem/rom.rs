@@ -16,10 +16,6 @@ impl Rom {
             widget_update: true,
         }
     }
-
-    pub fn contents_mut(&mut self) -> &mut [u8] {
-        &mut self.contents
-    }
 }
 
 impl DeviceTrait for Rom {

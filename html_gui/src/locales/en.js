@@ -199,6 +199,10 @@ const LangEn = {
             asciiBuffer: {
                 writeHere: "Write here ...",
             },
+
+            memMonitor: {
+                cappedMsg: "-- Capped by Settings --"
+            },
         },
 
         logbar: {
@@ -224,6 +228,8 @@ const LangEn = {
             hex: "Hexadecimal",
             dec: "Decimal",
         },
+
+        wait: "Wait ...",
     },
 
     timeAgo: {
@@ -281,6 +287,12 @@ const LangEn = {
         [WasmMsgs.PreSyntaxError]: "Syntax error",
 
     },
+
+    wasmSys: {
+        unsupported: "Unsupported feature: {code}",
+
+        unimplemented: "Unimplemented feature: {code}",
+    }
 };
 
 export default LangEn;
