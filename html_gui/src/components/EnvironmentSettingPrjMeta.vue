@@ -14,6 +14,8 @@
                 class="uk-input"
                 type="text"
                 :placeholder="$t('environment.settings.EnvironmentSettingPrjMeta.prjName')"
+
+                @focusout="checkNameNotEmpty"
             >
         </div>
 
@@ -81,7 +83,7 @@
                 },
 
                 set(value) {
-                    this.projectMeta.name = value || DefaultPrjName;
+                    this.projectMeta.name = value;
                 }
             },
 
@@ -97,6 +99,14 @@
                 return date.toLocaleString();
             },
 
+        },
+
+        methods: {
+            checkNameNotEmpty() {
+                if (this.prjName.length < 3) {
+                    this.prjName = DefaultPrjName;
+                }
+            }
         }
     }
 </script>
