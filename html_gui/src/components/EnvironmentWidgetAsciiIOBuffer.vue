@@ -1,18 +1,21 @@
 <template>
     <div class="crl-widget">
-        <div
-            ref="a"
-            class="crl-output"
-
-            @scroll="onOutputScroll"
-        >
-            <pre>{{ formattedOutput }}</pre>
+        <div>
+            <pre class="crl-output-text" ref="scroll">{{ formattedOutput }}</pre>
         </div>
 
-        <input
-            @keypress="onInput"
-            type="text" class="crl-input" :placeholder="$t('environment.widget.asciiBuffer.writeHere')"
-        >
+        <div class="crl-input-container uk-grid">
+            <div class="uk-width-expand">
+                <input
+                    type="text" class="crl-input" :placeholder="$t('environment.widget.asciiBuffer.writeHere')"
+                >
+            </div>
+
+            <div class="uk-width-auto uk-padding-remove">
+                <input type="checkbox" v-model="doAutoScroll">
+                <font-awesome-icon icon="sort-amount-down-alt"/>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -37,9 +40,8 @@
 
         watch: {
             formattedOutput() {
-                //TODO: temp fix
-                if (true || this.doAutoScroll) {
-                    let element = this.$refs.a;
+                if (this.doAutoScroll) {
+                    let element = this.$refs.scroll;
 
                     element.scrollTop = element.scrollHeight;
                 }
@@ -54,7 +56,7 @@
             },
 
             onOutputScroll() {
-                let element = this.$refs.a;
+                let element = this.$refs.scroll;
 
                 let elementHeight = element.getBoundingClientRect().height;
 
@@ -69,27 +71,34 @@
         margin: 0.5em;
     }
 
-    .crl-output {
+    .crl-output-container {
         max-width: 100%;
+    }
 
-        padding: 0.1em;
+    .crl-output-text {
+        white-space: pre-wrap;
+        word-break: break-all;
 
-        background: #fff;
+        margin-bottom: 0;
+        padding: 0.2em;
 
         height: 10.5em;
         overflow-y: auto;
 
-        word-break: break-all;
-
         font-size: 90%;
         font-weight: bold;
 
+        background: #fff;
         color: black;
     }
 
-    .crl-input {
-        margin-top: 1em;
+    .crl-input-container {
+        margin-top: 0.70em;
 
+        color: #0a0c0d;
+    }
+
+    .crl-input {
         width: 100%;
 
         border: unset;
