@@ -38,13 +38,15 @@
             </label>
 
             <input
-                v-model.number="memMonitorMaxRows"
-
                 class="uk-input"
                 type="number"
 
                 min="1"
                 max="500"
+
+                :value="this.projectSettings.memoryMonitorMaxRows"
+                ref="memMonRowsInput"
+                @focusout="syncMemMonitorRowsLimit"
             >
         </div>
 
@@ -55,6 +57,8 @@
     import MixinSettingsPage from "./MixinSettingsPage";
     import {ProjectSchema} from "../assets/schema/project";
 
+    import UIkit from "uikit";
+
     const MEMORY_MONITOR_MIN_ROWS = ProjectSchema.properties.settings.properties.memoryMonitorMaxRows.minimum;
     const MEMORY_MONITOR_MAX_ROWS = ProjectSchema.properties.settings.properties.memoryMonitorMaxRows.maximum;
 
@@ -62,19 +66,40 @@
         name: "EnvironmentSettingEnvInterface",
         mixins: [MixinSettingsPage],
 
-        computed: {
-            memMonitorMaxRows: {
-                get() {
-                    return this.projectSettings.memoryMonitorMaxRows;
-                },
+        methods: {
+            syncMemMonitorRowsLimit() {
+                let value = parseInt(this.$refs.memMonRowsInput.value);
 
-                set(value) {
-                    let validValue = Math.min(MEMORY_MONITOR_MAX_ROWS,
-                        Math.max(MEMORY_MONITOR_MIN_ROWS, value)
-                    );
+                let validValue = Math.min(MEMORY_MONITOR_MAX_ROWS,
+                    Math.max(MEMORY_MONITOR_MIN_ROWS, value)
+                );
 
-                    this.projectSettings.memoryMonitorMaxRows = validValue;
-                }
+                this.interfaceIsFreezed = true;
+
+                let dialog = UIkit.modal.dialog(`
+                    <div class="uk-flex uk-flex-center uk-flex-middle" style="height: 50vh">
+                        <h2>
+                            ${this.$t("guiCommon.wait")}
+                        </h2>
+                    </div>
+
+                `, {
+                    stack: true,
+                    container: true,
+
+                    escClose: false,
+                    bgClose: false,
+
+                });
+
+
+                // it needs to be wrapped this way to work
+                setTimeout(_ => {
+                    new Promise(_ => {
+                        this.projectSettings.memoryMonitorMaxRows = validValue;
+                        dialog.hide();
+                    });
+                }, 500);
             }
         }
     }

@@ -224,6 +224,8 @@ const LangEn = {
             hex: "Hexadecimal",
             dec: "Decimal",
         },
+
+        wait: "Wait ...",
     },
 
     timeAgo: {
